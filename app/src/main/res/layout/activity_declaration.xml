@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.DeclarationViewModel"/>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.DeclarationActivity">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/placePickerCard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:onClick="@{() -> viewModel.onPlacePickerButtonCLicked()}"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/placePickerChooseTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:text="@string/choose_place"
+                style="@style/TextAppearance.AppCompat.Title"
+                app:visible="@{viewModel.pickedPlace == null}"/>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:visible="@{viewModel.pickedPlace != null}">
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/placePickerMapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:place="@{viewModel.pickedPlace}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/placePickerTitle"/>
+
+                <TextView
+                    android:id="@+id/placePickerTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
+                    android:text="@{viewModel.pickedPlace.name}"
+                    android:padding="8dp"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Place name"/>
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/photoPickerCard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:onClick="@{() -> viewModel.onPhotoPickerButtonClicked()}"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/placePickerCard">
+
+            <TextView
+                android:id="@+id/photoPickerChooseTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:text="@string/take_photo"
+                style="@style/TextAppearance.AppCompat.Title"
+                app:visible="@{viewModel.photoPath == null}"/>
+
+            <ImageView
+                android:id="@+id/photoPickerImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srcUrl="@{viewModel.photoPath}"
+                app:visible="@{viewModel.photoPath != null}"/>
+
+        </android.support.v7.widget.CardView>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</layout>

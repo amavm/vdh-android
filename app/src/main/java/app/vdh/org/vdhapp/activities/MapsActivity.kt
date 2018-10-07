@@ -1,7 +1,8 @@
-package app.vdh.org.vdhapp
+package app.vdh.org.vdhapp.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import app.vdh.org.vdhapp.R
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
