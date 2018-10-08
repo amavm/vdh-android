@@ -7,6 +7,8 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuInflater
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.databinding.ActivityDeclarationBinding
 import app.vdh.org.vdhapp.viewmodels.DeclarationViewModel
@@ -49,6 +51,7 @@ class DeclarationActivity : AppCompatActivity() {
         viewModel.openPhotoPickerEvent.observe(this, Observer {
             ImagePicker.create(this)
                     .single()
+                    .theme(R.style.ImagePickerTheme)
                     .returnMode(ReturnMode.ALL)
                     .start()
         })
@@ -86,6 +89,13 @@ class DeclarationActivity : AppCompatActivity() {
             val image = ImagePicker.getFirstImageOrNull(data)
             viewModel.setPhoto(image.path)
         }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.declaration_menu, menu)
+        return true
 
     }
 
