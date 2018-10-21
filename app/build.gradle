@@ -36,6 +36,7 @@ dependencies {
 
     implementation "com.google.android.gms:play-services-maps:$gms_version"
     implementation "com.google.android.gms:play-services-places:$gms_version"
+    implementation "com.google.android.gms:play-services-location:$gms_version"
 
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
@@ -50,6 +51,9 @@ dependencies {
 
     //Koin / DI
     implementation 'org.koin:koin-android-viewmodel:1.0.1'
+
+    //Anko
+    implementation "org.jetbrains.anko:anko:$anko_version"
 
 
 

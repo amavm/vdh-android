@@ -5,28 +5,28 @@ import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import app.vdh.org.vdhapp.R
-import app.vdh.org.vdhapp.databinding.ActivityDeclarationBinding
-import app.vdh.org.vdhapp.viewmodels.DeclarationViewModel
-import com.bumptech.glide.Glide
+import app.vdh.org.vdhapp.data.states.ReportingActionState
+import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
+import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.google.android.gms.location.places.ui.PlacePicker
-import kotlinx.android.synthetic.main.activity_declaration.*
+import kotlinx.android.synthetic.main.activity_reporting.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
-class DeclarationActivity : AppCompatActivity() {
+class ReportingActivity : AppCompatActivity() {
 
     companion object {
         var PLACE_PICKER_REQUEST = 1
     }
 
-    private val viewModel : DeclarationViewModel by viewModel()
+    private val viewModel : ReportingViewModel by viewModel()
 
     private val placePickerBuilder =  PlacePicker.IntentBuilder()
 
@@ -34,26 +34,30 @@ class DeclarationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding : ActivityDeclarationBinding = DataBindingUtil.setContentView(
-                this, R.layout.activity_declaration)
+        val binding : ActivityReportingBinding = DataBindingUtil.setContentView(
+                this, R.layout.activity_reporting)
 
         with(binding) {
-            setLifecycleOwner(this@DeclarationActivity)
-            viewModel = this@DeclarationActivity.viewModel
+            setLifecycleOwner(this@ReportingActivity)
+            viewModel = this@ReportingActivity.viewModel
         }
 
+        viewModel.reportingEvent.observe(this, Observer { action ->
 
-        viewModel.openPlacePickerEvent.observe(this, Observer {
-            val intent = placePickerBuilder.build(this)
-            startActivityForResult(intent, PLACE_PICKER_REQUEST)
-        })
+            when (action) {
 
-        viewModel.openPhotoPickerEvent.observe(this, Observer {
-            ImagePicker.create(this)
-                    .single()
-                    .theme(R.style.ImagePickerTheme)
-                    .returnMode(ReturnMode.ALL)
-                    .start()
+                is ReportingActionState.PickPhoto ->
+                    ImagePicker.create(this)
+                            .single()
+                            .theme(R.style.ImagePickerTheme)
+                            .returnMode(ReturnMode.ALL)
+                            .start()
+
+                is ReportingActionState.PickPlace -> {
+                    val intent = placePickerBuilder.build(this)
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST)
+                }
+            }
         })
 
         placePickerMapView.onCreate(savedInstanceState)
@@ -96,7 +100,17 @@ class DeclarationActivity : AppCompatActivity() {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.declaration_menu, menu)
         return true
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item?.let {
+            when(item.itemId) {
+                R.id.menu_save_declaraton -> {
+                    viewModel.saveReport(commentTextInput.text.toString() )
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {
