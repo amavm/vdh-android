@@ -3,7 +3,7 @@ package app.vdh.org.vdhapp.data
 import android.arch.lifecycle.LiveData
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 
-interface DeclarationRepository {
+interface ReportRepository {
 
     fun insertReport(reportEntity: ReportEntity, whenInserted: (Long) -> Unit)
 

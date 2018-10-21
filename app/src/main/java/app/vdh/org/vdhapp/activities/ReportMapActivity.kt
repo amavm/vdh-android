@@ -2,6 +2,8 @@ package app.vdh.org.vdhapp.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -9,7 +11,11 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.data.entities.ReportEntity
+import app.vdh.org.vdhapp.data.states.ReportingMapActionState
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
+import app.vdh.org.vdhapp.extenstions.addReportMarkers
+import app.vdh.org.vdhapp.extenstions.navigateTo
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -18,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -37,6 +44,11 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val binding : ActivityReportMapBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_report_map)
+
+        with(binding) {
+            setLifecycleOwner(this@ReportMapActivity)
+            viewModel = this@ReportMapActivity.viewModel
+        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -60,6 +72,23 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
         }
+        map.setOnInfoWindowClickListener {
+            val bundle = Bundle()
+            bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
+            this.navigateTo(ReportingActivity::class.java, bundle)
+        }
+
+        viewModel.getReports().observe(this, Observer { reports ->
+            map.addReportMarkers(reports)
+        })
+
+        viewModel.mapReportingEvent.observe(this, Observer { action ->
+            when(action) {
+                ReportingMapActionState.AddReport -> {
+                    this.navigateTo(ReportingActivity::class.java)
+                }
+            }
+        })
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -68,5 +97,9 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 initMap()
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

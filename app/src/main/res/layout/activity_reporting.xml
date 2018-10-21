@@ -39,7 +39,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintVertical_chainStyle="packed"
                         app:srcCompat="@drawable/ic_add_location"
-                        app:visible="@{viewModel.pickedPlace == null}"
+                        app:visible="@{viewModel.placeName == null}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/placePickerChooseTextView"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -52,7 +52,7 @@
                         android:gravity="center_horizontal"
                         android:text="@string/choose_place"
                         style="@style/TextAppearance.AppCompat.Title"
-                        app:visible="@{viewModel.pickedPlace == null}"
+                        app:visible="@{viewModel.placeLocation == null}"
                         app:layout_constraintTop_toBottomOf="@+id/placePickerIcon"
                         app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -60,10 +60,11 @@
                         android:id="@+id/placePickerMapView"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        app:place="@{viewModel.pickedPlace}"
+                        app:placeName="@{viewModel.placeName}"
+                        app:placeLocation="@{viewModel.placeLocation}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/placePickerTitle"
-                        app:visible="@{viewModel.pickedPlace != null}"/>
+                        app:visible="@{viewModel.placeLocation != null}"/>
 
                     <TextView
                         android:id="@+id/placePickerTitle"
@@ -71,11 +72,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center_horizontal"
-                        android:text="@{viewModel.pickedPlace.name}"
+                        android:text="@{viewModel.placeName}"
                         android:padding="8dp"
                         style="@style/TextAppearance.AppCompat.Title"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:visible="@{viewModel.pickedPlace != null}"
+                        app:visible="@{viewModel.placeLocation != null}"
                         tools:text="Place name"/>
 
                 </android.support.constraint.ConstraintLayout>
@@ -106,7 +107,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintVertical_chainStyle="packed"
                         app:srcCompat="@drawable/ic_add_a_photo"
-                        app:visible="@{viewModel.pickedPlace == null}"
+                        app:visible="@{viewModel.picturePath == null}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/photoPickerChooseTextView"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -159,6 +160,7 @@
                         android:id="@+id/commentTextInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:text="@{viewModel.reportComment}"
                         android:hint="@string/enter_comment"
                         android:maxLength="150"/>
 

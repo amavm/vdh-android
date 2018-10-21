@@ -4,12 +4,9 @@ import android.databinding.BindingAdapter
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.places.Place
-import com.google.android.gms.maps.LocationSource
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
@@ -34,18 +31,16 @@ class BindingAdapter {
         }
 
         @JvmStatic
-        @BindingAdapter("place")
-        fun setPlace(mapView: MapView, place: Place?) {
-            place?.let {
+        @BindingAdapter(value = ["placeName", "placeLocation"])
+        fun setPlace(mapView: MapView, placeName: String?, placeLocation: LatLng?) {
+            if (placeName != null && placeLocation != null) {
                 mapView.getMapAsync { googleMap ->
                     googleMap.uiSettings.setAllGesturesEnabled(false)
                     googleMap.uiSettings.isZoomControlsEnabled = true
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.latLng, 18.0f))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 18.0f))
 
-                    val marker = MarkerOptions().position(place.latLng)
-                    place.name?.let { name->
-                        marker.title(name.toString())
-                    }
+                    val marker = MarkerOptions().position(placeLocation)
+                    marker.title(placeName)
                     googleMap.addMarker(marker)
                 }
             }

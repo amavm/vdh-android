@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import org.jetbrains.anko.doAsync
 
-class DeclarationRepositoryImpl(private val reportDao: ReportDao) : DeclarationRepository {
+class ReportRepositoryImpl(private val reportDao: ReportDao) : ReportRepository {
 
     override fun insertReport(reportEntity: ReportEntity, whenInserted: (Long) -> Unit) {
         doAsync {

@@ -1,8 +1,8 @@
 package app.vdh.org.vdhapp.di
 
 import app.vdh.org.vdhapp.data.AppDatabase
-import app.vdh.org.vdhapp.data.DeclarationRepository
-import app.vdh.org.vdhapp.data.DeclarationRepositoryImpl
+import app.vdh.org.vdhapp.data.ReportRepository
+import app.vdh.org.vdhapp.data.ReportRepositoryImpl
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -18,8 +18,8 @@ val appModule = module {
         database.declarationDao()
     }
 
-    single<DeclarationRepository> { DeclarationRepositoryImpl(get()) }
+    single<ReportRepository> { ReportRepositoryImpl(get()) }
 
     viewModel { ReportingViewModel(androidApplication(), get()) }
-    viewModel { ReportMapViewModel(androidApplication()) }
+    viewModel { ReportMapViewModel(androidApplication(), get ()) }
 }

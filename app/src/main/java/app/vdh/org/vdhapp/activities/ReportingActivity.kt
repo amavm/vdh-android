@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
@@ -23,7 +24,9 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class ReportingActivity : AppCompatActivity() {
 
     companion object {
-        var PLACE_PICKER_REQUEST = 1
+        const val PLACE_PICKER_REQUEST = 1
+        const val REPORT_ARGS_KEY = "report_args_key"
+        const val SAVED_RESULT_CODE = 111
     }
 
     private val viewModel : ReportingViewModel by viewModel()
@@ -36,6 +39,10 @@ class ReportingActivity : AppCompatActivity() {
 
         val binding : ActivityReportingBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_reporting)
+
+        intent.extras?.getParcelable<ReportEntity>(REPORT_ARGS_KEY)?.let {
+            viewModel.setReportData(it)
+        }
 
         with(binding) {
             setLifecycleOwner(this@ReportingActivity)
@@ -106,7 +113,13 @@ class ReportingActivity : AppCompatActivity() {
         item?.let {
             when(item.itemId) {
                 R.id.menu_save_declaraton -> {
-                    viewModel.saveReport(commentTextInput.text.toString() )
+                    viewModel.saveReport(commentTextInput.text.toString()) { savedReport ->
+                        val bundle = Bundle()
+                        bundle.putParcelable(REPORT_ARGS_KEY, savedReport)
+                        val intent = Intent()
+                        intent.putExtras(bundle)
+                        setResult(SAVED_RESULT_CODE, intent)
+                    }
                 }
             }
         }
