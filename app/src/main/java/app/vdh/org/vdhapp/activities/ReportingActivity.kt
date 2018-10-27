@@ -26,7 +26,6 @@ class ReportingActivity : AppCompatActivity() {
     companion object {
         const val PLACE_PICKER_REQUEST = 1
         const val REPORT_ARGS_KEY = "report_args_key"
-        const val SAVED_RESULT_CODE = 111
     }
 
     private val viewModel : ReportingViewModel by viewModel()
@@ -56,9 +55,13 @@ class ReportingActivity : AppCompatActivity() {
                 is ReportingActionState.PickPhoto ->
                     ImagePicker.create(this)
                             .single()
+                            .showCamera(false)
                             .theme(R.style.ImagePickerTheme)
                             .returnMode(ReturnMode.ALL)
                             .start()
+
+                is ReportingActionState.TakePhoto ->
+                    ImagePicker.cameraOnly().start(this)
 
                 is ReportingActionState.PickPlace -> {
                     val intent = placePickerBuilder.build(this)
@@ -114,11 +117,7 @@ class ReportingActivity : AppCompatActivity() {
             when(item.itemId) {
                 R.id.menu_save_declaraton -> {
                     viewModel.saveReport(commentTextInput.text.toString()) { savedReport ->
-                        val bundle = Bundle()
-                        bundle.putParcelable(REPORT_ARGS_KEY, savedReport)
-                        val intent = Intent()
-                        intent.putExtras(bundle)
-                        setResult(SAVED_RESULT_CODE, intent)
+                        finish()
                     }
                 }
             }

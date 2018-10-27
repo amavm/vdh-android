@@ -36,7 +36,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private lateinit var map: GoogleMap
+    private var map: GoogleMap? = null
     private val viewModel : ReportMapViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,19 +68,18 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     private fun initMap() {
-        map.isMyLocationEnabled = true
+
+        addReports()
+
+        map?.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
         }
-        map.setOnInfoWindowClickListener {
+        map?.setOnInfoWindowClickListener {
             val bundle = Bundle()
             bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
             this.navigateTo(ReportingActivity::class.java, bundle)
         }
-
-        viewModel.getReports().observe(this, Observer { reports ->
-            map.addReportMarkers(reports)
-        })
 
         viewModel.mapReportingEvent.observe(this, Observer { action ->
             when(action) {
@@ -91,15 +90,18 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
 
+    private fun addReports() {
+        viewModel.getReports().observe(this, Observer { reports ->
+            map?.clear()
+            map?.addReportMarkers(reports)
+        })
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == LOCATION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initMap()
             }
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

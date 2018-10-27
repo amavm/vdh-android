@@ -20,12 +20,18 @@ class ReportingViewModel(application: Application, private val repository: Repor
     val picturePath: MutableLiveData<String> = MutableLiveData()
     val reportComment: MutableLiveData<String> = MutableLiveData()
 
+
+
     fun onPlacePickerButtonCLicked() {
         reportingEvent.value = ReportingActionState.PickPlace
     }
 
-    fun onPhotoPickerButtonClicked() {
+    fun onPhotoFromGalleryButtonClicked() {
         reportingEvent.value = ReportingActionState.PickPhoto
+    }
+
+    fun onTakePhotoButtonClicked() {
+        reportingEvent.value = ReportingActionState.TakePhoto
     }
 
     fun setReportData(report: ReportEntity) {

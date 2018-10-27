@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
-            android:src="@drawable/ic_place"
+            android:src="@drawable/ic_add_place"
             android:layout_margin="16dp"
             android:onClick="@{() -> viewModel.onReportButtonClicked()}"
             app:layout_constraintLeft_toLeftOf="parent"
