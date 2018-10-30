@@ -14,4 +14,6 @@ data class ReportEntity(
         var name:String? = "",
         var position: LatLng = LatLng(0.0,0.0),
         var photoPath: String? = "",
-        var comment: String? = "") : Parcelable
+        var comment: String? = "",
+        var deviceId: String? = "",
+        var timestamp: Long = System.currentTimeMillis()) : Parcelable

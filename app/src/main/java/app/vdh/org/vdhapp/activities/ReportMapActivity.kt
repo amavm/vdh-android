@@ -73,7 +73,9 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         map?.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
+            if (location != null) {
+                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
+            }
         }
         map?.setOnInfoWindowClickListener {
             val bundle = Bundle()

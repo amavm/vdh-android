@@ -116,7 +116,13 @@ class ReportingActivity : AppCompatActivity() {
         item?.let {
             when(item.itemId) {
                 R.id.menu_save_declaraton -> {
-                    viewModel.saveReport(commentTextInput.text.toString()) { savedReport ->
+                    viewModel.saveReport(commentTextInput.text.toString()) { _ ->
+                        finish()
+                    }
+                }
+
+                R.id.menu_send_declaraton -> {
+                    viewModel.saveReport(declarationComment = commentTextInput.text.toString(), sendToServer = true ) { _ ->
                         finish()
                     }
                 }

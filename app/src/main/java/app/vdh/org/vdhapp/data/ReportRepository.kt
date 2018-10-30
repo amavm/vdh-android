@@ -1,11 +1,12 @@
 package app.vdh.org.vdhapp.data
 
 import android.arch.lifecycle.LiveData
+import android.content.Context
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 
 interface ReportRepository {
 
-    fun insertReport(reportEntity: ReportEntity, whenInserted: (Long) -> Unit)
+    fun saveReport(context: Context, reportEntity: ReportEntity, sendToServer: Boolean = false, onSuccess: (Long) -> Unit)
 
     fun getReports() : LiveData<List<ReportEntity>>
 }

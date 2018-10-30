@@ -51,7 +51,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
         picturePath.value = path
     }
 
-    fun saveReport(declarationComment: String, whenSaved: (ReportEntity) -> Unit) {
+    fun saveReport(declarationComment: String, sendToServer: Boolean = false, whenSaved: (ReportEntity) -> Unit) {
 
         val report = ReportEntity(
                 id = reportId,
@@ -61,7 +61,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
                 photoPath = picturePath.value
         )
 
-        repository.insertReport(report) { insertedId ->
+        repository.saveReport(getApplication(), report, sendToServer = sendToServer) { insertedId ->
             report.id = insertedId
             whenSaved(report)
         }
