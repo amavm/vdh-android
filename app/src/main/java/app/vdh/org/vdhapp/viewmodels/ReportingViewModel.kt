@@ -12,6 +12,7 @@ import app.vdh.org.vdhapp.services.Result
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application) {
@@ -24,7 +25,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     val picturePath: MutableLiveData<String> = MutableLiveData()
     val reportComment: MutableLiveData<String> = MutableLiveData()
 
-
+    private var saveReportJob: Job? = null
 
     fun onPlacePickerButtonCLicked() {
         reportingEvent.value = ReportingActionState.PickPlace
@@ -65,7 +66,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
                 photoPath = picturePath.value
         )
 
-        GlobalScope.launch {
+        saveReportJob = GlobalScope.launch {
             val result = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
             when (result) {
 
@@ -79,5 +80,10 @@ class ReportingViewModel(application: Application, private val repository: Repor
             }
         }
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        saveReportJob?.cancel()
     }
 }
