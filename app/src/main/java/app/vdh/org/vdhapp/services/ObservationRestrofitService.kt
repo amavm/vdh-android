@@ -2,7 +2,9 @@ package app.vdh.org.vdhapp.services
 
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.dtos.ObservationListDto
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -17,5 +19,5 @@ interface ObservationRestrofitService {
                            @Query("nextToken") nextToken: String? = null) : Call<ObservationListDto>
 
     @POST("observations")
-    fun postObservation(@Body observation: ObservationDto) : Call<ObservationDto>
+    fun postObservation(@Body observation: ObservationDto) : Deferred<Response<ObservationDto>>
 }

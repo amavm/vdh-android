@@ -3,12 +3,16 @@ package app.vdh.org.vdhapp.viewmodels
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
+import app.vdh.org.vdhapp.services.Result
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application) {
 
@@ -61,9 +65,19 @@ class ReportingViewModel(application: Application, private val repository: Repor
                 photoPath = picturePath.value
         )
 
-        repository.saveReport(getApplication(), report, sendToServer = sendToServer) { insertedId ->
-            report.id = insertedId
-            whenSaved(report)
+        GlobalScope.launch {
+            val result = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
+            when (result) {
+
+                is Result.Success -> {
+                    report.id = result.data
+                    whenSaved(report)
+                }
+
+                is Result.Error -> Log.e("ReportingViewModel", "Save report exception ${result.exception}")
+
+            }
         }
+
     }
 }

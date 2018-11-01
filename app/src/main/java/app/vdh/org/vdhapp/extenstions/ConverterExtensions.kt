@@ -26,6 +26,6 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
             comment = comment ?: "",
             attributes = arrayOf("ice"),
             position = arrayOf(position.latitude, position.longitude),
-            deviceId = "123",
+            deviceId = context.uniqueId() ?: "",
             assets = listOf(ImageAssetDto(data = photoString)))
 }
