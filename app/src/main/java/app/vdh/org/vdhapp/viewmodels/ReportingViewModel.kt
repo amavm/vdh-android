@@ -11,11 +11,13 @@ import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.services.Result
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application) {
+class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext
+        get() = Job() + Dispatchers.Default
 
     val reportingEvent: SingleLiveEvent<ReportingActionState> = SingleLiveEvent()
 
@@ -66,17 +68,33 @@ class ReportingViewModel(application: Application, private val repository: Repor
                 photoPath = picturePath.value
         )
 
-        saveReportJob = GlobalScope.launch {
-            val result = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
-            when (result) {
+        saveReportJob = launch {
 
-                is Result.Success -> {
-                    report.id = result.data
-                    whenSaved(report)
+            val resultPair = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
+            val saveResult = resultPair.first
+            val sendToServerResult = resultPair.second
+
+            withContext(Dispatchers.Main) {
+                when (saveResult) {
+
+                    is Result.Success -> {
+                        report.id = saveResult.data
+                        whenSaved(report)
+                    }
+
+                    is Result.Error -> Log.e("ReportingViewModel", "Save report exception ${saveResult.exception}")
+
                 }
 
-                is Result.Error -> Log.e("ReportingViewModel", "Save report exception ${result.exception}")
+                when (sendToServerResult) {
+                    is Result.Success -> {
+                        Log.e("ReportingViewModel", "Sent to server")
+                    }
 
+                    is Result.Error -> Log.e("ReportingViewModel", "Send report exception ${sendToServerResult.exception}")
+
+                    else -> {}
+                }
             }
         }
 

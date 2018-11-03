@@ -14,7 +14,7 @@ import java.io.IOException
 class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationService: ObservationService) : ReportRepository {
 
 
-    override suspend fun saveReport(context: Context, reportEntity: ReportEntity, sendToServer: Boolean): Result<Long> {
+    override suspend fun saveReport(context: Context, reportEntity: ReportEntity, sendToServer: Boolean): Pair<Result<Long>, Result<ObservationDto>?> {
 
         val insertionResult = safeCall(call = {savedReport(reportEntity)},
                 errorMessage = "Error during sending report")
@@ -26,11 +26,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
                             errorMessage = "Error during sending report")
                 } else null
 
-        return when {
-            insertionResult is Result.Error -> Result.Error(insertionResult.exception)
-            sendServerResult is Result.Error -> Result.Error(sendServerResult.exception)
-            else -> insertionResult
-        }
+        return Pair(insertionResult, sendServerResult)
     }
 
     override fun getReports(): LiveData<List<ReportEntity>> {
