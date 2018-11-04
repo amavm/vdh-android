@@ -1,6 +1,7 @@
 package app.vdh.org.vdhapp.services
 
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
+import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
 import retrofit2.Call
@@ -23,5 +24,9 @@ class ObservationServiceImpl : ObservationService {
 
     override fun sendObservation(observationDto: ObservationDto) : Deferred<Response<ObservationDto>> {
         return observationRetrofitService.postObservation(observationDto)
+    }
+
+    override fun getObservations(): Deferred<Response<ObservationListDto>> {
+        return observationRetrofitService.getObservations()
     }
 }

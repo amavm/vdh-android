@@ -232,6 +232,20 @@
 
             </android.support.design.card.MaterialCardView>
 
+            <TextView
+                android:id="@+id/reportSyncDateTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/medium_spacing"
+                android:text="@{viewModel.syncDate}"
+                app:visible="@{viewModel.syncDate != null}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/commentCard"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="Syncronisation : 13 mars "/>
+
         </android.support.constraint.ConstraintLayout>
 
     </ScrollView>

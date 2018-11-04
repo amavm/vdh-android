@@ -7,6 +7,7 @@ import app.vdh.org.vdhapp.data.dtos.ImageAssetDto
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import com.bumptech.glide.Glide
+import com.google.android.gms.maps.model.LatLng
 import java.io.ByteArrayOutputStream
 
 fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
@@ -22,10 +23,27 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
     bitmap.recycle()
 
     return ObservationDto(
-            timeStamp = timestamp / 1000,
+            timestamp = System.currentTimeMillis() / 1000,
             comment = comment ?: "",
             attributes = arrayOf("ice"),
             position = arrayOf(position.latitude, position.longitude),
             deviceId = context.uniqueId() ?: "",
-            assets = listOf(ImageAssetDto(data = photoString)))
+            assets = listOf(ImageAssetDto(imageUrl = photoString)))
+}
+
+fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
+    return map {
+        val photoPath = if (it.assets.isNotEmpty()) {
+            it.assets[0].imageUrl
+        } else null
+
+        val report = ReportEntity(
+                position = LatLng(it.position[0], it.position[1]),
+                deviceId =  it.deviceId,
+                comment = it.comment,
+                syncTimestamp = it.timestamp * 1000,
+                photoPath = photoPath)
+        report.id = it.deviceId + it.timestamp
+        report
+    }
 }

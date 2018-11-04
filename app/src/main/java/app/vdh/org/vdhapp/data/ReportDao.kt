@@ -13,6 +13,9 @@ interface ReportDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertDeclaration(reportEntity: ReportEntity) : Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertDeclarationList(reportEntityList: List<ReportEntity>) : List<Long>
+
     @Query("SELECT * FROM reportentity")
     fun getAllDeclarations(): LiveData<List<ReportEntity>>
 }

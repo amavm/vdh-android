@@ -3,7 +3,9 @@ package app.vdh.org.vdhapp.viewmodels
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
+import android.text.format.DateUtils
+import app.vdh.org.vdhapp.App
+import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
@@ -12,6 +14,7 @@ import app.vdh.org.vdhapp.services.Result
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application), CoroutineScope {
@@ -21,11 +24,11 @@ class ReportingViewModel(application: Application, private val repository: Repor
 
     val reportingEvent: SingleLiveEvent<ReportingActionState> = SingleLiveEvent()
 
-    var reportId: Long? = null
     var placeName: MutableLiveData<String> = MutableLiveData()
     var placeLocation: MutableLiveData<LatLng> = MutableLiveData()
     val picturePath: MutableLiveData<String> = MutableLiveData()
     val reportComment: MutableLiveData<String> = MutableLiveData()
+    var syncDate: MutableLiveData<String> = MutableLiveData()
 
     private var saveReportJob: Job? = null
 
@@ -42,11 +45,13 @@ class ReportingViewModel(application: Application, private val repository: Repor
     }
 
     fun setReportData(report: ReportEntity) {
-        reportId = report.id
         placeName.value = report.name
         placeLocation.value = report.position
         picturePath.value = report.photoPath
         reportComment.value = report.comment
+        report.syncTimestamp?.let {
+            syncDate.value = getApplication<App>().getString(R.string.sync_date, DateUtils.getRelativeTimeSpanString(it).toString())
+        }
     }
 
     fun setPlace(place: Place) {
@@ -58,10 +63,11 @@ class ReportingViewModel(application: Application, private val repository: Repor
         picturePath.value = path
     }
 
-    fun saveReport(declarationComment: String, sendToServer: Boolean = false, whenSaved: (ReportEntity) -> Unit) {
+    fun saveReport(declarationComment: String, sendToServer: Boolean = false,
+                   onSuccess: (String) -> Unit,
+                   onError: (String) -> Unit) {
 
         val report = ReportEntity(
-                id = reportId,
                 name = placeName.value,
                 comment = declarationComment,
                 position = placeLocation.value ?: LatLng(.0,.0),
@@ -75,26 +81,14 @@ class ReportingViewModel(application: Application, private val repository: Repor
             val sendToServerResult = resultPair.second
 
             withContext(Dispatchers.Main) {
-                when (saveResult) {
-
-                    is Result.Success -> {
-                        report.id = saveResult.data
-                        whenSaved(report)
-                    }
-
-                    is Result.Error -> Log.e("ReportingViewModel", "Save report exception ${saveResult.exception}")
-
+                if (saveResult is Result.Success && sendToServerResult is Result.Success) {
+                    onSuccess(getApplication<App>().getString(R.string.send_report_success))
+                } else if (saveResult is Result.Success && !sendToServer) {
+                    onSuccess(getApplication<App>().getString(R.string.save_report_success))
+                } else {
+                    onError(getApplication<App>().getString(R.string.save_send_report_error))
                 }
 
-                when (sendToServerResult) {
-                    is Result.Success -> {
-                        Log.e("ReportingViewModel", "Sent to server")
-                    }
-
-                    is Result.Error -> Log.e("ReportingViewModel", "Send report exception ${sendToServerResult.exception}")
-
-                    else -> {}
-                }
             }
         }
 

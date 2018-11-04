@@ -3,7 +3,7 @@ package app.vdh.org.vdhapp.data.dtos
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-data class ObservationDto(@SerializedName("timestamp") val timeStamp: Long,
+data class ObservationDto(@SerializedName("timestamp") val timestamp: Long,
                           @SerializedName("position") val position: Array<Double>,
                           @SerializedName("attributes")val attributes: Array<String>,
                           @SerializedName("assets") val assets: List<ImageAssetDto>,
@@ -16,7 +16,7 @@ data class ObservationDto(@SerializedName("timestamp") val timeStamp: Long,
 
         other as ObservationDto
 
-        if (timeStamp != other.timeStamp) return false
+        if (timestamp != other.timestamp) return false
         if (!Arrays.equals(position, other.position)) return false
         if (!Arrays.equals(attributes, other.attributes)) return false
         if (assets != other.assets) return false
@@ -27,7 +27,7 @@ data class ObservationDto(@SerializedName("timestamp") val timeStamp: Long,
     }
 
     override fun hashCode(): Int {
-        var result = timeStamp.hashCode()
+        var result = timestamp.hashCode()
         result = 31 * result + Arrays.hashCode(position)
         result = 31 * result + Arrays.hashCode(attributes)
         result = 31 * result + assets.hashCode()

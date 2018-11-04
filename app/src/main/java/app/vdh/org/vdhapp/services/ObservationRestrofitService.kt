@@ -20,4 +20,7 @@ interface ObservationRestrofitService {
 
     @POST("observations")
     fun postObservation(@Body observation: ObservationDto) : Deferred<Response<ObservationDto>>
+
+    @GET("observations")
+    fun getObservations() : Deferred<Response<ObservationListDto>>
 }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,6 +14,7 @@ import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
+import app.vdh.org.vdhapp.fragments.ProgressDialogFragment
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
@@ -31,6 +33,7 @@ class ReportingActivity : AppCompatActivity() {
     private val viewModel : ReportingViewModel by viewModel()
 
     private val placePickerBuilder =  PlacePicker.IntentBuilder()
+    private val progressDialogFragment =  ProgressDialogFragment()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,15 +119,32 @@ class ReportingActivity : AppCompatActivity() {
         item?.let {
             when(item.itemId) {
                 R.id.menu_save_declaraton -> {
-                    viewModel.saveReport(commentTextInput.text.toString()) { finish() }
+                    saveReport()
                 }
 
                 R.id.menu_send_declaraton -> {
-                    viewModel.saveReport(declarationComment = commentTextInput.text.toString(), sendToServer = true ) { finish() }
+                    saveReport(sendToServer = true)
                 }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun saveReport(sendToServer: Boolean = false) {
+        progressDialogFragment.show(supportFragmentManager, "progress_dialog")
+        viewModel.saveReport(declarationComment = commentTextInput.text.toString(), sendToServer = sendToServer,
+                onSuccess = {
+                    progressDialogFragment.dismiss()
+                    if (sendToServer) {
+                        finish()
+                    } else {
+                        Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
+                    }
+                },
+                onError = {
+                    progressDialogFragment.dismiss()
+                    Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
+                })
     }
 
     override fun onDestroy() {

@@ -19,7 +19,11 @@ class BindingAdapter {
         fun setImage(imageView: ImageView, url: String?) {
             url?.let {
                 if (url.isNotEmpty()) {
-                    Glide.with(imageView).asBitmap().load(url).into(imageView)
+                    if (url.startsWith("http")) {
+                        Glide.with(imageView).load(url).into(imageView)
+                    } else {
+                        Glide.with(imageView).asBitmap().load(url).into(imageView)
+                    }
                 }
             }
         }

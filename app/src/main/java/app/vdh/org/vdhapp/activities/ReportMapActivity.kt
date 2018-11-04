@@ -77,10 +77,11 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
             }
         }
-        map?.setOnInfoWindowClickListener {
+        map?.setOnMarkerClickListener {
             val bundle = Bundle()
             bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
             this.navigateTo(ReportingActivity::class.java, bundle)
+            false
         }
 
         viewModel.mapReportingEvent.observe(this, Observer { action ->
