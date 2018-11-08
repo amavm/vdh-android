@@ -16,4 +16,21 @@ class Converters {
         return LatLng(positions[0].toDouble(),positions[1].toDouble())
     }
 
+    @TypeConverter
+    fun statusToString(status: Status?) : String? {
+        status?.let {
+            return status.key
+        }
+        return null
+    }
+
+    @TypeConverter
+    fun stringToStatus(statusKey: String?) : Status? {
+        return when (statusKey) {
+            Status.BIG_SNOW.key -> Status.BIG_SNOW
+            Status.SMALL_SNOW.key -> Status.SMALL_SNOW
+            Status.ICE.key -> Status.ICE
+            else -> null
+        }
+    }
 }

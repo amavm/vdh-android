@@ -1,4 +1,5 @@
 <resources>
+    <string name="empty"/>
     <string name="app_name">VDH</string>
     <string name="choose_place">Choisissez un lieu</string>
     <string name="take_photo">Prendre</string>
@@ -10,4 +11,8 @@
     <string name="send_report_success">Rapport envoye</string>
     <string name="save_report_success">Rapport sauvegrade</string>
     <string name="save_send_report_error">Une erreur s\'est produite</string>
+    <string name="status_big_snow">Grosse neige</string>
+    <string name="status_small_snow">Petite neige</string>
+    <string name="status_ice">Glace</string>
+    <string name="status_ok">Deneige</string>
 </resources>

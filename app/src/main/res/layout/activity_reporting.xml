@@ -5,6 +5,7 @@
 
     <data>
         <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.ReportingViewModel"/>
+        <import type="app.vdh.org.vdhapp.data.Status"/>
     </data>
 
     <ScrollView
@@ -93,6 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.Button.Icon"
+                        app:layout_constraintVertical_chainStyle="packed"
                         app:icon="@drawable/ic_take_photo"
                         app:visible="@{viewModel.picturePath == null}"
                         android:text="@string/take_photo"
@@ -144,60 +146,90 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/small_spacing">
 
-                    <android.support.design.widget.FloatingActionButton
+                    <android.support.design.button.MaterialButton
                         android:id="@+id/statusBigSnowButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_big_snow"
-                        android:tint="@android:color/white"
-                        android:layout_margin="@dimen/medium_spacing"
+                        android:text="@string/status_big_snow"
+                        app:backgroundTint="@{Status.BIG_SNOW.colorRes}"
+                        android:onClick="@{() -> viewModel.onStatusSelected(Status.BIG_SNOW)}"
+                        app:visible="@{viewModel.status == null}"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@+id/statusSmallSnowButton"
+                        app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/statusSmallSnowButton"/>
+
+                    <android.support.design.button.MaterialButton
+                        android:id="@+id/statusSmallSnowButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/status_small_snow"
+                        app:backgroundTint="@{Status.SMALL_SNOW.colorRes}"
+                        android:onClick="@{() -> viewModel.onStatusSelected(Status.SMALL_SNOW)}"
+                        app:visible="@{viewModel.status == null}"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/statusBigSnowButton"
                         app:layout_constraintBottom_toTopOf="@+id/statusIceButton"/>
 
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/statusSmallSnowButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_small_snow"
-                        android:tint="@android:color/white"
-                        android:layout_margin="@dimen/medium_spacing"
-                        app:layout_constraintLeft_toRightOf="@+id/statusBigSnowButton"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@+id/statusSunnyButton"/>
-
-                    <android.support.design.widget.FloatingActionButton
+                    <android.support.design.button.MaterialButton
                         android:id="@+id/statusIceButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_ice"
-                        android:tint="@android:color/white"
-                        android:layout_margin="@dimen/medium_spacing"
-                        app:layout_constraintTop_toBottomOf="@+id/statusBigSnowButton"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toLeftOf="@+id/statusSunnyButton"
+                        android:text="@string/status_ice"
+                        app:backgroundTint="@{Status.ICE.colorRes}"
+                        android:onClick="@{() -> viewModel.onStatusSelected(Status.ICE)}"
+                        app:visible="@{viewModel.status == null}"
+                        app:layout_constraintTop_toBottomOf="@+id/statusSmallSnowButton"
+                        app:layout_constraintBottom_toTopOf="@+id/statusSunnyButton"
+                        app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"/>
 
-                    <android.support.design.widget.FloatingActionButton
+                    <android.support.design.button.MaterialButton
                         android:id="@+id/statusSunnyButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_sun"
-                        android:tint="@android:color/white"
-                        android:layout_margin="@dimen/medium_spacing"
-                        app:layout_constraintTop_toBottomOf="@+id/statusSmallSnowButton"
+                        android:text="@string/status_ok"
+                        app:backgroundTint="@{Status.OK.colorRes}"
+                        android:onClick="@{() -> viewModel.onStatusSelected(Status.OK)}"
+                        app:visible="@{viewModel.status == null}"
+                        app:layout_constraintTop_toBottomOf="@+id/statusIceButton"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toRightOf="@+id/statusIceButton"/>
+                        app:layout_constraintLeft_toLeftOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/statusSelectedImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:status="@{viewModel.status}"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/statusSelectedTextView"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        tools:src="@drawable/ic_big_snow"
+                        tools:tint="@color/colorPrimaryDark"/>
+
+                    <TextView
+                        android:id="@+id/statusSelectedTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:status='@{viewModel.status}'
+                        app:visible="@{viewModel.status != null}"
+                        app:layout_constraintTop_toBottomOf="@id/statusSelectedImage"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        tools:text="Grosse neige"
+                        tools:textColor="@color/colorPrimaryDark"/>
 
                 </android.support.constraint.ConstraintLayout>
-
-
-
 
             </android.support.design.card.MaterialCardView>
 

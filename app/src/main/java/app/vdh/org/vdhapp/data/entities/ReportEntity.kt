@@ -3,6 +3,7 @@ package app.vdh.org.vdhapp.data.entities
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcelable
+import app.vdh.org.vdhapp.data.Status
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.parcel.Parcelize
 
@@ -14,6 +15,7 @@ data class ReportEntity(
         var photoPath: String? = "",
         var comment: String? = "",
         var deviceId: String? = "",
+        var status: Status? = null,
         var syncTimestamp: Long? = null) : Parcelable {
 
         @PrimaryKey

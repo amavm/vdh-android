@@ -8,6 +8,7 @@ import app.vdh.org.vdhapp.App
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
+import app.vdh.org.vdhapp.data.Status
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.services.Result
@@ -29,6 +30,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     val picturePath: MutableLiveData<String> = MutableLiveData()
     val reportComment: MutableLiveData<String> = MutableLiveData()
     var syncDate: MutableLiveData<String> = MutableLiveData()
+    var status : MutableLiveData<Status> = MutableLiveData()
 
     private var saveReportJob: Job? = null
 
@@ -44,6 +46,10 @@ class ReportingViewModel(application: Application, private val repository: Repor
         reportingEvent.value = ReportingActionState.TakePhoto
     }
 
+    fun onStatusSelected(selectedStatus: Status) {
+        status.value = selectedStatus
+    }
+
     fun setReportData(report: ReportEntity) {
         placeName.value = report.name
         placeLocation.value = report.position
@@ -52,6 +58,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
         report.syncTimestamp?.let {
             syncDate.value = getApplication<App>().getString(R.string.sync_date, DateUtils.getRelativeTimeSpanString(it).toString())
         }
+        status.value = report.status
     }
 
     fun setPlace(place: Place) {
@@ -71,7 +78,8 @@ class ReportingViewModel(application: Application, private val repository: Repor
                 name = placeName.value,
                 comment = declarationComment,
                 position = placeLocation.value ?: LatLng(.0,.0),
-                photoPath = picturePath.value
+                photoPath = picturePath.value,
+                status = status.value
         )
 
         saveReportJob = launch {
