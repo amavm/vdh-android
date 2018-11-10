@@ -89,7 +89,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return if (response.isSuccessful) {
             Result.Success(response.body()!!)
         } else {
-            Result.Error(IOException("Error occurred when posting report ${response.errorBody()}"))
+            Result.Error(IOException("Error occurred when posting report ${response.errorBody()?.string()}"))
         }
     }
 

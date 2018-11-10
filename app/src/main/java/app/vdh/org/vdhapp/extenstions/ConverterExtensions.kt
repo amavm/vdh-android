@@ -20,12 +20,12 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
     val bos = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bos)
     val photoString = Base64.encodeToString(bos.toByteArray(), Base64.DEFAULT)
-    bitmap.recycle()
+    val statusList = status?.let { arrayOf(it.key) }
 
     return ObservationDto(
             timestamp = System.currentTimeMillis() / 1000,
             comment = comment ?: "",
-            attributes = arrayOf("ice"),
+            attributes = statusList ?: arrayOf(),
             position = arrayOf(position.latitude, position.longitude),
             deviceId = context.uniqueId() ?: "",
             assets = listOf(ImageAssetDto(imageUrl = photoString)))
