@@ -2,6 +2,7 @@ package app.vdh.org.vdhapp.viewmodels
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.text.format.DateUtils
 import app.vdh.org.vdhapp.App
@@ -32,6 +33,10 @@ class ReportingViewModel(application: Application, private val repository: Repor
     var syncDate: MutableLiveData<String> = MutableLiveData()
     var status : MutableLiveData<Status> = MutableLiveData()
 
+    var placePickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
+    var photoPickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
+    var statusPickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
+
     private var saveReportJob: Job? = null
 
     fun onPlacePickerButtonCLicked() {
@@ -48,6 +53,10 @@ class ReportingViewModel(application: Application, private val repository: Repor
 
     fun onStatusSelected(selectedStatus: Status) {
         status.value = selectedStatus
+        statusPickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {
+            status.value = null
+            statusPickerEditButtonViewModel.value = null
+        })
     }
 
     fun setReportData(report: ReportEntity) {
@@ -64,10 +73,15 @@ class ReportingViewModel(application: Application, private val repository: Repor
     fun setPlace(place: Place) {
         placeName.value = place.name.toString()
         placeLocation.value = place.latLng
+        placePickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {onPlacePickerButtonCLicked()})
     }
 
     fun setPhoto(path: String) {
         picturePath.value = path
+        photoPickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {
+            picturePath.value = null
+            photoPickerEditButtonViewModel.value = null
+        })
     }
 
     fun saveReport(declarationComment: String, sendToServer: Boolean = false,

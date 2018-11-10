@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:bind="http://schemas.android.com/tools">
 
     <data>
         <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.ReportingViewModel"/>
@@ -52,21 +53,14 @@
                         app:placeName="@{viewModel.placeName}"
                         app:placeLocation="@{viewModel.placeLocation}"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@+id/placePickerTitle"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:visible="@{viewModel.placeLocation != null}"/>
 
-                    <TextView
-                        android:id="@+id/placePickerTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center_horizontal"
-                        android:text="@{viewModel.placeName}"
-                        android:padding="8dp"
-                        style="@style/TextAppearance.AppCompat.Title"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:visible="@{viewModel.placeLocation != null}"
-                        tools:text="Place name"/>
+                    <include
+                        layout="@layout/button_edit"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        bind:viewModel="@{viewModel.placePickerEditButtonViewModel}"/>
 
                 </android.support.constraint.ConstraintLayout>
 
@@ -126,6 +120,12 @@
                         app:srcUrl="@{viewModel.picturePath}"
                         app:visible="@{viewModel.picturePath != null}"/>
 
+                    <include
+                        layout="@layout/button_edit"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        bind:viewModel="@{viewModel.photoPickerEditButtonViewModel}"/>
+
 
                 </android.support.constraint.ConstraintLayout>
 
@@ -146,13 +146,15 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="@dimen/small_spacing">
+                    android:layout_height="match_parent">
 
                     <android.support.design.button.MaterialButton
                         android:id="@+id/statusBigSnowButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/small_spacing"
+                        android:layout_marginStart="@dimen/small_spacing"
+                        android:layout_marginEnd="@dimen/small_spacing"
                         android:text="@string/status_big_snow"
                         app:backgroundTint="@{Status.BIG_SNOW.colorRes}"
                         android:onClick="@{() -> viewModel.onStatusSelected(Status.BIG_SNOW)}"
@@ -166,6 +168,9 @@
                         android:id="@+id/statusSmallSnowButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/small_spacing"
+                        android:layout_marginStart="@dimen/small_spacing"
+                        android:layout_marginEnd="@dimen/small_spacing"
                         android:text="@string/status_small_snow"
                         app:backgroundTint="@{Status.SMALL_SNOW.colorRes}"
                         android:onClick="@{() -> viewModel.onStatusSelected(Status.SMALL_SNOW)}"
@@ -179,6 +184,9 @@
                         android:id="@+id/statusIceButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/small_spacing"
+                        android:layout_marginStart="@dimen/small_spacing"
+                        android:layout_marginEnd="@dimen/small_spacing"
                         android:text="@string/status_ice"
                         app:backgroundTint="@{Status.ICE.colorRes}"
                         android:onClick="@{() -> viewModel.onStatusSelected(Status.ICE)}"
@@ -192,6 +200,10 @@
                         android:id="@+id/statusSunnyButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/small_spacing"
+                        android:layout_marginStart="@dimen/small_spacing"
+                        android:layout_marginEnd="@dimen/small_spacing"
+                        android:layout_marginBottom="@dimen/small_spacing"
                         android:text="@string/status_ok"
                         app:backgroundTint="@{Status.OK.colorRes}"
                         android:onClick="@{() -> viewModel.onStatusSelected(Status.OK)}"
@@ -206,6 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:status="@{viewModel.status}"
+                        app:visible="@{viewModel.status != null}"
                         app:layout_constraintVertical_chainStyle="packed"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/statusSelectedTextView"
@@ -228,6 +241,12 @@
                         app:layout_constraintRight_toRightOf="parent"
                         tools:text="Grosse neige"
                         tools:textColor="@color/colorPrimaryDark"/>
+
+                    <include
+                        layout="@layout/button_edit"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        bind:viewModel="@{viewModel.statusPickerEditButtonViewModel}"/>
 
                 </android.support.constraint.ConstraintLayout>
 
