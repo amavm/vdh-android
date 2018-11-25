@@ -11,8 +11,11 @@
     <string name="send_report_success">Rapport envoye</string>
     <string name="save_report_success">Rapport sauvegrade</string>
     <string name="save_send_report_error">Une erreur s\'est produite</string>
+    <string name="mandatory_fields_missing_error">La location et le status sont obligatoires</string>
     <string name="status_big_snow">Grosse neige</string>
     <string name="status_small_snow">Petite neige</string>
     <string name="status_ice">Glace</string>
     <string name="status_ok">Deneige</string>
+    <string name="no_photo">Pas de photo</string>
+    <string name="no_comment">Pas de commentaire</string>
 </resources>

@@ -35,14 +35,13 @@ class ReportingActivity : AppCompatActivity() {
     private val placePickerBuilder =  PlacePicker.IntentBuilder()
     private val progressDialogFragment =  ProgressDialogFragment()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val binding : ActivityReportingBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_reporting)
 
-        intent.extras?.getParcelable<ReportEntity>(REPORT_ARGS_KEY)?.let {
+        getCurrentReport()?.let {
             viewModel.setReportData(it)
         }
 
@@ -111,8 +110,8 @@ class ReportingActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.declaration_menu, menu)
-        return true
+        inflater.inflate(R.menu.reporting_edit_menu, menu)
+        return viewModel.syncDate.value == null
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -161,4 +160,7 @@ class ReportingActivity : AppCompatActivity() {
         super.onLowMemory()
         placePickerMapView.onLowMemory()
     }
+
+    private fun getCurrentReport() : ReportEntity? = intent.extras?.getParcelable(REPORT_ARGS_KEY)
+
 }

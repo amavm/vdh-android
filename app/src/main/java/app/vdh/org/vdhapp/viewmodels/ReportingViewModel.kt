@@ -53,10 +53,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
 
     fun onStatusSelected(selectedStatus: Status) {
         status.value = selectedStatus
-        statusPickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {
-            status.value = null
-            statusPickerEditButtonViewModel.value = null
-        })
+        setStatusEditButton()
     }
 
     fun setReportData(report: ReportEntity) {
@@ -68,52 +65,80 @@ class ReportingViewModel(application: Application, private val repository: Repor
             syncDate.value = getApplication<App>().getString(R.string.sync_date, DateUtils.getRelativeTimeSpanString(it).toString())
         }
         status.value = report.status
+        if (syncDate.value == null) {
+            setPlaceEditButton()
+            setPhotoEditButton()
+            setStatusEditButton()
+        } else if (reportComment.value?.isEmpty() == true) {
+            reportComment.value = getApplication<App>().resources.getString(R.string.no_comment)
+        }
     }
 
     fun setPlace(place: Place) {
         placeName.value = place.name.toString()
         placeLocation.value = place.latLng
-        placePickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {onPlacePickerButtonCLicked()})
+        setPlaceEditButton()
     }
 
     fun setPhoto(path: String) {
         picturePath.value = path
-        photoPickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {
-            picturePath.value = null
-            photoPickerEditButtonViewModel.value = null
-        })
+        setPhotoEditButton()
     }
 
     fun saveReport(declarationComment: String, sendToServer: Boolean = false,
                    onSuccess: (String) -> Unit,
                    onError: (String) -> Unit) {
 
-        val report = ReportEntity(
-                name = placeName.value,
-                comment = declarationComment,
-                position = placeLocation.value ?: LatLng(.0,.0),
-                photoPath = picturePath.value,
-                status = status.value
-        )
+        val reportLocation = placeLocation.value
+        if (reportLocation != null && status.value != null) {
 
-        saveReportJob = launch {
+            val report = ReportEntity(
+                    name = placeName.value,
+                    comment = declarationComment,
+                    position = reportLocation,
+                    photoPath = picturePath.value,
+                    status = status.value
+            )
 
-            val resultPair = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
-            val saveResult = resultPair.first
-            val sendToServerResult = resultPair.second
+            saveReportJob = launch {
 
-            withContext(Dispatchers.Main) {
-                if (saveResult is Result.Success && sendToServerResult is Result.Success) {
-                    onSuccess(getApplication<App>().getString(R.string.send_report_success))
-                } else if (saveResult is Result.Success && !sendToServer) {
-                    onSuccess(getApplication<App>().getString(R.string.save_report_success))
-                } else {
-                    onError(getApplication<App>().getString(R.string.save_send_report_error))
+                val resultPair = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
+                val saveResult = resultPair.first
+                val sendToServerResult = resultPair.second
+
+                withContext(Dispatchers.Main) {
+                    if (saveResult is Result.Success && sendToServerResult is Result.Success) {
+                        onSuccess(getApplication<App>().getString(R.string.send_report_success))
+                    } else if (saveResult is Result.Success && !sendToServer) {
+                        onSuccess(getApplication<App>().getString(R.string.save_report_success))
+                    } else {
+                        onError(getApplication<App>().getString(R.string.save_send_report_error))
+                    }
+
                 }
-
             }
+        } else {
+            onError(getApplication<App>().getString(R.string.mandatory_fields_missing_error))
         }
 
+    }
+
+    private fun setPlaceEditButton() {
+        placePickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {onPlacePickerButtonCLicked()})
+    }
+
+    private fun setPhotoEditButton() {
+        photoPickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {
+            picturePath.value = null
+            photoPickerEditButtonViewModel.value = null
+        })
+    }
+
+    private fun setStatusEditButton() {
+        statusPickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {
+            status.value = null
+            statusPickerEditButtonViewModel.value = null
+        })
     }
 
     override fun onCleared() {

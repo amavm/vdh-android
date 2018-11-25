@@ -12,15 +12,12 @@ import retrofit2.http.Query
 
 interface ObservationRestrofitService {
 
-    @GET("observations")
-    fun getObservationList(@Query("startTs") startTimeStamp: Long? = null,
-                           @Query("endTs") endTimestamp: Long? = null,
-                           @Query("sort") sort: String? = null,
-                           @Query("nextToken") nextToken: String? = null) : Call<ObservationListDto>
-
     @POST("observations")
     fun postObservation(@Body observation: ObservationDto) : Deferred<Response<ObservationDto>>
 
     @GET("observations")
-    fun getObservations() : Deferred<Response<ObservationListDto>>
+    fun getObservations(@Query("startTs") startTimeStamp: Long? = null,
+                        @Query("endTs") endTimestamp: Long? = null,
+                        @Query("sort") sort: String? = null,
+                        @Query("nextToken") nextToken: String? = null) : Deferred<Response<ObservationListDto>>
 }

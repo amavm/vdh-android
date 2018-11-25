@@ -2,11 +2,7 @@ package app.vdh.org.vdhapp.databinding
 
 import android.content.res.ColorStateList
 import android.databinding.BindingAdapter
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
 import android.support.design.button.MaterialButton
 import android.support.v4.content.ContextCompat
 import android.view.View
