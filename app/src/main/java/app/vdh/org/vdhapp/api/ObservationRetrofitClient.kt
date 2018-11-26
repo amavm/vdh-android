@@ -1,16 +1,14 @@
-package app.vdh.org.vdhapp.services
+package app.vdh.org.vdhapp.api
 
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import kotlinx.coroutines.Deferred
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
-interface ObservationRestrofitService {
+interface ObservationRetrofitClient {
 
     @POST("observations")
     fun postObservation(@Body observation: ObservationDto) : Deferred<Response<ObservationDto>>
@@ -20,4 +18,8 @@ interface ObservationRestrofitService {
                         @Query("endTs") endTimestamp: Long? = null,
                         @Query("sort") sort: String? = null,
                         @Query("nextToken") nextToken: String? = null) : Deferred<Response<ObservationListDto>>
+
+    @DELETE("observations/{id}")
+    fun deleteObservation(@Path("id") id: String) : Deferred<Response<ResponseBody>>
+
 }

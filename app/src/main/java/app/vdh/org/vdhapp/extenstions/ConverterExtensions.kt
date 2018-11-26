@@ -38,8 +38,9 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
 }
 
 fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
-    return map {
-        val photoPath = if (it.assets.isNotEmpty()) {
+    return filter { it.position.size == 2 }
+            .map {
+        val photoPath = if (it.assets?.isNotEmpty() == true) {
             it.assets[0].imageUrl
         } else null
 
@@ -48,7 +49,8 @@ fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
                 deviceId =  it.deviceId,
                 comment = it.comment,
                 syncTimestamp = it.timestamp * 1000,
-                photoPath = photoPath)
+                photoPath = photoPath,
+                serverId = it.id)
         report.id = it.deviceId + it.timestamp
         report
     }

@@ -8,13 +8,13 @@ import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.extenstions.toObservationDto
 import app.vdh.org.vdhapp.extenstions.toReportEntities
-import app.vdh.org.vdhapp.services.ObservationService
-import app.vdh.org.vdhapp.services.Result
+import app.vdh.org.vdhapp.api.ObservationApiClient
+import app.vdh.org.vdhapp.api.Result
 import kotlinx.coroutines.*
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
-class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationService: ObservationService) : ReportRepository, CoroutineScope {
+class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationApiClient: ObservationApiClient) : ReportRepository, CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Default
@@ -31,6 +31,9 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
         if (sendServerResult is Result.Success) {
             reportEntity.syncTimestamp = sendServerResult.data.timestamp * 1000
+            sendServerResult.data.id?.let {
+                reportEntity.serverId = sendServerResult.data.id
+            }
         }
 
         val insertionResult = safeCall(call = {savedReport(reportEntity)},
@@ -55,6 +58,37 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return reportDao.getAllDeclarations()
     }
 
+    override suspend fun deleteReport(reportEntity: ReportEntity): Result<String> {
+        reportEntity.serverId?.let {
+            val serverResult = safeCall(call = { deleteFromServer(it)}, errorMessage = "Exception during remove from server")
+            if (serverResult is Result.Success) {
+                val dbResult = safeCall(call = { deleteFromDatabase(reportEntity) }, errorMessage = "Unable to remove from db")
+                if (dbResult is Result.Success) {
+                    return Result.Success("Report removed")
+                }
+            }
+        }
+
+        return Result.Error(Exception("Unable to delete report"))
+    }
+
+    private suspend fun deleteFromServer(reportId: String) : Result<String> {
+        val result = observationApiClient.removeObservation(reportId).await()
+        if (result.isSuccessful) {
+            return Result.Success(result.message())
+        } else if (result.errorBody() != null){
+            Log.e("ReportingRepository", result.errorBody()?.string())
+            return Result.Error(Exception(result.errorBody()?.string()))
+        }
+        return Result.Error(Exception("Unable to delete report from server"))
+    }
+
+    private suspend fun deleteFromDatabase(reportEntity: ReportEntity) : Result<Unit> {
+        return async {
+            Result.Success(reportDao.deleteReport(reportEntity))
+        }.await()
+    }
+
     private suspend fun syncReports() : Result<Int>? {
         val observationsResult = safeCall(call = {getObservationsFromServer()},
                 errorMessage = "Error occurred when getting observations")
@@ -75,7 +109,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun getObservationsFromServer() : Result<ObservationListDto> {
-        val response = observationService.getObservations().await()
+        val response = observationApiClient.getObservations().await()
         return if (response.isSuccessful) {
             Result.Success(response.body()!!)
         } else {
@@ -85,7 +119,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
     private suspend fun sendReportToServer(context: Context, reportEntity: ReportEntity) : Result<ObservationDto> {
         val observationDto = reportEntity.toObservationDto(context)
-        val response = observationService.sendObservation(observationDto).await()
+        val response = observationApiClient.sendObservation(observationDto).await()
         return if (response.isSuccessful) {
             Result.Success(response.body()!!)
         } else {
@@ -96,13 +130,13 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
     private suspend fun savedReport(report: ReportEntity) : Result<Long>{
         return async {
-            Result.Success(reportDao.insertDeclaration(report))
+            Result.Success(reportDao.insertReport(report))
         }.await()
     }
 
     private suspend fun savedReportList(reportList: List<ReportEntity>) : Result<List<Long>>{
         return async {
-            Result.Success(reportDao.insertDeclarationList(reportList))
+            Result.Success(reportDao.insertReportList(reportList))
         }.await()
     }
 

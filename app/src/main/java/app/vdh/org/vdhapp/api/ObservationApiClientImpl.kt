@@ -1,15 +1,18 @@
-package app.vdh.org.vdhapp.services
+package app.vdh.org.vdhapp.api
 
+import android.util.Log
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
+import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ObservationServiceImpl : ObservationService {
+class ObservationApiClientImpl : ObservationApiClient {
 
     companion object {
         const val BASE_URL = "https://ohp6vrr7xd.execute-api.ca-central-1.amazonaws.com/dev/api/v1/"
@@ -20,7 +23,7 @@ class ObservationServiceImpl : ObservationService {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
-            .create(ObservationRestrofitService::class.java)
+            .create(ObservationRetrofitClient::class.java)
 
     override fun sendObservation(observationDto: ObservationDto) : Deferred<Response<ObservationDto>> {
         return observationRetrofitService.postObservation(observationDto)
@@ -28,5 +31,9 @@ class ObservationServiceImpl : ObservationService {
 
     override fun getObservations(): Deferred<Response<ObservationListDto>> {
         return observationRetrofitService.getObservations()
+    }
+
+    override fun removeObservation(observationId: String) : Deferred<Response<ResponseBody>> {
+        return observationRetrofitService.deleteObservation(observationId)
     }
 }

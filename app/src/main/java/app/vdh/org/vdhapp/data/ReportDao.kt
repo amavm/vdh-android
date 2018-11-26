@@ -1,21 +1,21 @@
 package app.vdh.org.vdhapp.data
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 
 @Dao
 interface ReportDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertDeclaration(reportEntity: ReportEntity) : Long
+    fun insertReport(reportEntity: ReportEntity) : Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertDeclarationList(reportEntityList: List<ReportEntity>) : List<Long>
+    fun insertReportList(reportEntityList: List<ReportEntity>) : List<Long>
 
     @Query("SELECT * FROM reportentity")
     fun getAllDeclarations(): LiveData<List<ReportEntity>>
+
+    @Delete
+    fun deleteReport(reportEntity: ReportEntity)
 }

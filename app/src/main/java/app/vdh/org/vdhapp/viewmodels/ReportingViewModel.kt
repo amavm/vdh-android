@@ -2,9 +2,9 @@ package app.vdh.org.vdhapp.viewmodels
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.text.format.DateUtils
+import android.util.Log
 import app.vdh.org.vdhapp.App
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.ReportRepository
@@ -12,11 +12,10 @@ import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.Status
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
-import app.vdh.org.vdhapp.services.Result
+import app.vdh.org.vdhapp.api.Result
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application), CoroutineScope {
@@ -24,7 +23,9 @@ class ReportingViewModel(application: Application, private val repository: Repor
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Default
 
-    val reportingEvent: SingleLiveEvent<ReportingActionState> = SingleLiveEvent()
+    var reportingEvent: SingleLiveEvent<ReportingActionState> = SingleLiveEvent()
+
+    private var currentReport: ReportEntity? = null
 
     var placeName: MutableLiveData<String> = MutableLiveData()
     var placeLocation: MutableLiveData<LatLng> = MutableLiveData()
@@ -38,6 +39,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     var statusPickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
 
     private var saveReportJob: Job? = null
+    private var deleteReportJob: Job? = null
 
     fun onPlacePickerButtonCLicked() {
         reportingEvent.value = ReportingActionState.PickPlace
@@ -57,6 +59,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     }
 
     fun setReportData(report: ReportEntity) {
+        currentReport = report
         placeName.value = report.name
         placeLocation.value = report.position
         picturePath.value = report.photoPath
@@ -105,22 +108,43 @@ class ReportingViewModel(application: Application, private val repository: Repor
                 val resultPair = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
                 val saveResult = resultPair.first
                 val sendToServerResult = resultPair.second
-
                 withContext(Dispatchers.Main) {
                     if (saveResult is Result.Success && sendToServerResult is Result.Success) {
                         onSuccess(getApplication<App>().getString(R.string.send_report_success))
                     } else if (saveResult is Result.Success && !sendToServer) {
                         onSuccess(getApplication<App>().getString(R.string.save_report_success))
                     } else {
-                        onError(getApplication<App>().getString(R.string.save_send_report_error))
+                        onError(getApplication<App>().getString(R.string.report_error))
                     }
-
                 }
             }
         } else {
             onError(getApplication<App>().getString(R.string.mandatory_fields_missing_error))
         }
+    }
 
+    fun deleteReport() {
+        reportingEvent.value = ReportingActionState.DeleteReport
+    }
+
+    fun deleteReport(onSuccess: (String) -> Unit,
+                     onError: (String) -> Unit) {
+        currentReport?.let {
+            deleteReportJob = launch {
+                val result = repository.deleteReport(it)
+                withContext(Dispatchers.Main) {
+                    when(result) {
+                        is Result.Success -> {
+                            onSuccess(getApplication<App>().getString(R.string.delete_report_success))
+                        }
+                        is Result.Error -> {
+                            Log.e("ReportingViewModel", result.exception.message)
+                            onError(getApplication<App>().getString(R.string.report_error))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun setPlaceEditButton() {

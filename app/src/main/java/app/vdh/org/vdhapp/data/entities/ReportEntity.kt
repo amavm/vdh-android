@@ -16,7 +16,8 @@ data class ReportEntity(
         var comment: String? = "",
         var deviceId: String? = "",
         var status: Status? = null,
-        var syncTimestamp: Long? = null) : Parcelable {
+        var syncTimestamp: Long = System.currentTimeMillis(),
+        var serverId: String? = null) : Parcelable {
 
         @PrimaryKey
         var id: String = deviceId + syncTimestamp

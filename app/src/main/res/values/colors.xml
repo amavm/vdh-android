@@ -6,4 +6,5 @@
     <color name="lightBlue">#b5d2e1</color>
     <color name="lightYellow">#f1c75d</color>
     <color name="editButtonGrey">#64616161</color>
+    <color name="red">#FF0000</color>
 </resources>

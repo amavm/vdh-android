@@ -4,4 +4,5 @@ sealed class ReportingActionState {
     object PickPlace : ReportingActionState()
     object PickPhoto : ReportingActionState()
     object TakePhoto : ReportingActionState()
+    object DeleteReport : ReportingActionState()
 }

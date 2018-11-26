@@ -69,6 +69,10 @@ class ReportingActivity : AppCompatActivity() {
                     val intent = placePickerBuilder.build(this)
                     startActivityForResult(intent, PLACE_PICKER_REQUEST)
                 }
+
+                is ReportingActionState.DeleteReport -> {
+                    removeReport()
+                }
             }
         })
 
@@ -139,6 +143,19 @@ class ReportingActivity : AppCompatActivity() {
                     } else {
                         Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
                     }
+                },
+                onError = {
+                    progressDialogFragment.dismiss()
+                    Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
+                })
+    }
+
+    private fun removeReport() {
+        progressDialogFragment.show(supportFragmentManager, "progress_dialog")
+        viewModel.deleteReport(
+                onSuccess = {
+                    progressDialogFragment.dismiss()
+                    finish()
                 },
                 onError = {
                     progressDialogFragment.dismiss()

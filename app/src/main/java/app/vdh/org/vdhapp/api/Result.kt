@@ -1,4 +1,4 @@
-package app.vdh.org.vdhapp.services
+package app.vdh.org.vdhapp.api
 
 sealed class Result<out T: Any> {
     data class Success<out T : Any>(val data: T) : Result<T>()

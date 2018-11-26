@@ -3,8 +3,8 @@ package app.vdh.org.vdhapp.di
 import app.vdh.org.vdhapp.data.AppDatabase
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.ReportRepositoryImpl
-import app.vdh.org.vdhapp.services.ObservationService
-import app.vdh.org.vdhapp.services.ObservationServiceImpl
+import app.vdh.org.vdhapp.api.ObservationApiClient
+import app.vdh.org.vdhapp.api.ObservationApiClientImpl
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -20,7 +20,7 @@ val appModule = module {
         database.declarationDao()
     }
 
-    single<ObservationService> { ObservationServiceImpl() }
+    single<ObservationApiClient> { ObservationApiClientImpl() }
 
     single<ReportRepository> { ReportRepositoryImpl(get(), get()) }
 
