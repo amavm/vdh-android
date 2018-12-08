@@ -9,7 +9,7 @@ import app.vdh.org.vdhapp.App
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
-import app.vdh.org.vdhapp.data.Status
+import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.api.Result

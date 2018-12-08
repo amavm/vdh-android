@@ -3,7 +3,6 @@ package app.vdh.org.vdhapp.activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -12,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
+import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.states.ReportingMapActionState
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
 import app.vdh.org.vdhapp.extenstions.addReportMarkers
@@ -24,7 +24,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.data.geojson.GeoJsonLayer
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -71,26 +71,35 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         addReports()
 
-        map?.isMyLocationEnabled = true
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
-            }
-        }
-        map?.setOnMarkerClickListener {
-            val bundle = Bundle()
-            bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
-            this.navigateTo(ReportingActivity::class.java, bundle)
-            false
-        }
+        map?.let { map ->
 
-        viewModel.mapReportingEvent.observe(this, Observer { action ->
-            when(action) {
-                ReportingMapActionState.AddReport -> {
-                    this.navigateTo(ReportingActivity::class.java)
+            map.isMyLocationEnabled = true
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
                 }
             }
-        })
+            map.setOnMarkerClickListener {
+                val bundle = Bundle()
+                bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
+                this.navigateTo(ReportingActivity::class.java, bundle)
+                false
+            }
+
+            viewModel.mapReportingEvent.observe(this, Observer { action ->
+                when(action) {
+                    ReportingMapActionState.AddReport -> {
+                        this.navigateTo(ReportingActivity::class.java)
+                    }
+                }
+            })
+
+            map.setOnCameraIdleListener {
+                //addBicyclePath(map)
+            }
+
+            addBicyclePath(map)
+        }
     }
 
     private fun addReports() {
@@ -98,6 +107,22 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             map?.clear()
             map?.addReportMarkers(reports)
         })
+    }
+
+    private fun addBicyclePath(map: GoogleMap) {
+        val visibleRegion = map.projection.visibleRegion
+        var layer: GeoJsonLayer? = null
+        viewModel.getBicyclePath(
+                onSuccess = { geoJson ->
+                    map.let { map ->
+                        layer?.removeLayerFromMap()
+                        layer = GeoJsonLayer(map, geoJson)
+                        layer?.addLayerToMap()
+                    }
+                },
+                onError = {
+
+                })
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

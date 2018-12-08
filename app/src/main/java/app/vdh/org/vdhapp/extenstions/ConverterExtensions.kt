@@ -3,11 +3,13 @@ package app.vdh.org.vdhapp.extenstions
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
+import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.dtos.ImageAssetDto
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import java.io.ByteArrayOutputStream
 
 fun ReportEntity.toObservationDto(context: Context) : ObservationDto {

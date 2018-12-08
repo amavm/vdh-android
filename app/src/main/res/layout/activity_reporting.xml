@@ -6,7 +6,7 @@
 
     <data>
         <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.ReportingViewModel"/>
-        <import type="app.vdh.org.vdhapp.data.Status"/>
+        <import type="app.vdh.org.vdhapp.data.models.Status"/>
     </data>
 
     <ScrollView

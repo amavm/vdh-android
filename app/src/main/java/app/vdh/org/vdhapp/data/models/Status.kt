@@ -1,4 +1,4 @@
-package app.vdh.org.vdhapp.data
+package app.vdh.org.vdhapp.data.models
 
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes

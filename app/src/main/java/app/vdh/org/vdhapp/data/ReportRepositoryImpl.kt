@@ -10,7 +10,11 @@ import app.vdh.org.vdhapp.extenstions.toObservationDto
 import app.vdh.org.vdhapp.extenstions.toReportEntities
 import app.vdh.org.vdhapp.api.ObservationApiClient
 import app.vdh.org.vdhapp.api.Result
+import app.vdh.org.vdhapp.api.safeCall
+import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
@@ -56,6 +60,18 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
             }
         }
         return reportDao.getAllDeclarations()
+    }
+
+    override suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter): Result<JSONObject> {
+        return observationApiClient.getBicyclePaths(boundingBoxQueryParameter = boundingBoxQueryParameter)
+    }
+
+    override suspend fun getBicyclePathGeoJson(centerCoordinates: LatLng): Result<JSONObject> {
+        return observationApiClient.getBicyclePaths(centerCoordinates = centerCoordinates)
+    }
+
+    override suspend fun getBicyclePathGeoJson(): Result<JSONObject> {
+        return observationApiClient.getBicyclePaths()
     }
 
     override suspend fun deleteReport(reportEntity: ReportEntity): Result<String> {
@@ -138,11 +154,5 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return async {
             Result.Success(reportDao.insertReportList(reportList))
         }.await()
-    }
-
-    private suspend fun <T : Any> safeCall(call: suspend () -> Result<T>, errorMessage: String): Result<T> = try {
-        call.invoke()
-    } catch (e: Exception) {
-        Result.Error(Exception(errorMessage, e))
     }
 }

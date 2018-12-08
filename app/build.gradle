@@ -41,6 +41,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$gms_version"
     implementation "com.google.android.gms:play-services-places:$gms_version"
     implementation "com.google.android.gms:play-services-location:$gms_version"
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
 
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"

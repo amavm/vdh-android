@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import app.vdh.org.vdhapp.data.Status
+import app.vdh.org.vdhapp.data.models.Status
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView

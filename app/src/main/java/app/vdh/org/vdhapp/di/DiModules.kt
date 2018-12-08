@@ -20,7 +20,7 @@ val appModule = module {
         database.declarationDao()
     }
 
-    single<ObservationApiClient> { ObservationApiClientImpl() }
+    single<ObservationApiClient> { ObservationApiClientImpl(androidApplication().applicationContext) }
 
     single<ReportRepository> { ReportRepositoryImpl(get(), get()) }
 
