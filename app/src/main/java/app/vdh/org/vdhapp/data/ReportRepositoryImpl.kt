@@ -14,6 +14,7 @@ import app.vdh.org.vdhapp.api.safeCall
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
@@ -28,7 +29,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
         val sendServerResult: Result<ObservationDto>? =
                 if (sendToServer) {
-                    safeCall(call = {sendReportToServer(context, reportEntity)},
+                    safeCall(call = { observationApiClient.sendObservation(reportEntity.toObservationDto(context))},
                             errorMessage = "Error during sending report")
 
                 } else null
@@ -76,7 +77,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
     override suspend fun deleteReport(reportEntity: ReportEntity): Result<String> {
         reportEntity.serverId?.let {
-            val serverResult = safeCall(call = { deleteFromServer(it)}, errorMessage = "Exception during remove from server")
+            val serverResult = safeCall(call = { observationApiClient.removeObservation(it)}, errorMessage = "Exception during remove from server")
             if (serverResult is Result.Success) {
                 val dbResult = safeCall(call = { deleteFromDatabase(reportEntity) }, errorMessage = "Unable to remove from db")
                 if (dbResult is Result.Success) {
@@ -88,17 +89,6 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return Result.Error(Exception("Unable to delete report"))
     }
 
-    private suspend fun deleteFromServer(reportId: String) : Result<String> {
-        val result = observationApiClient.removeObservation(reportId).await()
-        if (result.isSuccessful) {
-            return Result.Success(result.message())
-        } else if (result.errorBody() != null){
-            Log.e("ReportingRepository", result.errorBody()?.string())
-            return Result.Error(Exception(result.errorBody()?.string()))
-        }
-        return Result.Error(Exception("Unable to delete report from server"))
-    }
-
     private suspend fun deleteFromDatabase(reportEntity: ReportEntity) : Result<Unit> {
         return async {
             Result.Success(reportDao.deleteReport(reportEntity))
@@ -106,7 +96,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun syncReports() : Result<Int>? {
-        val observationsResult = safeCall(call = {getObservationsFromServer()},
+        val observationsResult = safeCall(call = {observationApiClient.getObservations()},
                 errorMessage = "Error occurred when getting observations")
         return when (observationsResult) {
             is Result.Success -> {
@@ -121,26 +111,6 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
             is Result.Error -> {
                 Result.Error(observationsResult.exception)
             }
-        }
-    }
-
-    private suspend fun getObservationsFromServer() : Result<ObservationListDto> {
-        val response = observationApiClient.getObservations().await()
-        return if (response.isSuccessful) {
-            Result.Success(response.body()!!)
-        } else {
-            Result.Error(IOException("Error occurred when getting observations"))
-        }
-    }
-
-    private suspend fun sendReportToServer(context: Context, reportEntity: ReportEntity) : Result<ObservationDto> {
-        val observationDto = reportEntity.toObservationDto(context)
-        val response = observationApiClient.sendObservation(observationDto).await()
-        return if (response.isSuccessful) {
-            Result.Success(response.body()!!)
-        } else {
-            Log.e("ReportRepositoryImpl", "Sending report error ${response.errorBody()?.string()}")
-            Result.Error(IOException("Error occurred when posting report ${response.errorBody()?.string()}"))
         }
     }
 

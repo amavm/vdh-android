@@ -97,8 +97,6 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             map.setOnCameraIdleListener {
                 //addBicyclePath(map)
             }
-
-            addBicyclePath(map)
         }
     }
 

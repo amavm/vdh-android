@@ -16,7 +16,6 @@ import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 
 class ObservationApiClientImpl(private val appContext: Context) : ObservationApiClient {
 
@@ -24,23 +23,51 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
         const val BASE_URL = "https://ohp6vrr7xd.execute-api.ca-central-1.amazonaws.com/dev/api/v1/"
     }
 
-    private val observationRetrofitService = Retrofit.Builder()
+    private val observationRetrofitClient = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
             .create(ObservationRetrofitClient::class.java)
 
-    override fun sendObservation(observationDto: ObservationDto) : Deferred<Response<ObservationDto>> {
-        return observationRetrofitService.postObservation(observationDto)
+    override suspend fun sendObservation(observationDto: ObservationDto) : Result<ObservationDto> {
+        return safeCall({
+            val response = observationRetrofitClient.postObservation(observationDto).await()
+            val observation = response.body()
+            if (response.isSuccessful && observation != null) {
+                Result.Success(observationDto)
+            } else {
+                Log.e("ObservationApiClient", "Sending report error ${response.errorBody()?.string()}")
+                Result.Error(Exception("Error occurred when posting report ${response.errorBody()?.string()}"))
+            }
+        }, "Unable to send observation to server")
     }
 
-    override fun getObservations(): Deferred<Response<ObservationListDto>> {
-        return observationRetrofitService.getObservations()
+    override suspend fun getObservations(): Result<ObservationListDto> {
+        return safeCall({
+            val response = observationRetrofitClient.getObservations().await()
+            val observationList = response.body()
+            if (response.isSuccessful && observationList != null) {
+                Result.Success(observationList)
+            } else {
+                Log.e("ObservationApiClient", "Getting report error ${response.errorBody()?.string()}")
+                Result.Error(Exception("Error occurred when getting reports ${response.errorBody()?.string()}"))
+            }
+        }, errorMessage = "Unable to get observations")
     }
 
-    override fun removeObservation(observationId: String) : Deferred<Response<ResponseBody>> {
-        return observationRetrofitService.deleteObservation(observationId)
+    override suspend fun removeObservation(observationId: String) : Result<ResponseBody> {
+        return safeCall({
+            val response = observationRetrofitClient.deleteObservation(observationId).await()
+            val responseBody = response.body()
+            if (response.isSuccessful && responseBody != null) {
+                Result.Success(responseBody)
+            } else {
+                Log.e("ObservationApiClient", "Removing report error ${response.errorBody()?.string()}")
+                Result.Error(Exception("Error occurred when removing reports ${response.errorBody()?.string()}"))
+            }
+        }, errorMessage = "Unable to remove observation")
+
     }
 
     override suspend fun getBicyclePaths(boundingBoxQueryParameter: BoundingBoxQueryParameter?,
@@ -53,7 +80,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
             } else {
                 null
             }
-            val result = observationRetrofitService.getBicyclePaths(
+            val result = observationRetrofitClient.getBicyclePaths(
                     boundingBoxQueryParameter = boundingBoxQueryParameter,
                     centerLatLng = latLngQueryParameter,
                     nextToken = nextToken)

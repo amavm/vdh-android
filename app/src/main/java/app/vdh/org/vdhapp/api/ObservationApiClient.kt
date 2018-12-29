@@ -12,11 +12,11 @@ import retrofit2.Response
 
 interface ObservationApiClient {
 
-    fun sendObservation(observationDto: ObservationDto) : Deferred<Response<ObservationDto>>
+    suspend fun sendObservation(observationDto: ObservationDto) : Result<ObservationDto>
 
-    fun getObservations() : Deferred<Response<ObservationListDto>>
+    suspend fun getObservations() : Result<ObservationListDto>
 
-    fun removeObservation(observationId: String) : Deferred<Response<ResponseBody>>
+    suspend fun removeObservation(observationId: String) : Result<ResponseBody>
 
     suspend fun getBicyclePaths(boundingBoxQueryParameter: BoundingBoxQueryParameter? = null,
                                 centerCoordinates: LatLng? = null,
