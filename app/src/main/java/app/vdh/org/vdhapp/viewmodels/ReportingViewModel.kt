@@ -3,6 +3,7 @@ package app.vdh.org.vdhapp.viewmodels
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.content.Intent
 import android.text.format.DateUtils
 import android.util.Log
 import app.vdh.org.vdhapp.App
@@ -13,6 +14,8 @@ import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.api.Result
+import app.vdh.org.vdhapp.helpers.GoogleMapLinkHelper
+import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
@@ -163,6 +166,28 @@ class ReportingViewModel(application: Application, private val repository: Repor
             status.value = null
             statusPickerEditButtonViewModel.value = null
         })
+    }
+
+    fun getShareIntent() : Intent {
+        val appContext = getApplication<Application>().applicationContext
+
+        val statusLabelRes = currentReport?.status?.labelRes
+        val statusLabel = if (statusLabelRes != null) {
+            appContext.resources.getString(statusLabelRes)
+        } else null
+
+        val shareReportContent = appContext.resources.getString(R.string.share_report_content,
+                GoogleMapLinkHelper.getMapUrl(currentReport?.position, 20), statusLabel, currentReport?.comment)
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        sharingIntent.type = "image/jpeg"
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, appContext.resources.getString(R.string.share_report_title))
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareReportContent)
+
+        ImageHelper.getSharedImageUri(appContext)?.let { fileUri ->
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+        }
+
+        return sharingIntent
     }
 
     override fun onCleared() {

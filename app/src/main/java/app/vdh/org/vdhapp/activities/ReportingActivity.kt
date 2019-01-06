@@ -6,9 +6,10 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.ShareActionProvider
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
@@ -113,9 +114,19 @@ class ReportingActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.reporting_edit_menu, menu)
-        return viewModel.syncDate.value == null
+        val isEditable = viewModel.syncDate.value == null
+        menuInflater.inflate(R.menu.reporting_edit_menu, menu)
+        val shareMenuItem = menu?.findItem(R.id.menu_share_declaraton)
+        if (!isEditable) {
+            menu?.findItem(R.id.menu_send_declaraton)?.isVisible = false
+            menu?.findItem(R.id.menu_save_declaraton)?.isVisible = false
+            val shareActionProvider = MenuItemCompat.getActionProvider(shareMenuItem) as ShareActionProvider
+            shareActionProvider.setShareIntent(viewModel.getShareIntent())
+        } else {
+            shareMenuItem?.isVisible = false
+        }
+
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

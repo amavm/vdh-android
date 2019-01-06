@@ -27,11 +27,17 @@ class Converters {
 
     @TypeConverter
     fun stringToStatus(statusKey: String?) : Status? {
-        return when (statusKey) {
-            Status.BIG_SNOW.key -> Status.BIG_SNOW
-            Status.SMALL_SNOW.key -> Status.SMALL_SNOW
-            Status.ICE.key -> Status.ICE
-            else -> null
+        return Companion.stringToStatus(statusKey)
+    }
+
+    companion object {
+        fun stringToStatus(statusKey: String?) : Status? {
+            return when (statusKey) {
+                Status.BIG_SNOW.key -> Status.BIG_SNOW
+                Status.SMALL_SNOW.key -> Status.SMALL_SNOW
+                Status.ICE.key -> Status.ICE
+                else -> null
+            }
         }
     }
 }

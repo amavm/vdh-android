@@ -2,6 +2,8 @@ package app.vdh.org.vdhapp.databinding
 
 import android.content.res.ColorStateList
 import android.databinding.BindingAdapter
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.design.button.MaterialButton
 import android.support.v4.content.ContextCompat
@@ -9,7 +11,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import app.vdh.org.vdhapp.data.models.Status
+import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
@@ -27,9 +34,9 @@ class BindingAdapter {
             url?.let {
                 if (url.isNotEmpty()) {
                     if (url.startsWith("http")) {
-                        Glide.with(imageView).load(url).into(imageView)
+                        Glide.with(imageView).load(url).listener(ImageHelper.getSharedImageRequestListener(imageView.context)).into(imageView)
                     } else {
-                        Glide.with(imageView).asBitmap().load(url).into(imageView)
+                        Glide.with(imageView).asBitmap().listener(ImageHelper.getSharedImageRequestListener(imageView.context)).load(url).into(imageView)
                     }
                 }
             }

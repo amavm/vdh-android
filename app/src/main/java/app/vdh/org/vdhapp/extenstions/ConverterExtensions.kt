@@ -3,6 +3,7 @@ package app.vdh.org.vdhapp.extenstions
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
+import app.vdh.org.vdhapp.data.Converters
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.dtos.ImageAssetDto
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
@@ -23,7 +24,7 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
         val bos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bos)
         val photoString = Base64.encodeToString(bos.toByteArray(), Base64.DEFAULT)
-        arrayListOf(ImageAssetDto(imageUrl = photoString))
+        arrayListOf(ImageAssetDto(data = photoString))
     } else {
         arrayListOf()
     }
@@ -45,11 +46,15 @@ fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
         val photoPath = if (it.assets?.isNotEmpty() == true) {
             it.assets[0].imageUrl
         } else null
+        val status = if (it.attributes.isNotEmpty()) {
+            Converters.stringToStatus(it.attributes[0])
+        } else null
 
         val report = ReportEntity(
                 position = LatLng(it.position[0], it.position[1]),
                 deviceId =  it.deviceId,
                 comment = it.comment,
+                status = status,
                 syncTimestamp = it.timestamp * 1000,
                 photoPath = photoPath,
                 serverId = it.id)
