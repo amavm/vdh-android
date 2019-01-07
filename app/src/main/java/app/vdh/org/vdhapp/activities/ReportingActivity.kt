@@ -17,9 +17,11 @@ import app.vdh.org.vdhapp.data.states.ReportingActionState
 import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
 import app.vdh.org.vdhapp.fragments.ProgressDialogFragment
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
+import com.crashlytics.android.Crashlytics
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.google.android.gms.location.places.ui.PlacePicker
+import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_reporting.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -38,7 +40,6 @@ class ReportingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val binding : ActivityReportingBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_reporting)
 

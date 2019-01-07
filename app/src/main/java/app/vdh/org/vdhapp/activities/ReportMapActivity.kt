@@ -17,6 +17,7 @@ import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
 import app.vdh.org.vdhapp.extenstions.addReportMarkers
 import app.vdh.org.vdhapp.extenstions.navigateTo
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.data.geojson.GeoJsonLayer
+import io.fabric.sdk.android.Fabric
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -41,7 +43,6 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val binding : ActivityReportMapBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_report_map)
 
