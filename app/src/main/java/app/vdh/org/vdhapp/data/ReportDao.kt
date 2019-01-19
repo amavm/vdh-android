@@ -1,7 +1,7 @@
 package app.vdh.org.vdhapp.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 
 @Dao

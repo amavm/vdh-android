@@ -1,6 +1,6 @@
 package app.vdh.org.vdhapp.data
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
 

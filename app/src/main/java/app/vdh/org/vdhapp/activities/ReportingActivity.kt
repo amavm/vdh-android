@@ -1,14 +1,14 @@
 package app.vdh.org.vdhapp.activities
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.ShareActionProvider
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.MenuItemCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ShareActionProvider
 import android.view.Menu
 import android.view.MenuItem
 import app.vdh.org.vdhapp.R
@@ -153,12 +153,12 @@ class ReportingActivity : AppCompatActivity() {
                     if (sendToServer) {
                         finish()
                     } else {
-                        Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(container, it , Snackbar.LENGTH_LONG).show()
                     }
                 },
                 onError = {
                     progressDialogFragment.dismiss()
-                    Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(container, it , Snackbar.LENGTH_LONG).show()
                 })
     }
 
@@ -171,7 +171,7 @@ class ReportingActivity : AppCompatActivity() {
                 },
                 onError = {
                     progressDialogFragment.dismiss()
-                    Snackbar.make(container, it ,Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(container, it , Snackbar.LENGTH_LONG).show()
                 })
     }
 

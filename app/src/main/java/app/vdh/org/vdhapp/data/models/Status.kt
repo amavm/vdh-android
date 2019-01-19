@@ -1,8 +1,8 @@
 package app.vdh.org.vdhapp.data.models
 
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import app.vdh.org.vdhapp.R
 
 enum class Status(val key: String,

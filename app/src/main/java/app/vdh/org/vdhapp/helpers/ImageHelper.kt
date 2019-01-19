@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.support.v4.content.FileProvider
+import androidx.core.content.FileProvider
 import app.vdh.org.vdhapp.BuildConfig
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException

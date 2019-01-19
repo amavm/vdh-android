@@ -1,6 +1,6 @@
 package app.vdh.org.vdhapp.data
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import android.content.Context
 import android.util.Log
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
