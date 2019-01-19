@@ -118,9 +118,9 @@ class ReportingActivity : AppCompatActivity() {
         val isEditable = viewModel.syncDate.value == null
         menuInflater.inflate(R.menu.reporting_edit_menu, menu)
         val shareMenuItem = menu?.findItem(R.id.menu_share_declaraton)
+        menu?.findItem(R.id.menu_send_declaraton)?.isVisible = isEditable
+        menu?.findItem(R.id.menu_save_declaraton)?.isVisible = isEditable
         if (!isEditable) {
-            menu?.findItem(R.id.menu_send_declaraton)?.isVisible = false
-            menu?.findItem(R.id.menu_save_declaraton)?.isVisible = false
             val shareActionProvider = MenuItemCompat.getActionProvider(shareMenuItem) as ShareActionProvider
             shareActionProvider.setShareIntent(viewModel.getShareIntent())
         } else {

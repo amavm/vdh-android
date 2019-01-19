@@ -36,6 +36,7 @@ class Converters {
                 Status.BIG_SNOW.key -> Status.BIG_SNOW
                 Status.SMALL_SNOW.key -> Status.SMALL_SNOW
                 Status.ICE.key -> Status.ICE
+                Status.OK.key -> Status.OK
                 else -> null
             }
         }

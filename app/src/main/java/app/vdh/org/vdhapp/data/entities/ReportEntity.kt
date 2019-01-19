@@ -16,7 +16,7 @@ data class ReportEntity(
         var comment: String? = "",
         var deviceId: String? = "",
         var status: Status? = null,
-        var syncTimestamp: Long = System.currentTimeMillis(),
+        var syncTimestamp: Long? = null,
         var serverId: String? = null) : Parcelable {
 
         @PrimaryKey
