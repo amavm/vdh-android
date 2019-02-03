@@ -34,6 +34,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_CODE = 123
         private const val DEFAULT_MAP_ZOOM = 16.0f
+        private const val BIKE_PATH_ON_MAP_ZOOM = 13.0f
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -96,7 +97,9 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             })
 
             map.setOnCameraIdleListener {
-                //addBicyclePath(map)
+                if (map.cameraPosition.zoom >= BIKE_PATH_ON_MAP_ZOOM) {
+                    addBicyclePath(map)
+                }
             }
         }
     }
@@ -112,6 +115,10 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         val visibleRegion = map.projection.visibleRegion
         var layer: GeoJsonLayer? = null
         viewModel.getBicyclePath(
+                boundingBoxQueryParameter = BoundingBoxQueryParameter(
+                        topRight = visibleRegion.latLngBounds.northeast,
+                        bottomLeft = visibleRegion.latLngBounds.southwest
+                ),
                 onSuccess = { geoJson ->
                     map.let { map ->
                         layer?.removeLayerFromMap()

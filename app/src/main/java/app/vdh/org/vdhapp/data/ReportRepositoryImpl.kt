@@ -90,9 +90,9 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun deleteFromDatabase(reportEntity: ReportEntity) : Result<Unit> {
-        return async {
+        return withContext(Dispatchers.Default) {
             Result.Success(reportDao.deleteReport(reportEntity))
-        }.await()
+        }
     }
 
     private suspend fun syncReports() : Result<Int>? {

@@ -8,12 +8,10 @@ import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import app.vdh.org.vdhapp.data.models.LatLngQueryParameter
 import com.google.android.gms.maps.model.LatLng
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import kotlinx.coroutines.Deferred
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -97,30 +95,30 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
                         null
                     }
 
-                    Log.d("ObservationApiClient", "NextToken : $nextTokenString")
-                    val newItems = jsonObject.getJSONArray("items")
-                    if (nextTokenString.isNullOrEmpty() && geoJsonItems != null) {
-                        Result.Success(transformToGeoJson(geoJsonItems))
-                    } else {
-                        val totalItems = JSONArray()
-                        geoJsonItems?.let {
-                            for (i in 0 until geoJsonItems.length()) {
-                                totalItems.put(geoJsonItems.get(i))
+                    val items = jsonObject.getJSONArray("items")
+                    when {
+                        nextTokenString.isNullOrEmpty() -> {
+                            Result.Success(transformToGeoJson(geoJsonItems ?: items))
+                        }
+                        else -> {
+                            val totalItems = JSONArray()
+                            geoJsonItems?.let {
+                                for (i in 0 until geoJsonItems.length()) {
+                                    totalItems.put(geoJsonItems.get(i))
+                                }
                             }
-                        }
-                        for (i in 0 until newItems.length()) {
-                            totalItems.put(newItems.get(i))
-                        }
+                            for (i in 0 until items.length()) {
+                                totalItems.put(items.get(i))
+                            }
 
-                        Log.d("ObservationApiClient", "Call getBicyclePaths with $nextTokenString (${totalItems.length()} items)")
-                        getBicyclePaths(geoJsonItems = totalItems , nextToken = nextTokenString)
+                            getBicyclePaths(geoJsonItems = totalItems , nextToken = nextTokenString)
+                        }
                     }
 
                 } else {
                     Result.Error(Exception("Response body is null"))
                 }
             } else {
-                Log.e("ObservationApiClient", result.errorBody()?.string())
                 Result.Error(Exception("Api error on getBicyclePaths, code : ${result.code()}"))
             }
         } , errorMessage = "Unable to get bicycle path JsonObject")

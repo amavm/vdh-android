@@ -31,9 +31,11 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
         mapReportingEvent.value = ReportingMapActionState.AddReport
     }
 
-    fun getBicyclePath(onSuccess: (JSONObject) -> Unit, onError: (Throwable) -> Unit) {
+    fun getBicyclePath(boundingBoxQueryParameter: BoundingBoxQueryParameter,
+                       onSuccess: (JSONObject) -> Unit,
+                       onError: (Throwable) -> Unit) {
         currentJob = launch {
-            val result = repository.getBicyclePathGeoJson()
+            val result = repository.getBicyclePathGeoJson(boundingBoxQueryParameter = boundingBoxQueryParameter)
             when (result) {
                 is Result.Success -> {
                     Log.d("ReportMapViewModel", "Bike Path ok ${result.data}")
