@@ -9,7 +9,9 @@ import com.google.android.material.button.MaterialButton
 import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.TextView
+import androidx.core.widget.CompoundButtonCompat
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.bumptech.glide.Glide
@@ -87,6 +89,18 @@ class BindingAdapter {
         @BindingAdapter("backgroundTint")
         fun setBackgroundTintRes(materialButton: MaterialButton, @ColorRes colorRes: Int) {
             materialButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(materialButton.context, colorRes))
+        }
+
+        @JvmStatic
+        @BindingAdapter("buttonTint")
+        fun setButtonTintRes(radioButton: RadioButton, @ColorRes colorRes: Int) {
+            radioButton.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(radioButton.context, colorRes))
+        }
+
+        @JvmStatic
+        @BindingAdapter("textColor")
+        fun setButtonTextColorRes(radioButton: RadioButton, @ColorRes colorRes: Int) {
+            radioButton.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(radioButton.context, colorRes)))
         }
     }
 

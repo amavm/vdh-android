@@ -14,10 +14,13 @@
     <string name="delete_report_success">Rapport supprime</string>
     <string name="report_error">Une erreur s\'est produite</string>
     <string name="mandatory_fields_missing_error">La location et le status sont obligatoires</string>
-    <string name="status_big_snow">Grosse neige</string>
-    <string name="status_small_snow">Petite neige</string>
-    <string name="status_ice">Glace</string>
-    <string name="status_ok">Deneige</string>
+
+    <string name="status_caution">Autre obstacle</string>
+    <string name="status_snow">Enneigé</string>
+    <string name="status_ice">Glacé</string>
+    <string name="status_clear">Dénneigé</string>
+    <string name="status_none">Aucun</string>
+
     <string name="no_photo">Pas de photo</string>
     <string name="no_comment">Pas de commentaire</string>
     <string name="remove_report">Supprimer</string>
@@ -27,6 +30,7 @@
         Status: %2s \n\n
         Commentaire: %3s
     </string>
-
-    <string name="stringName1"><![CDATA[<html>bla</html>]]></string>
+    <string name="filter_status">Filtrer par status</string>
+    <string name="filter_hours">Filtrer par ajout</string>
+    <string name="filter_path">Filtrer par type de piste</string>
 </resources>

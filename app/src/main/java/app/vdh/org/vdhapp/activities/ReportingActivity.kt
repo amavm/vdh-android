@@ -13,15 +13,13 @@ import android.view.Menu
 import android.view.MenuItem
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.states.ReportingActionState
+import app.vdh.org.vdhapp.data.events.ReportingEvent
 import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
 import app.vdh.org.vdhapp.fragments.ProgressDialogFragment
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
-import com.crashlytics.android.Crashlytics
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.google.android.gms.location.places.ui.PlacePicker
-import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_reporting.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -56,7 +54,7 @@ class ReportingActivity : AppCompatActivity() {
 
             when (action) {
 
-                is ReportingActionState.PickPhoto ->
+                is ReportingEvent.PickPhoto ->
                     ImagePicker.create(this)
                             .single()
                             .showCamera(false)
@@ -64,15 +62,15 @@ class ReportingActivity : AppCompatActivity() {
                             .returnMode(ReturnMode.ALL)
                             .start()
 
-                is ReportingActionState.TakePhoto ->
+                is ReportingEvent.TakePhoto ->
                     ImagePicker.cameraOnly().start(this)
 
-                is ReportingActionState.PickPlace -> {
+                is ReportingEvent.PickPlace -> {
                     val intent = placePickerBuilder.build(this)
                     startActivityForResult(intent, PLACE_PICKER_REQUEST)
                 }
 
-                is ReportingActionState.DeleteReport -> {
+                is ReportingEvent.DeleteReport -> {
                     removeReport()
                 }
             }

@@ -6,18 +6,21 @@ import androidx.lifecycle.Observer
 import android.content.pm.PackageManager
 import androidx.databinding.DataBindingUtil
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
-import app.vdh.org.vdhapp.data.states.ReportingMapActionState
+import app.vdh.org.vdhapp.data.events.ReportingMapEvent
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
 import app.vdh.org.vdhapp.extenstions.addReportMarkers
 import app.vdh.org.vdhapp.extenstions.navigateTo
+import app.vdh.org.vdhapp.extenstions.openBottomDialogFragment
+import app.vdh.org.vdhapp.fragments.StatusFilterDialogFragment
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,7 +29,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.data.geojson.GeoJsonLayer
-import io.fabric.sdk.android.Fabric
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -90,8 +92,12 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             viewModel.mapReportingEvent.observe(this, Observer { action ->
                 when(action) {
-                    ReportingMapActionState.AddReport -> {
+                    ReportingMapEvent.AddReport -> {
                         this.navigateTo(ReportingActivity::class.java)
+                    }
+
+                    ReportingMapEvent.StatusFilterDialog -> {
+                        this.openBottomDialogFragment(StatusFilterDialogFragment(), "status_filter_framgent")
                     }
                 }
             })
@@ -102,6 +108,28 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.map_filter_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item?.let {
+            when(item.itemId) {
+                R.id.menu_filter_hours -> {
+                }
+
+                R.id.menu_filter_status -> {
+                    viewModel.onStatusFilterButtonClicked()
+                }
+
+                R.id.menu_filter_path -> {
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun addReports() {

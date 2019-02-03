@@ -7,13 +7,13 @@ import androidx.room.TypeConverters
 import android.content.Context
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 
-@Database(entities = [ReportEntity::class], version = 5, exportSchema = false)
+@Database(entities = [ReportEntity::class], version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
-        const val DATABASE_NAME = "app_db"
+        private const val DATABASE_NAME = "app_db"
 
         fun create(context: Context) : AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)

@@ -8,7 +8,7 @@
         android:title="@string/save" />
 
     <item android:id="@+id/menu_send_declaraton"
-        android:icon="@drawable/ic_share"
+        android:icon="@drawable/ic_send"
         app:showAsAction="ifRoom"
         android:title="@string/save" />
 

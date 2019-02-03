@@ -9,8 +9,7 @@ import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
-import app.vdh.org.vdhapp.data.states.ReportingMapActionState
-import com.google.android.gms.maps.model.LatLng
+import app.vdh.org.vdhapp.data.events.ReportingMapEvent
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import kotlin.coroutines.CoroutineContext
@@ -22,13 +21,17 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
 
     private var currentJob: Job? = null
 
-    val mapReportingEvent: SingleLiveEvent<ReportingMapActionState> = SingleLiveEvent()
+    val mapReportingEvent: SingleLiveEvent<ReportingMapEvent> = SingleLiveEvent()
 
 
     fun getReports() : LiveData<List<ReportEntity>> = repository.getReports()
 
     fun onReportButtonClicked() {
-        mapReportingEvent.value = ReportingMapActionState.AddReport
+        mapReportingEvent.value = ReportingMapEvent.AddReport
+    }
+
+    fun onStatusFilterButtonClicked() {
+        mapReportingEvent.value = ReportingMapEvent.StatusFilterDialog
     }
 
     fun getBicyclePath(boundingBoxQueryParameter: BoundingBoxQueryParameter,

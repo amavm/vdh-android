@@ -12,7 +12,7 @@ import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.states.ReportingActionState
+import app.vdh.org.vdhapp.data.events.ReportingEvent
 import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.helpers.ImageHelper
@@ -26,7 +26,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Default
 
-    var reportingEvent: SingleLiveEvent<ReportingActionState> = SingleLiveEvent()
+    var reportingEvent: SingleLiveEvent<ReportingEvent> = SingleLiveEvent()
 
     private var currentReport: ReportEntity? = null
 
@@ -45,15 +45,15 @@ class ReportingViewModel(application: Application, private val repository: Repor
     private var deleteReportJob: Job? = null
 
     fun onPlacePickerButtonCLicked() {
-        reportingEvent.value = ReportingActionState.PickPlace
+        reportingEvent.value = ReportingEvent.PickPlace
     }
 
     fun onPhotoFromGalleryButtonClicked() {
-        reportingEvent.value = ReportingActionState.PickPhoto
+        reportingEvent.value = ReportingEvent.PickPhoto
     }
 
     fun onTakePhotoButtonClicked() {
-        reportingEvent.value = ReportingActionState.TakePhoto
+        reportingEvent.value = ReportingEvent.TakePhoto
     }
 
     fun onStatusSelected(selectedStatus: Status) {
@@ -127,7 +127,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     }
 
     fun deleteReport() {
-        reportingEvent.value = ReportingActionState.DeleteReport
+        reportingEvent.value = ReportingEvent.DeleteReport
     }
 
     fun deleteReport(onSuccess: (String) -> Unit,

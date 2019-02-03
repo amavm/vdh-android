@@ -20,7 +20,7 @@ class Converters {
     @TypeConverter
     fun statusToString(status: Status?) : String? {
         status?.let {
-            return status.key
+            return status.name
         }
         return null
     }
@@ -32,13 +32,10 @@ class Converters {
 
     companion object {
         fun stringToStatus(statusKey: String?) : Status? {
-            return when (statusKey) {
-                Status.BIG_SNOW.key -> Status.BIG_SNOW
-                Status.SMALL_SNOW.key -> Status.SMALL_SNOW
-                Status.ICE.key -> Status.ICE
-                Status.OK.key -> Status.OK
-                else -> null
+            if (statusKey != null) {
+                return Status.valueOf(statusKey)
             }
+            return null
         }
     }
 }

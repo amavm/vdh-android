@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.StatusFilterViewModel" />
+        <import type="app.vdh.org.vdhapp.data.models.Status"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView android:id="@+id/status_filter_title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_status"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/medium_spacing"
+            android:layout_margin="@dimen/medium_spacing"
+            android:layout_marginBottom="@dimen/medium_spacing"/>
+
+        <RadioGroup
+            android:id="@+id/status_filter_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_spacing"
+            android:layout_marginBottom="@dimen/medium_spacing"
+            android:layout_marginStart="@dimen/medium_spacing"
+            android:layout_marginEnd="@dimen/medium_spacing"
+            android:onCheckedChanged="@{viewModel.onStatusCheckedChanged}"
+            app:layout_constraintTop_toBottomOf="@id/status_filter_title"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <RadioButton
+                android:id="@+id/status_filter_clear"
+                style="@style/Base.Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:buttonTint="@{Status.CLEARED.colorRes}"
+                app:textColor="@{Status.CLEARED.colorRes}"
+                android:text="@string/status_clear"/>
+
+            <RadioButton
+                android:id="@+id/status_filter_snow"
+                style="@style/Base.Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:buttonTint="@{Status.SNOW.colorRes}"
+                app:textColor="@{Status.SNOW.colorRes}"
+                android:text="@string/status_snow"/>
+
+            <RadioButton
+                android:id="@+id/status_filter_ice"
+                style="@style/Base.Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:buttonTint="@{Status.ICE.colorRes}"
+                app:textColor="@{Status.ICE.colorRes}"
+                android:text="@string/status_ice"/>
+
+            <RadioButton
+                android:id="@+id/status_filter_caution"
+                style="@style/Base.Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:buttonTint="@{Status.CAUTION.colorRes}"
+                app:textColor="@{Status.CAUTION.colorRes}"
+                android:text="@string/status_caution"/>
+
+            <RadioButton
+                android:id="@+id/status_filter_none"
+                style="@style/Base.Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/black"
+                android:text="@string/status_none"/>
+
+
+        </RadioGroup>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_filter_status"
+        android:icon="@drawable/ic_menu_status"
+        app:showAsAction="ifRoom"
+        android:title="@string/filter_status" />
+
+    <item android:id="@+id/menu_filter_hours"
+        android:icon="@drawable/ic_menu_hours"
+        app:showAsAction="ifRoom"
+        android:title="@string/filter_hours" />
+
+    <item android:id="@+id/menu_filter_path"
+        android:icon="@drawable/ic_menu_bike_path"
+        app:showAsAction="ifRoom"
+        android:title="@string/filter_path"/>
+</menu>

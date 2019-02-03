@@ -1,8 +1,0 @@
-package app.vdh.org.vdhapp.data.states
-
-sealed class ReportingActionState {
-    object PickPlace : ReportingActionState()
-    object PickPhoto : ReportingActionState()
-    object TakePhoto : ReportingActionState()
-    object DeleteReport : ReportingActionState()
-}

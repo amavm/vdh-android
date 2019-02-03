@@ -29,7 +29,7 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
         arrayListOf()
     }
 
-    val statusList = status?.let { arrayOf(it.key) }
+    val statusList = status?.let { arrayOf(it.name) }
 
     return ObservationDto(
             timestamp = System.currentTimeMillis() / 1000,
