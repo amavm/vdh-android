@@ -6,14 +6,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.SingleLiveEvent
-import app.vdh.org.vdhapp.data.events.StatusFilterEvent
+import app.vdh.org.vdhapp.data.events.ReportFilterEvent
 import app.vdh.org.vdhapp.data.models.Status
 
 class StatusFilterViewModel(app: Application) : AndroidViewModel(app) {
 
     var currentStatus: MutableLiveData<Status?> = MutableLiveData()
 
-    val statusFilterEvent: SingleLiveEvent<StatusFilterEvent> = SingleLiveEvent()
+    val reportFilterEvent: SingleLiveEvent<ReportFilterEvent> = SingleLiveEvent()
 
     fun onStatusCheckedChanged(radioGroup: RadioGroup, id: Int) {
         currentStatus.value = when(id){
@@ -23,6 +23,6 @@ class StatusFilterViewModel(app: Application) : AndroidViewModel(app) {
             R.id.status_filter_ice -> Status.ICE
             else -> null
         }
-        statusFilterEvent.value = StatusFilterEvent.PickStatusFilter(currentStatus.value)
+        reportFilterEvent.value = ReportFilterEvent.PickStatusFilter(currentStatus.value)
     }
 }

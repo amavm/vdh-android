@@ -5,6 +5,7 @@ import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.ReportRepositoryImpl
 import app.vdh.org.vdhapp.api.ObservationApiClient
 import app.vdh.org.vdhapp.api.ObservationApiClientImpl
+import app.vdh.org.vdhapp.viewmodels.HoursFilterViewModel
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
 import app.vdh.org.vdhapp.viewmodels.StatusFilterViewModel
@@ -28,5 +29,6 @@ val appModule = module {
     viewModel { ReportingViewModel(androidApplication(), get()) }
     viewModel { ReportMapViewModel(androidApplication(), get ()) }
     viewModel { StatusFilterViewModel(androidApplication()) }
+    viewModel { HoursFilterViewModel(androidApplication()) }
 
 }

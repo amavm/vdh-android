@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.Preference
 import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
@@ -15,7 +14,11 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.consts.PrefConst
+import app.vdh.org.vdhapp.consts.PrefConst.HOURS_SORT_PREFS_KEY
+import app.vdh.org.vdhapp.consts.PrefConst.STATUS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.data.entities.ReportEntity
+import app.vdh.org.vdhapp.data.events.ReportFilterEvent
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
@@ -23,6 +26,7 @@ import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
 import app.vdh.org.vdhapp.extenstions.addReportMarkers
 import app.vdh.org.vdhapp.extenstions.navigateTo
 import app.vdh.org.vdhapp.extenstions.openBottomDialogFragment
+import app.vdh.org.vdhapp.fragments.HourFilterDialogFragment
 import app.vdh.org.vdhapp.fragments.StatusFilterDialogFragment
 import app.vdh.org.vdhapp.viewmodels.ReportMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -50,13 +54,19 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val viewModel : ReportMapViewModel by viewModel()
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        if (key == Status.STATUS_SORT_PREFS_KEY) {
-            setCurrentStatusFromSharedPrefs()
+        when (key) {
+            STATUS_SORT_PREFS_KEY -> setCurrentStatusFromSharedPrefs()
+            HOURS_SORT_PREFS_KEY -> setCurrentHourFilterFromSharedPrefs()
         }
     }
 
     private fun setCurrentStatusFromSharedPrefs() {
         viewModel.setStatusFilter(Status.readFromPreferences(this))
+    }
+
+    private fun setCurrentHourFilterFromSharedPrefs() {
+        val hourFilterPrefs = defaultSharedPreferences.getInt(HOURS_SORT_PREFS_KEY, PrefConst.HOURS_SORT_DEFAULT_VALUE)
+        viewModel.setHoursAgoFilter(hourFilterPrefs)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,9 +122,17 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     is ReportingMapEvent.AddReport -> {
                         this.navigateTo(ReportingActivity::class.java)
                     }
+                }
+            })
 
-                    is ReportingMapEvent.OpenStatusFilterDialog -> {
-                        this.openBottomDialogFragment(StatusFilterDialogFragment.newInstance(action.currentStatusFilter), "status_filter_framgent")
+            viewModel.filterReportingEvent.observe(this, Observer { action ->
+                when (action) {
+                    is ReportFilterEvent.PickStatusFilter -> {
+                        this.openBottomDialogFragment(StatusFilterDialogFragment.newInstance(action.status), "status_filter_framgent")
+                    }
+
+                    is ReportFilterEvent.PickHoursFilter -> {
+                        this.openBottomDialogFragment(HourFilterDialogFragment.newInstance(action.hoursAgo), "status_filter_framgent")
                     }
                 }
             })
@@ -136,6 +154,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         item?.let {
             when(item.itemId) {
                 R.id.menu_filter_hours -> {
+                    viewModel.onHoursFilterButtonClicked()
                 }
 
                 R.id.menu_filter_status -> {
@@ -150,11 +169,13 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addReports() {
-        viewModel.getReports().observe(this, Observer { reports ->
+        setCurrentStatusFromSharedPrefs()
+        setCurrentHourFilterFromSharedPrefs()
+        viewModel.initReportMediatorLiveDataSources()
+        viewModel.reports.observe(this, Observer { reports ->
             map?.clear()
             map?.addReportMarkers(this, reports)
         })
-        setCurrentStatusFromSharedPrefs()
     }
 
     private fun addBicyclePath(map: GoogleMap) {

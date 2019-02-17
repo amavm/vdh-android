@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import app.vdh.org.vdhapp.R
-import app.vdh.org.vdhapp.data.events.StatusFilterEvent
+import app.vdh.org.vdhapp.consts.PrefConst.STATUS_SORT_PREFS_KEY
+import app.vdh.org.vdhapp.data.events.ReportFilterEvent
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.databinding.FragmentStatusFilterBinding
 import app.vdh.org.vdhapp.viewmodels.StatusFilterViewModel
@@ -22,7 +23,7 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
             val fragment = StatusFilterDialogFragment()
             if (status != null) {
                 val args = Bundle()
-                args.putSerializable(Status.STATUS_SORT_PREFS_KEY, status.name)
+                args.putSerializable(STATUS_SORT_PREFS_KEY, status.name)
                 fragment.arguments = args
             }
             return fragment
@@ -34,7 +35,7 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding : FragmentStatusFilterBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_status_filter, container,false)
 
-        arguments?.getString(Status.STATUS_SORT_PREFS_KEY)?.let {
+        arguments?.getString(STATUS_SORT_PREFS_KEY)?.let {
             val status = Status.valueOf(it)
             viewModel.currentStatus.value = status
         }
@@ -42,9 +43,9 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
         binding.viewModel = viewModel
         binding.setLifecycleOwner(this)
 
-        viewModel.statusFilterEvent.observe(this, Observer { statusFilterEvent ->
+        viewModel.reportFilterEvent.observe(this, Observer { statusFilterEvent ->
             when(statusFilterEvent) {
-                is StatusFilterEvent.PickStatusFilter -> {
+                is ReportFilterEvent.PickStatusFilter -> {
                     context?.let { context ->
                         Status.writeInPreferences(context, statusFilterEvent.status)
                         dismiss()

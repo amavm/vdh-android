@@ -1,15 +1,14 @@
 package app.vdh.org.vdhapp.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import app.vdh.org.vdhapp.api.Result
+import app.vdh.org.vdhapp.consts.PrefConst
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
+import app.vdh.org.vdhapp.data.events.ReportFilterEvent
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
 import app.vdh.org.vdhapp.data.models.Status
@@ -25,23 +24,49 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
     private var currentJob: Job? = null
 
     val mapReportingEvent: SingleLiveEvent<ReportingMapEvent> = SingleLiveEvent()
+
+    val filterReportingEvent: SingleLiveEvent<ReportFilterEvent> = SingleLiveEvent()
     private val currentStatusFilter: MutableLiveData<Status> = MutableLiveData()
+    private val currentHoursAgoFilter: MutableLiveData<Int> = MutableLiveData()
 
+    val reports: MediatorLiveData<List<ReportEntity>> = MediatorLiveData()
 
-    fun getReports() : LiveData<List<ReportEntity>> = Transformations.switchMap(currentStatusFilter) {statusFilter ->
-        repository.getReports(statusFilter)
+    private val reportsByStatus : LiveData<List<ReportEntity>> = Transformations.switchMap(currentStatusFilter) { statusFilter ->
+        repository.getReports(status = statusFilter, hoursAgo = currentHoursAgoFilter.value?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
     }
+
+    private val reportsByHours : LiveData<List<ReportEntity>> = Transformations.switchMap(currentHoursAgoFilter) { hoursFilter ->
+        repository.getReports(status = currentStatusFilter.value, hoursAgo = hoursFilter)
+    }
+
+    fun initReportMediatorLiveDataSources() {
+        reports.addSource(reportsByStatus, ::setReports)
+        reports.addSource(reportsByHours, ::setReports)
+    }
+
+    private fun setReports(newReports :List<ReportEntity>) {
+        reports.value = newReports
+    }
+
 
     fun onReportButtonClicked() {
         mapReportingEvent.value = ReportingMapEvent.AddReport
     }
 
     fun onStatusFilterButtonClicked() {
-        mapReportingEvent.value = ReportingMapEvent.OpenStatusFilterDialog(currentStatusFilter.value)
+        filterReportingEvent.value = ReportFilterEvent.PickStatusFilter(currentStatusFilter.value)
+    }
+
+    fun onHoursFilterButtonClicked() {
+        filterReportingEvent.value = ReportFilterEvent.PickHoursFilter(currentHoursAgoFilter.value ?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
     }
 
     fun setStatusFilter(status: Status?) {
         currentStatusFilter.value = status
+    }
+
+    fun setHoursAgoFilter(hoursAgo: Int) {
+        currentHoursAgoFilter.value = hoursAgo
     }
 
     fun getBicyclePath(boundingBoxQueryParameter: BoundingBoxQueryParameter,

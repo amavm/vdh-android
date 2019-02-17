@@ -15,6 +15,7 @@ import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationApiClient: ObservationApiClient) : ReportRepository, CoroutineScope {
@@ -46,7 +47,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return Pair(insertionResult, sendServerResult)
     }
 
-    override fun getReports(status: Status?): LiveData<List<ReportEntity>> {
+    override fun getReports(hoursAgo: Int, status: Status?): LiveData<List<ReportEntity>> {
         launch {
             val syncResult = withContext(Dispatchers.Default) {
                 syncReports()
@@ -57,10 +58,14 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
             }
         }
+
+        val now = System.currentTimeMillis()
+        val from = now - TimeUnit.HOURS.toMillis(hoursAgo.toLong())
+
         return if (status == null){
-            reportDao.getAllReports()
+            reportDao.getAllReports(from, now)
         } else {
-            reportDao.getReports(status)
+            reportDao.getReports(status, from, now)
         }
     }
 

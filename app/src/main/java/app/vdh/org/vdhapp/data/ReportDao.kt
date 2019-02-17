@@ -14,11 +14,11 @@ interface ReportDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertReportList(reportEntityList: List<ReportEntity>) : List<Long>
 
-    @Query("SELECT * FROM reportentity")
-    fun getAllReports(): LiveData<List<ReportEntity>>
+    @Query("SELECT * FROM reportentity WHERE syncTimestamp BETWEEN :fromTimeStamp AND :toTimeStamp")
+    fun getAllReports(fromTimeStamp: Long, toTimeStamp: Long): LiveData<List<ReportEntity>>
 
-    @Query("SELECT * FROM reportentity WHERE status == :filterStatus")
-    fun getReports(filterStatus: Status): LiveData<List<ReportEntity>>
+    @Query("SELECT * FROM reportentity WHERE status == :filterStatus AND syncTimestamp BETWEEN :fromTimeStamp AND :toTimeStamp")
+    fun getReports(filterStatus: Status, fromTimeStamp: Long, toTimeStamp: Long): LiveData<List<ReportEntity>>
 
     @Delete
     fun deleteReport(reportEntity: ReportEntity)

@@ -5,6 +5,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.consts.PrefConst.STATUS_SORT_PREFS_KEY
 import org.jetbrains.anko.defaultSharedPreferences
 
 enum class Status(@StringRes val  labelRes: Int,
@@ -16,7 +17,6 @@ enum class Status(@StringRes val  labelRes: Int,
     CLEARED( R.string.status_clear, R.color.lightYellow, R.drawable.ic_cleared);
 
     companion object {
-        const val STATUS_SORT_PREFS_KEY = "status_sort_prefs_key"
 
         fun readFromPreferences(context: Context) : Status? {
             val statusKey = context.defaultSharedPreferences.getString(STATUS_SORT_PREFS_KEY, null)
