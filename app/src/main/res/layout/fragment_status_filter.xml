@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.CLEARED.colorRes}"
                 app:textColor="@{Status.CLEARED.colorRes}"
+                android:checked="@{viewModel.currentStatus == Status.CLEARED}"
                 android:text="@string/status_clear"/>
 
             <RadioButton
