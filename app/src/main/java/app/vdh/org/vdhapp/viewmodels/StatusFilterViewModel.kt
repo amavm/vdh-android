@@ -11,7 +11,7 @@ import app.vdh.org.vdhapp.data.models.Status
 
 class StatusFilterViewModel(app: Application) : AndroidViewModel(app) {
 
-    val currentStatus: MutableLiveData<Status?> = MutableLiveData()
+    var currentStatus: MutableLiveData<Status?> = MutableLiveData()
 
     val statusFilterEvent: SingleLiveEvent<StatusFilterEvent> = SingleLiveEvent()
 
@@ -25,5 +25,4 @@ class StatusFilterViewModel(app: Application) : AndroidViewModel(app) {
         }
         statusFilterEvent.value = StatusFilterEvent.PickStatusFilter(currentStatus.value)
     }
-
 }

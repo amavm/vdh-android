@@ -16,10 +16,29 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class StatusFilterDialogFragment : BottomSheetDialogFragment() {
 
+    companion object {
+
+        fun newInstance(status: Status?) : StatusFilterDialogFragment {
+            val fragment = StatusFilterDialogFragment()
+            if (status != null) {
+                val args = Bundle()
+                args.putSerializable(Status.STATUS_SORT_PREFS_KEY, status.name)
+                fragment.arguments = args
+            }
+            return fragment
+        }
+    }
+
     private val viewModel : StatusFilterViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding : FragmentStatusFilterBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_status_filter, container,false)
+
+        arguments?.getString(Status.STATUS_SORT_PREFS_KEY)?.let {
+            val status = Status.valueOf(it)
+            viewModel.currentStatus.value = status
+        }
+
         binding.viewModel = viewModel
         binding.setLifecycleOwner(this)
 

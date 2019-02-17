@@ -50,6 +50,7 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.SNOW.colorRes}"
                 app:textColor="@{Status.SNOW.colorRes}"
+                android:checked="@{viewModel.currentStatus == Status.SNOW}"
                 android:text="@string/status_snow"/>
 
             <RadioButton
@@ -59,6 +60,7 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.ICE.colorRes}"
                 app:textColor="@{Status.ICE.colorRes}"
+                android:checked="@{viewModel.currentStatus == Status.ICE}"
                 android:text="@string/status_ice"/>
 
             <RadioButton
@@ -68,6 +70,7 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.CAUTION.colorRes}"
                 app:textColor="@{Status.CAUTION.colorRes}"
+                android:checked="@{viewModel.currentStatus == Status.CAUTION}"
                 android:text="@string/status_caution"/>
 
             <RadioButton
@@ -76,6 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@android:color/black"
+                android:checked="@{viewModel.currentStatus == null}"
                 android:text="@string/status_none"/>
 
 

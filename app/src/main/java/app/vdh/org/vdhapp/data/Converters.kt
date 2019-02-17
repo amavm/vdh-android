@@ -3,6 +3,7 @@ package app.vdh.org.vdhapp.data
 import androidx.room.TypeConverter
 import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
+import java.lang.Exception
 
 class Converters {
 
@@ -33,7 +34,11 @@ class Converters {
     companion object {
         fun stringToStatus(statusKey: String?) : Status? {
             if (statusKey != null) {
-                return Status.valueOf(statusKey)
+                return try {
+                    Status.valueOf(statusKey)
+                } catch (e: Exception) {
+                    null
+                }
             }
             return null
         }

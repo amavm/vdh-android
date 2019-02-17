@@ -2,19 +2,23 @@ package app.vdh.org.vdhapp.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import androidx.lifecycle.Observer
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
+import android.preference.Preference
+import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
+import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
+import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
 import app.vdh.org.vdhapp.extenstions.addReportMarkers
 import app.vdh.org.vdhapp.extenstions.navigateTo
@@ -29,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.data.geojson.GeoJsonLayer
+import org.jetbrains.anko.defaultSharedPreferences
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -43,6 +48,16 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var map: GoogleMap? = null
     private val viewModel : ReportMapViewModel by viewModel()
+
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (key == Status.STATUS_SORT_PREFS_KEY) {
+            setCurrentStatusFromSharedPrefs()
+        }
+    }
+
+    private fun setCurrentStatusFromSharedPrefs() {
+        viewModel.setStatusFilter(Status.readFromPreferences(this))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +74,8 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -92,12 +109,12 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             viewModel.mapReportingEvent.observe(this, Observer { action ->
                 when(action) {
-                    ReportingMapEvent.AddReport -> {
+                    is ReportingMapEvent.AddReport -> {
                         this.navigateTo(ReportingActivity::class.java)
                     }
 
-                    ReportingMapEvent.StatusFilterDialog -> {
-                        this.openBottomDialogFragment(StatusFilterDialogFragment(), "status_filter_framgent")
+                    is ReportingMapEvent.OpenStatusFilterDialog -> {
+                        this.openBottomDialogFragment(StatusFilterDialogFragment.newInstance(action.currentStatusFilter), "status_filter_framgent")
                     }
                 }
             })
@@ -137,6 +154,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             map?.clear()
             map?.addReportMarkers(reports)
         })
+        setCurrentStatusFromSharedPrefs()
     }
 
     private fun addBicyclePath(map: GoogleMap) {
@@ -165,5 +183,10 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 initMap()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(prefsListener)
     }
 }

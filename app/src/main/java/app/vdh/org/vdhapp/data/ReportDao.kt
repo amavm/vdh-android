@@ -3,6 +3,7 @@ package app.vdh.org.vdhapp.data
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import app.vdh.org.vdhapp.data.entities.ReportEntity
+import app.vdh.org.vdhapp.data.models.Status
 
 @Dao
 interface ReportDao {
@@ -14,7 +15,10 @@ interface ReportDao {
     fun insertReportList(reportEntityList: List<ReportEntity>) : List<Long>
 
     @Query("SELECT * FROM reportentity")
-    fun getAllDeclarations(): LiveData<List<ReportEntity>>
+    fun getAllReports(): LiveData<List<ReportEntity>>
+
+    @Query("SELECT * FROM reportentity WHERE status == :filterStatus")
+    fun getReports(filterStatus: Status): LiveData<List<ReportEntity>>
 
     @Delete
     fun deleteReport(reportEntity: ReportEntity)

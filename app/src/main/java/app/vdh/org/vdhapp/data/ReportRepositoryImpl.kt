@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import android.content.Context
 import android.util.Log
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
-import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.extenstions.toObservationDto
 import app.vdh.org.vdhapp.extenstions.toReportEntities
@@ -12,11 +11,10 @@ import app.vdh.org.vdhapp.api.ObservationApiClient
 import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.api.safeCall
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
+import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
-import okhttp3.ResponseBody
 import org.json.JSONObject
-import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
 class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationApiClient: ObservationApiClient) : ReportRepository, CoroutineScope {
@@ -48,19 +46,22 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return Pair(insertionResult, sendServerResult)
     }
 
-    override fun getReports(): LiveData<List<ReportEntity>> {
+    override fun getReports(status: Status?): LiveData<List<ReportEntity>> {
         launch {
-            val deferred = async {
+            val syncResult = withContext(Dispatchers.Default) {
                 syncReports()
             }
-            val syncResult = deferred.await()
             when (syncResult) {
                 is Result.Success -> Log.i("ReportRepositoryImpl", "Sync of ${syncResult.data} reports succeed")
                 is Result.Error -> Log.e("ReportRepositoryImpl", "Sync reports error ${syncResult.exception}")
 
             }
         }
-        return reportDao.getAllDeclarations()
+        return if (status == null){
+            reportDao.getAllReports()
+        } else {
+            reportDao.getReports(status)
+        }
     }
 
     override suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter): Result<JSONObject> {
@@ -115,14 +116,14 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun savedReport(report: ReportEntity) : Result<Long>{
-        return async {
+        return withContext(Dispatchers.Default) {
             Result.Success(reportDao.insertReport(report))
-        }.await()
+        }
     }
 
     private suspend fun savedReportList(reportList: List<ReportEntity>) : Result<List<Long>>{
-        return async {
+        return withContext(Dispatchers.Default) {
             Result.Success(reportDao.insertReportList(reportList))
-        }.await()
+        }
     }
 }
