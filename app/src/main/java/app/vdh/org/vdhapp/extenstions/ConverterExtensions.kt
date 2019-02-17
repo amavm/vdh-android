@@ -47,7 +47,7 @@ fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
             it.assets[0].imageUrl
         } else null
         val status = if (it.attributes.isNotEmpty()) {
-            Converters.stringToStatus(it.attributes[0])
+            Converters.stringToStatus(it.attributes[0].toUpperCase())
         } else null
 
         val report = ReportEntity(

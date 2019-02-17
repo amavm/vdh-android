@@ -152,7 +152,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun addReports() {
         viewModel.getReports().observe(this, Observer { reports ->
             map?.clear()
-            map?.addReportMarkers(reports)
+            map?.addReportMarkers(this, reports)
         })
         setCurrentStatusFromSharedPrefs()
     }

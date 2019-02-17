@@ -19,7 +19,7 @@
     <string name="status_snow">Enneigé</string>
     <string name="status_ice">Glacé</string>
     <string name="status_clear">Dénneigé</string>
-    <string name="status_none">Aucun</string>
+    <string name="status_none">Tous</string>
 
     <string name="no_photo">Pas de photo</string>
     <string name="no_comment">Pas de commentaire</string>
