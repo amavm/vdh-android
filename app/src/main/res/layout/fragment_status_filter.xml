@@ -9,18 +9,24 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/backgroundBlue">
 
-        <TextView android:id="@+id/status_filter_title"
+        <TextView
+            android:id="@+id/status_filter_title"
             style="@style/TextAppearance.AppCompat.Title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/filter_status"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/medium_spacing"
-            android:layout_margin="@dimen/medium_spacing"
-            android:layout_marginBottom="@dimen/medium_spacing"/>
+            android:paddingTop="@dimen/medium_spacing"
+            android:paddingStart="@dimen/medium_spacing"
+            android:paddingBottom="@dimen/medium_spacing"
+            android:drawableStart="@drawable/ic_status"
+            android:drawablePadding="@dimen/medium_spacing"/>
 
         <RadioGroup
             android:id="@+id/status_filter_radio_group"
@@ -41,7 +47,10 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.CLEARED.colorRes}"
                 app:textColor="@{Status.CLEARED.colorRes}"
+                android:button="@drawable/selector_status_cleared"
                 android:checked="@{viewModel.currentStatus == Status.CLEARED}"
+                android:padding="@dimen/small_spacing"
+                android:textStyle="bold"
                 android:text="@string/status_clear"/>
 
             <RadioButton
@@ -51,7 +60,10 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.SNOW.colorRes}"
                 app:textColor="@{Status.SNOW.colorRes}"
+                android:button="@drawable/selector_status_snowy"
                 android:checked="@{viewModel.currentStatus == Status.SNOW}"
+                android:padding="@dimen/small_spacing"
+                android:textStyle="bold"
                 android:text="@string/status_snow"/>
 
             <RadioButton
@@ -61,7 +73,10 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.ICE.colorRes}"
                 app:textColor="@{Status.ICE.colorRes}"
+                android:button="@drawable/selector_status_icy"
                 android:checked="@{viewModel.currentStatus == Status.ICE}"
+                android:padding="@dimen/small_spacing"
+                android:textStyle="bold"
                 android:text="@string/status_ice"/>
 
             <RadioButton
@@ -71,7 +86,10 @@
                 android:layout_height="wrap_content"
                 app:buttonTint="@{Status.CAUTION.colorRes}"
                 app:textColor="@{Status.CAUTION.colorRes}"
+                android:button="@drawable/selector_status_caution"
                 android:checked="@{viewModel.currentStatus == Status.CAUTION}"
+                android:padding="@dimen/small_spacing"
+                android:textStyle="bold"
                 android:text="@string/status_caution"/>
 
             <RadioButton
@@ -81,7 +99,9 @@
                 android:layout_height="wrap_content"
                 android:buttonTint="@android:color/black"
                 android:checked="@{viewModel.currentStatus == null}"
-                android:text="@string/status_none"/>
+                android:text="@string/status_none"
+                android:textStyle="bold"
+                android:padding="@dimen/small_spacing"/>
 
 
         </RadioGroup>

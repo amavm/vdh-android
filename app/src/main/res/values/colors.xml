@@ -4,7 +4,11 @@
     <color name="colorPrimaryDark">#3588b3</color>
     <color name="colorAccent">#EE3225</color>
     <color name="lightBlue">#b5d2e1</color>
+    <color name="backgroundBlue">#C8D9E0</color>
+    <color name="darkBlue">#164193</color>
     <color name="lightYellow">#f1c75d</color>
     <color name="editButtonGrey">#64616161</color>
-    <color name="red">#FF0000</color>
+    <color name="red">#CC1719</color>
+    <color name="green">#4FAE47</color>
+    <color name="orange">#EE7D00</color>
 </resources>
