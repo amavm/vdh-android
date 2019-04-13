@@ -61,6 +61,6 @@ class HourFilterDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         report_filter_number_picker.minValue = 1
         report_filter_number_picker.maxValue = 24
-        report_filter_number_picker.value = PrefConst.HOURS_SORT_DEFAULT_VALUE
+        report_filter_number_picker.value = viewModel.currentHoursAgoFilter
     }
 }

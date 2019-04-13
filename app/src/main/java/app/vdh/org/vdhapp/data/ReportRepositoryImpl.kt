@@ -63,9 +63,9 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         val from = now - TimeUnit.HOURS.toMillis(hoursAgo.toLong())
 
         return if (status == null){
-            reportDao.getAllReports(from, now)
+            reportDao.getAllReports(from)
         } else {
-            reportDao.getReports(status, from, now)
+            reportDao.getReports(status, from)
         }
     }
 

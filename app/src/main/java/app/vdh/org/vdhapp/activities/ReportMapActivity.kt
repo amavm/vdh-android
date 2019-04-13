@@ -53,20 +53,17 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private var map: GoogleMap? = null
     private val viewModel : ReportMapViewModel by viewModel()
 
-    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            STATUS_SORT_PREFS_KEY -> setCurrentStatusFromSharedPrefs()
-            HOURS_SORT_PREFS_KEY -> setCurrentHourFilterFromSharedPrefs()
+            STATUS_SORT_PREFS_KEY -> setCurrentFilterFromSharedPrefs()
+            HOURS_SORT_PREFS_KEY -> setCurrentFilterFromSharedPrefs()
         }
     }
 
-    private fun setCurrentStatusFromSharedPrefs() {
-        viewModel.setStatusFilter(Status.readFromPreferences(this))
-    }
-
-    private fun setCurrentHourFilterFromSharedPrefs() {
-        val hourFilterPrefs = defaultSharedPreferences.getInt(HOURS_SORT_PREFS_KEY, PrefConst.HOURS_SORT_DEFAULT_VALUE)
-        viewModel.setHoursAgoFilter(hourFilterPrefs)
+    private fun setCurrentFilterFromSharedPrefs() {
+        val status = Status.readFromPreferences(this)
+        val hourFilterStatus = defaultSharedPreferences.getInt(HOURS_SORT_PREFS_KEY, PrefConst.HOURS_SORT_DEFAULT_VALUE)
+        viewModel.setCurrentFilter(ReportFilterEvent.ReportFilterPicked(status, hourFilterStatus))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,9 +166,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addReports() {
-        setCurrentStatusFromSharedPrefs()
-        setCurrentHourFilterFromSharedPrefs()
-        viewModel.initReportMediatorLiveDataSources()
+        setCurrentFilterFromSharedPrefs()
         viewModel.reports.observe(this, Observer { reports ->
             map?.clear()
             map?.addReportMarkers(this, reports)

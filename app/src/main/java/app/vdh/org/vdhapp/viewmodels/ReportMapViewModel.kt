@@ -11,7 +11,6 @@ import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.events.ReportFilterEvent
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
-import app.vdh.org.vdhapp.data.models.Status
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import kotlin.coroutines.CoroutineContext
@@ -25,48 +24,17 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
 
     val mapReportingEvent: SingleLiveEvent<ReportingMapEvent> = SingleLiveEvent()
 
+
     val filterReportingEvent: SingleLiveEvent<ReportFilterEvent> = SingleLiveEvent()
-    private val currentStatusFilter: MutableLiveData<Status> = MutableLiveData()
-    private val currentHoursAgoFilter: MutableLiveData<Int> = MutableLiveData()
+    private val currentFilter: MutableLiveData<ReportFilterEvent.ReportFilterPicked> = MutableLiveData()
 
-    val reports: MediatorLiveData<List<ReportEntity>> = MediatorLiveData()
-
-    private val reportsByStatus : LiveData<List<ReportEntity>> = Transformations.switchMap(currentStatusFilter) { statusFilter ->
-        repository.getReports(status = statusFilter, hoursAgo = currentHoursAgoFilter.value?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
-    }
-
-    private val reportsByHours : LiveData<List<ReportEntity>> = Transformations.switchMap(currentHoursAgoFilter) { hoursFilter ->
-        repository.getReports(status = currentStatusFilter.value, hoursAgo = hoursFilter)
-    }
-
-    fun initReportMediatorLiveDataSources() {
-        reports.addSource(reportsByStatus, ::setReports)
-        reports.addSource(reportsByHours, ::setReports)
-    }
-
-    private fun setReports(newReports :List<ReportEntity>) {
-        reports.value = newReports
+    val reports : LiveData<List<ReportEntity>> = Transformations.switchMap(currentFilter) { currentFilter ->
+        repository.getReports(status = currentFilter.status, hoursAgo = currentFilter.hoursAgo)
     }
 
 
-    fun onReportButtonClicked() {
-        mapReportingEvent.value = ReportingMapEvent.AddReport
-    }
-
-    fun onStatusFilterButtonClicked() {
-        filterReportingEvent.value = ReportFilterEvent.PickStatusFilter(currentStatusFilter.value)
-    }
-
-    fun onHoursFilterButtonClicked() {
-        filterReportingEvent.value = ReportFilterEvent.PickHoursFilter(currentHoursAgoFilter.value ?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
-    }
-
-    fun setStatusFilter(status: Status?) {
-        currentStatusFilter.value = status
-    }
-
-    fun setHoursAgoFilter(hoursAgo: Int) {
-        currentHoursAgoFilter.value = hoursAgo
+    fun setCurrentFilter(filterPicked: ReportFilterEvent.ReportFilterPicked) {
+        currentFilter.value = filterPicked
     }
 
     fun getBicyclePath(boundingBoxQueryParameter: BoundingBoxQueryParameter,
@@ -90,6 +58,18 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
             }
 
         }
+    }
+
+    fun onStatusFilterButtonClicked() {
+        filterReportingEvent.value = ReportFilterEvent.PickStatusFilter(currentFilter.value?.status)
+    }
+
+    fun onHoursFilterButtonClicked() {
+        filterReportingEvent.value = ReportFilterEvent.PickHoursFilter(currentFilter.value?.hoursAgo ?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
+    }
+
+    fun onReportButtonClicked() {
+        mapReportingEvent.value = ReportingMapEvent.AddReport
     }
 
     override fun onCleared() {
