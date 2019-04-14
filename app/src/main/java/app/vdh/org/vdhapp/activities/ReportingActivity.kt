@@ -113,12 +113,12 @@ class ReportingActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val isEditable = viewModel.syncDate.value == null
+        val isReportSentToServer = viewModel.isReportSentToServer.value ?: false
         menuInflater.inflate(R.menu.reporting_edit_menu, menu)
         val shareMenuItem = menu?.findItem(R.id.menu_share_declaraton)
-        menu?.findItem(R.id.menu_send_declaraton)?.isVisible = isEditable
-        menu?.findItem(R.id.menu_save_declaraton)?.isVisible = isEditable
-        if (!isEditable) {
+        menu?.findItem(R.id.menu_send_declaraton)?.isVisible = !isReportSentToServer
+        menu?.findItem(R.id.menu_save_declaraton)?.isVisible = !isReportSentToServer
+        if (isReportSentToServer) {
             val shareActionProvider = MenuItemCompat.getActionProvider(shareMenuItem) as ShareActionProvider
             shareActionProvider.setShareIntent(viewModel.getShareIntent())
         } else {

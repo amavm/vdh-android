@@ -5,10 +5,10 @@ import app.vdh.org.vdhapp.consts.PrefConst
 import org.jetbrains.anko.defaultSharedPreferences
 import java.util.*
 
-fun Context.uniqueId() : String? =
-        if (defaultSharedPreferences.contains(PrefConst.UNIQUE_ID_PREF_KEY)) {
-            defaultSharedPreferences.getString(PrefConst.UNIQUE_ID_PREF_KEY, null)
-        } else  {
+fun Context.uniqueId() : String =
+        defaultSharedPreferences.getString(PrefConst.UNIQUE_ID_PREF_KEY, null)?.let {
+            it
+        }?: run {
             val uniqueId = UUID.randomUUID().toString()
             defaultSharedPreferences.edit()
                     .putString(PrefConst.UNIQUE_ID_PREF_KEY, uniqueId)

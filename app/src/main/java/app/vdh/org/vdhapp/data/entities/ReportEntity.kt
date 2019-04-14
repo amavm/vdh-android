@@ -10,16 +10,14 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity
 data class ReportEntity(
-        var name:String? = "",
-        var position: LatLng = LatLng(0.0,0.0),
-        var photoPath: String? = "",
-        var comment: String? = "",
-        var deviceId: String? = "",
-        var status: Status? = null,
-        var syncTimestamp: Long? = null,
-        var serverId: String? = null) : Parcelable {
-
+        val deviceId: String,
+        val timestamp: Long = System.currentTimeMillis(),
         @PrimaryKey
-        var id: String = deviceId + syncTimestamp
-
-}
+        val id: String = deviceId + timestamp,
+        val sentToSever: Boolean = false,
+        val name:String? = "",
+        val position: LatLng = LatLng(0.0,0.0),
+        val photoPath: String? = "",
+        val comment: String? = "",
+        val status: Status? = null,
+        val serverId: String? = null) : Parcelable

@@ -26,6 +26,8 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
     override suspend fun saveReport(context: Context, reportEntity: ReportEntity, sendToServer: Boolean): Pair<Result<Long>, Result<ObservationDto>?> {
 
+        var reportToSave = reportEntity
+
         val sendServerResult: Result<ObservationDto>? =
                 if (sendToServer) {
                     safeCall(call = { observationApiClient.sendObservation(reportEntity.toObservationDto(context))},
@@ -34,13 +36,12 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
                 } else null
 
         if (sendServerResult is Result.Success) {
-            reportEntity.syncTimestamp = sendServerResult.data.timestamp * 1000
             sendServerResult.data.id?.let {
-                reportEntity.serverId = sendServerResult.data.id
+                reportToSave = reportEntity.copy(serverId = sendServerResult.data.id, sentToSever = true)
             }
         }
 
-        val insertionResult = safeCall(call = {savedReport(reportEntity)},
+        val insertionResult = safeCall(call = {savedReport(reportToSave)},
                 errorMessage = "Error during sending report")
 
 

@@ -1,19 +1,20 @@
 package app.vdh.org.vdhapp.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import android.content.Intent
 import android.text.format.DateUtils
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import app.vdh.org.vdhapp.App
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
-import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.events.ReportingEvent
-import app.vdh.org.vdhapp.api.Result
+import app.vdh.org.vdhapp.data.models.Status
+import app.vdh.org.vdhapp.extenstions.uniqueId
 import app.vdh.org.vdhapp.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.google.android.gms.location.places.Place
@@ -34,8 +35,9 @@ class ReportingViewModel(application: Application, private val repository: Repor
     var placeLocation: MutableLiveData<LatLng> = MutableLiveData()
     val picturePath: MutableLiveData<String> = MutableLiveData()
     val reportComment: MutableLiveData<String> = MutableLiveData()
-    var syncDate: MutableLiveData<String> = MutableLiveData()
+    var saveOrSyncDate: MutableLiveData<String> = MutableLiveData()
     var status : MutableLiveData<Status> = MutableLiveData()
+    var isReportSentToServer : MutableLiveData<Boolean> = MutableLiveData()
 
     var placePickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
     var photoPickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
@@ -43,6 +45,10 @@ class ReportingViewModel(application: Application, private val repository: Repor
 
     private var saveReportJob: Job? = null
     private var deleteReportJob: Job? = null
+
+    init {
+        isReportSentToServer.value = false
+    }
 
     fun onPlacePickerButtonCLicked() {
         reportingEvent.value = ReportingEvent.PickPlace
@@ -63,15 +69,15 @@ class ReportingViewModel(application: Application, private val repository: Repor
 
     fun setReportData(report: ReportEntity) {
         currentReport = report
+        isReportSentToServer.value = report.sentToSever
         placeName.value = report.name
         placeLocation.value = report.position
         picturePath.value = report.photoPath
         reportComment.value = report.comment
-        report.syncTimestamp?.let {
-            syncDate.value = getApplication<App>().getString(R.string.sync_date, DateUtils.getRelativeTimeSpanString(it).toString())
-        }
+        val saveOrSyncDateFmt = if (report.sentToSever) R.string.sync_date_fmt else R.string.save_date_fmt
+        saveOrSyncDate.value = getApplication<App>().getString(saveOrSyncDateFmt, DateUtils.getRelativeTimeSpanString(report.timestamp).toString())
         status.value = report.status
-        if (syncDate.value == null) {
+        if (!report.sentToSever) {
             setPlaceEditButton()
             setPhotoEditButton()
             setStatusEditButton()
@@ -98,13 +104,20 @@ class ReportingViewModel(application: Application, private val repository: Repor
         val reportLocation = placeLocation.value
         if (reportLocation != null && status.value != null) {
 
-            val report = ReportEntity(
+            val report = currentReport?.copy(
                     name = placeName.value,
                     comment = declarationComment,
                     position = reportLocation,
                     photoPath = picturePath.value,
-                    status = status.value
-            )
+                    status = status.value) ?: run {
+                ReportEntity(
+                        deviceId = getApplication<App>().uniqueId(),
+                        name = placeName.value,
+                        comment = declarationComment,
+                        position = reportLocation,
+                        photoPath = picturePath.value,
+                        status = status.value)
+            }
 
             saveReportJob = launch {
 

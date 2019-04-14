@@ -33,7 +33,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
             val response = observationRetrofitClient.postObservation(observationDto).await()
             val observation = response.body()
             if (response.isSuccessful && observation != null) {
-                Result.Success(observationDto)
+                Result.Success(observation)
             } else {
                 Log.e("ObservationApiClient", "Sending report error ${response.errorBody()?.string()}")
                 Result.Error(Exception("Error occurred when posting report ${response.errorBody()?.string()}"))

@@ -111,7 +111,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 val bundle = Bundle()
                 bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
                 this.navigateTo(ReportingActivity::class.java, bundle)
-                false
+                true
             }
 
             viewModel.mapReportingEvent.observe(this, Observer { action ->

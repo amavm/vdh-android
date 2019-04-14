@@ -4,13 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
 import app.vdh.org.vdhapp.data.Converters
-import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.dtos.ImageAssetDto
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import java.io.ByteArrayOutputStream
 
 fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
@@ -32,11 +30,11 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
     val statusList = status?.let { arrayOf(it.name) }
 
     return ObservationDto(
-            timestamp = System.currentTimeMillis() / 1000,
+            timestamp = timestamp / 1000,
             comment = comment ?: "",
             attributes = statusList ?: arrayOf(),
             position = arrayOf(position.latitude, position.longitude),
-            deviceId = context.uniqueId() ?: "",
+            deviceId = deviceId,
             assets = assets)
 }
 
@@ -51,14 +49,15 @@ fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
         } else null
 
         val report = ReportEntity(
+                id = it.deviceId + it.timestamp,
                 position = LatLng(it.position[0], it.position[1]),
                 deviceId =  it.deviceId,
                 comment = it.comment,
                 status = status,
-                syncTimestamp = it.timestamp * 1000,
+                timestamp = it.timestamp * 1000,
                 photoPath = photoPath,
-                serverId = it.id)
-        report.id = it.deviceId + it.timestamp
+                serverId = it.id,
+                sentToSever = true)
         report
     }
 }

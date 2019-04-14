@@ -8,12 +8,13 @@
     <string name="save">Sauvegarder</string>
     <string name="share">Partager</string>
     <string name="send">Envoyer</string>
-    <string name="sync_date">Envoyé %1s</string>
+    <string name="sync_date_fmt">Envoyé %1s</string>
+    <string name="save_date_fmt">Sauvegardé %1s</string>
     <string name="send_report_success">Rapport envoye</string>
     <string name="save_report_success">Rapport sauvegrade</string>
     <string name="delete_report_success">Rapport supprime</string>
     <string name="report_error">Une erreur s\'est produite</string>
-    <string name="mandatory_fields_missing_error">La location et le status sont obligatoires</string>
+    <string name="mandatory_fields_missing_error">Le lieu et le status sont obligatoires</string>
 
     <string name="status_caution">Autre obstacle</string>
     <string name="status_snow">Enneigé</string>

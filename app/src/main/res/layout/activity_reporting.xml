@@ -90,7 +90,7 @@
                         style="@style/Widget.MaterialComponents.Button.Icon"
                         app:layout_constraintVertical_chainStyle="packed"
                         app:icon="@drawable/ic_take_photo"
-                        app:visible="@{viewModel.picturePath == null &amp;&amp; viewModel.syncDate == null}"
+                        app:visible="@{viewModel.picturePath == null &amp;&amp; !viewModel.isReportSentToServer}"
                         android:text="@string/take_photo"
                         android:onClick="@{() -> viewModel.onTakePhotoButtonClicked()}"
                         app:layout_constraintTop_toTopOf="parent"
@@ -105,7 +105,7 @@
                         style="@style/Widget.MaterialComponents.Button.Icon"
                         app:icon="@drawable/ic_add_photo"
                         android:text="@string/add_photo"
-                        app:visible="@{viewModel.picturePath == null &amp;&amp; viewModel.syncDate == null}"
+                        app:visible="@{viewModel.picturePath == null &amp;&amp; !viewModel.isReportSentToServer}"
                         android:onClick="@{() -> viewModel.onPhotoFromGalleryButtonClicked()}"
                         app:layout_constraintTop_toBottomOf="@+id/photoPickerTakeFab"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -125,7 +125,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/no_photo"
-                        app:visible="@{viewModel.picturePath == null &amp;&amp; viewModel.syncDate != null}"
+                        app:visible="@{viewModel.picturePath == null &amp;&amp; viewModel.isReportSentToServer}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -291,7 +291,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:counterEnabled="true"
                         app:counterMaxLength="150"
-                        app:visible="@{viewModel.syncDate == null}">
+                        app:visible="@{!viewModel.isReportSentToServer}">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/commentTextInput"
@@ -313,7 +313,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:text="@{viewModel.reportComment}"
-                        app:visible="@{viewModel.syncDate != null}"/>
+                        app:visible="@{viewModel.isReportSentToServer}"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -328,7 +328,7 @@
                 android:text="@string/remove_report"
                 android:backgroundTint="@color/red"
                 android:onClick="@{() -> viewModel.deleteReport()}"
-                app:visible="@{viewModel.syncDate != null}"
+                app:visible="@{viewModel.isReportSentToServer}"
                 app:layout_constraintTop_toBottomOf="@+id/commentCard"
                 app:layout_constraintBottom_toTopOf="@+id/reportSyncDateTextView"
                 app:layout_constraintStart_toStartOf="parent"
@@ -341,8 +341,7 @@
                 android:gravity="center"
                 android:layout_marginTop="@dimen/medium_spacing"
                 android:layout_marginBottom="@dimen/medium_spacing"
-                android:text="@{viewModel.syncDate}"
-                app:visible="@{viewModel.syncDate != null}"
+                android:text="@{viewModel.saveOrSyncDate}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/deleteReportButton"
                 app:layout_constraintLeft_toLeftOf="parent"

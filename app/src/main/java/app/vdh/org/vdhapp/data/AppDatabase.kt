@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import android.content.Context
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 
-@Database(entities = [ReportEntity::class], version = 6, exportSchema = false)
+@Database(entities = [ReportEntity::class], version = 7, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
