@@ -16,7 +16,7 @@ class StatusFilterViewModel(app: Application) : AndroidViewModel(app) {
     val reportFilterEvent: SingleLiveEvent<ReportFilterEvent> = SingleLiveEvent()
 
     fun onStatusCheckedChanged(radioGroup: RadioGroup, id: Int) {
-        currentStatus.value = when(id){
+        currentStatus.value = when (id) {
             R.id.status_filter_snow -> Status.SNOW
             R.id.status_filter_caution -> Status.CAUTION
             R.id.status_filter_clear -> Status.CLEARED

@@ -17,14 +17,13 @@ object ImageHelper {
 
     private const val SHARE_IMAGE_PATH = "vdh_report_share_picture.jpeg"
 
-    fun getSharedImageUri(context: Context) : Uri? {
+    fun getSharedImageUri(context: Context): Uri? {
             val picture = File(context.cacheDir, SHARE_IMAGE_PATH)
             return FileProvider.getUriForFile(context,
                     BuildConfig.APPLICATION_ID + ".provider", picture)
-
     }
 
-    fun <T> getSharedImageRequestListener(context: Context) : RequestListener<T>  {
+    fun <T> getSharedImageRequestListener(context: Context): RequestListener<T> {
         return object : RequestListener<T> {
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<T>?, isFirstResource: Boolean): Boolean {
                 return false
@@ -43,7 +42,6 @@ object ImageHelper {
                 }
                 return false
             }
-
         }
     }
 }

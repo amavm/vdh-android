@@ -1,15 +1,16 @@
 package app.vdh.org.vdhapp.data.dtos
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
-data class ObservationDto(@SerializedName("timestamp") val timestamp: Long,
-                          @SerializedName("position") val position: Array<Double>,
-                          @SerializedName("attributes")val attributes: Array<String>,
-                          @SerializedName("assets") val assets: List<ImageAssetDto>?,
-                          @SerializedName("comment") val comment: String,
-                          @SerializedName("deviceId") val deviceId: String,
-                          @SerializedName("id") val id: String? = null) {
+data class ObservationDto(
+    @SerializedName("timestamp") val timestamp: Long,
+    @SerializedName("position") val position: Array<Double>,
+    @SerializedName("attributes")val attributes: Array<String>,
+    @SerializedName("assets") val assets: List<ImageAssetDto>?,
+    @SerializedName("comment") val comment: String,
+    @SerializedName("deviceId") val deviceId: String,
+    @SerializedName("id") val id: String? = null
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

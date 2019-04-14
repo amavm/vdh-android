@@ -2,8 +2,6 @@ package app.vdh.org.vdhapp.databinding
 
 import android.content.res.ColorStateList
 import androidx.databinding.BindingAdapter
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import com.google.android.material.button.MaterialButton
 import androidx.core.content.ContextCompat
@@ -11,20 +9,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
-import androidx.core.widget.CompoundButtonCompat
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import org.jetbrains.anko.textColor
-
 
 class BindingAdapter {
 
@@ -64,7 +56,6 @@ class BindingAdapter {
                     googleMap.addMarker(marker)
                 }
             }
-
         }
 
         @JvmStatic
@@ -103,5 +94,4 @@ class BindingAdapter {
             radioButton.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(radioButton.context, colorRes)))
         }
     }
-
 }

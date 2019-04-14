@@ -27,8 +27,7 @@ val appModule = module {
     single<ReportRepository> { ReportRepositoryImpl(get(), get()) }
 
     viewModel { ReportingViewModel(androidApplication(), get()) }
-    viewModel { ReportMapViewModel(androidApplication(), get ()) }
+    viewModel { ReportMapViewModel(androidApplication(), get()) }
     viewModel { StatusFilterViewModel(androidApplication()) }
     viewModel { HoursFilterViewModel(androidApplication()) }
-
 }

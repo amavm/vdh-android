@@ -8,18 +8,18 @@ import java.lang.Exception
 class Converters {
 
     @TypeConverter
-    fun positionToString(latLng: LatLng) : String {
+    fun positionToString(latLng: LatLng): String {
         return "${latLng.latitude}|${latLng.longitude}"
     }
 
     @TypeConverter
-    fun positionFromString(position: String) : LatLng {
+    fun positionFromString(position: String): LatLng {
         val positions = position.split("|")
-        return LatLng(positions[0].toDouble(),positions[1].toDouble())
+        return LatLng(positions[0].toDouble(), positions[1].toDouble())
     }
 
     @TypeConverter
-    fun statusToString(status: Status?) : String? {
+    fun statusToString(status: Status?): String? {
         status?.let {
             return status.name
         }
@@ -27,12 +27,12 @@ class Converters {
     }
 
     @TypeConverter
-    fun stringToStatus(statusKey: String?) : Status? {
+    fun stringToStatus(statusKey: String?): Status? {
         return Companion.stringToStatus(statusKey)
     }
 
     companion object {
-        fun stringToStatus(statusKey: String?) : Status? {
+        fun stringToStatus(statusKey: String?): Status? {
             if (statusKey != null) {
                 return try {
                     Status.valueOf(statusKey)

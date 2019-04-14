@@ -19,7 +19,7 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
 
-        fun newInstance(status: Status?) : StatusFilterDialogFragment {
+        fun newInstance(status: Status?): StatusFilterDialogFragment {
             val fragment = StatusFilterDialogFragment()
             if (status != null) {
                 val args = Bundle()
@@ -30,10 +30,10 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private val viewModel : StatusFilterViewModel by viewModel()
+    private val viewModel: StatusFilterViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding : FragmentStatusFilterBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_status_filter, container,false)
+        val binding: FragmentStatusFilterBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_status_filter, container, false)
 
         arguments?.getString(STATUS_SORT_PREFS_KEY)?.let {
             val status = Status.valueOf(it)
@@ -44,7 +44,7 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
         binding.setLifecycleOwner(this)
 
         viewModel.reportFilterEvent.observe(this, Observer { statusFilterEvent ->
-            when(statusFilterEvent) {
+            when (statusFilterEvent) {
                 is ReportFilterEvent.PickStatusFilter -> {
                     context?.let { context ->
                         Status.writeInPreferences(context, statusFilterEvent.status)

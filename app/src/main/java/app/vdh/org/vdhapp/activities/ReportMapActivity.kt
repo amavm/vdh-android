@@ -51,7 +51,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var map: GoogleMap? = null
-    private val viewModel : ReportMapViewModel by viewModel()
+    private val viewModel: ReportMapViewModel by viewModel()
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
@@ -68,7 +68,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding : ActivityReportMapBinding = DataBindingUtil.setContentView(
+        val binding: ActivityReportMapBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_report_map)
 
         with(binding) {
@@ -115,7 +115,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             viewModel.mapReportingEvent.observe(this, Observer { action ->
-                when(action) {
+                when (action) {
                     is ReportingMapEvent.AddReport -> {
                         this.navigateTo(ReportingActivity::class.java)
                     }
@@ -149,7 +149,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.menu_filter_hours -> {
                     viewModel.onHoursFilterButtonClicked()
                 }
@@ -189,7 +189,6 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 },
                 onError = {
-
                 })
     }
 

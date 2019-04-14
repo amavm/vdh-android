@@ -15,7 +15,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private const val DATABASE_NAME = "app_db"
 
-        fun create(context: Context) : AppDatabase {
+        fun create(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                     .fallbackToDestructiveMigration()
                     .build()

@@ -19,7 +19,11 @@ import app.vdh.org.vdhapp.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application), CoroutineScope {
@@ -36,12 +40,12 @@ class ReportingViewModel(application: Application, private val repository: Repor
     val picturePath: MutableLiveData<String> = MutableLiveData()
     val reportComment: MutableLiveData<String> = MutableLiveData()
     var saveOrSyncDate: MutableLiveData<String> = MutableLiveData()
-    var status : MutableLiveData<Status> = MutableLiveData()
-    var isReportSentToServer : MutableLiveData<Boolean> = MutableLiveData()
+    var status: MutableLiveData<Status> = MutableLiveData()
+    var isReportSentToServer: MutableLiveData<Boolean> = MutableLiveData()
 
-    var placePickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
-    var photoPickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
-    var statusPickerEditButtonViewModel : MutableLiveData<EditButtonViewModel> = MutableLiveData()
+    var placePickerEditButtonViewModel: MutableLiveData<EditButtonViewModel> = MutableLiveData()
+    var photoPickerEditButtonViewModel: MutableLiveData<EditButtonViewModel> = MutableLiveData()
+    var statusPickerEditButtonViewModel: MutableLiveData<EditButtonViewModel> = MutableLiveData()
 
     private var saveReportJob: Job? = null
     private var deleteReportJob: Job? = null
@@ -97,9 +101,12 @@ class ReportingViewModel(application: Application, private val repository: Repor
         setPhotoEditButton()
     }
 
-    fun saveReport(declarationComment: String, sendToServer: Boolean = false,
-                   onSuccess: (String) -> Unit,
-                   onError: (String) -> Unit) {
+    fun saveReport(
+        declarationComment: String,
+        sendToServer: Boolean = false,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
 
         val reportLocation = placeLocation.value
         if (reportLocation != null && status.value != null) {
@@ -143,13 +150,15 @@ class ReportingViewModel(application: Application, private val repository: Repor
         reportingEvent.value = ReportingEvent.DeleteReport
     }
 
-    fun deleteReport(onSuccess: (String) -> Unit,
-                     onError: (String) -> Unit) {
+    fun deleteReport(
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
         currentReport?.let {
             deleteReportJob = launch {
                 val result = repository.deleteReport(it)
                 withContext(Dispatchers.Main) {
-                    when(result) {
+                    when (result) {
                         is Result.Success -> {
                             onSuccess(getApplication<App>().getString(R.string.delete_report_success))
                         }
@@ -164,7 +173,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
     }
 
     private fun setPlaceEditButton() {
-        placePickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = {onPlacePickerButtonCLicked()})
+        placePickerEditButtonViewModel.value = EditButtonViewModel(visible = true, onClick = { onPlacePickerButtonCLicked() })
     }
 
     private fun setPhotoEditButton() {
@@ -181,7 +190,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
         })
     }
 
-    fun getShareIntent() : Intent {
+    fun getShareIntent(): Intent {
         val appContext = getApplication<Application>().applicationContext
 
         val statusLabelRes = currentReport?.status?.labelRes

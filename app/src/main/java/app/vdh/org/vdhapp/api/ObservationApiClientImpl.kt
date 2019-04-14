@@ -28,7 +28,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
             .build()
             .create(ObservationRetrofitClient::class.java)
 
-    override suspend fun sendObservation(observationDto: ObservationDto) : Result<ObservationDto> {
+    override suspend fun sendObservation(observationDto: ObservationDto): Result<ObservationDto> {
         return safeCall({
             val response = observationRetrofitClient.postObservation(observationDto).await()
             val observation = response.body()
@@ -54,7 +54,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
         }, errorMessage = "Unable to get observations")
     }
 
-    override suspend fun removeObservation(observationId: String) : Result<ResponseBody> {
+    override suspend fun removeObservation(observationId: String): Result<ResponseBody> {
         return safeCall({
             val response = observationRetrofitClient.deleteObservation(observationId).await()
             val responseBody = response.body()
@@ -65,13 +65,14 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
                 Result.Error(Exception("Error occurred when removing reports ${response.errorBody()?.string()}"))
             }
         }, errorMessage = "Unable to remove observation")
-
     }
 
-    override suspend fun getBicyclePaths(boundingBoxQueryParameter: BoundingBoxQueryParameter?,
-                                         centerCoordinates: LatLng?,
-                                         geoJsonItems: JSONArray?,
-                                         nextToken: String?): Result<JSONObject> {
+    override suspend fun getBicyclePaths(
+        boundingBoxQueryParameter: BoundingBoxQueryParameter?,
+        centerCoordinates: LatLng?,
+        geoJsonItems: JSONArray?,
+        nextToken: String?
+    ): Result<JSONObject> {
         return safeCall(call = {
             val latLngQueryParameter = if (centerCoordinates != null) {
                 LatLngQueryParameter(centerCoordinates)
@@ -90,8 +91,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
                     val jsonObject = JSONObject(geoJsonResponse.string())
                     val nextTokenString = try {
                         jsonObject.getString("nextToken")
-                    }
-                    catch (e: JSONException) {
+                    } catch (e: JSONException) {
                         null
                     }
 
@@ -111,20 +111,19 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
                                 totalItems.put(items.get(i))
                             }
 
-                            getBicyclePaths(geoJsonItems = totalItems , nextToken = nextTokenString)
+                            getBicyclePaths(geoJsonItems = totalItems, nextToken = nextTokenString)
                         }
                     }
-
                 } else {
                     Result.Error(Exception("Response body is null"))
                 }
             } else {
                 Result.Error(Exception("Api error on getBicyclePaths, code : ${result.code()}"))
             }
-        } , errorMessage = "Unable to get bicycle path JsonObject")
+        }, errorMessage = "Unable to get bicycle path JsonObject")
     }
 
-    private fun transformToGeoJson(geoJsonItems: JSONArray) : JSONObject {
+    private fun transformToGeoJson(geoJsonItems: JSONArray): JSONObject {
 
         for (i in 0 until geoJsonItems.length()) {
             val section = geoJsonItems.getJSONObject(i)
@@ -136,7 +135,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
         geoJson.put("type", "FeatureCollection")
         geoJson.put("features", geoJsonItems)
 
-        //File(appContext.cacheDir, "geojson.json").writeText(geoJson.toString(4))
+        // File(appContext.cacheDir, "geojson.json").writeText(geoJson.toString(4))
 
         return geoJson
     }

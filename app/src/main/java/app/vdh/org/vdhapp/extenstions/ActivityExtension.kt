@@ -14,6 +14,6 @@ fun <T> Activity.navigateTo(klass: Class<T>, data: Bundle? = null) {
     this.startActivity(intent)
 }
 
-fun <T: BottomSheetDialogFragment> AppCompatActivity.openBottomDialogFragment(fragment: T, tag: String) {
+fun <T : BottomSheetDialogFragment> AppCompatActivity.openBottomDialogFragment(fragment: T, tag: String) {
     fragment.show(supportFragmentManager, tag)
 }

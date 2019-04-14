@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.maps.model.LatLng
 import java.io.ByteArrayOutputStream
 
-fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
+fun ReportEntity.toObservationDto(context: Context): ObservationDto {
 
     val assets = if (photoPath != null) {
         val bitmap = Glide.with(context)
@@ -38,7 +38,7 @@ fun ReportEntity.toObservationDto(context: Context) : ObservationDto {
             assets = assets)
 }
 
-fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
+fun List<ObservationDto>.toReportEntities(): List<ReportEntity> {
     return filter { it.position.size == 2 }
             .map {
         val photoPath = if (it.assets?.isNotEmpty() == true) {
@@ -51,7 +51,7 @@ fun List<ObservationDto>.toReportEntities() : List<ReportEntity> {
         val report = ReportEntity(
                 id = it.deviceId + it.timestamp,
                 position = LatLng(it.position[0], it.position[1]),
-                deviceId =  it.deviceId,
+                deviceId = it.deviceId,
                 comment = it.comment,
                 status = status,
                 timestamp = it.timestamp * 1000,

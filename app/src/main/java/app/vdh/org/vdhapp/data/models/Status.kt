@@ -8,17 +8,19 @@ import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.consts.PrefConst.STATUS_SORT_PREFS_KEY
 import org.jetbrains.anko.defaultSharedPreferences
 
-enum class Status(@StringRes val  labelRes: Int,
-                  @ColorRes val colorRes: Int,
-                  @DrawableRes val imgRes: Int) {
+enum class Status(
+    @StringRes val labelRes: Int,
+    @ColorRes val colorRes: Int,
+    @DrawableRes val imgRes: Int
+) {
     CAUTION(R.string.status_caution, R.color.red, R.drawable.ic_caution_on),
     SNOW(R.string.status_snow, R.color.orange, R.drawable.ic_snowy_on),
     ICE(R.string.status_ice, R.color.darkBlue, R.drawable.ic_icy_on),
-    CLEARED( R.string.status_clear, R.color.green, R.drawable.ic_cleared_on);
+    CLEARED(R.string.status_clear, R.color.green, R.drawable.ic_cleared_on);
 
     companion object {
 
-        fun readFromPreferences(context: Context) : Status? {
+        fun readFromPreferences(context: Context): Status? {
             val statusKey = context.defaultSharedPreferences.getString(STATUS_SORT_PREFS_KEY, null)
             return if (statusKey != null) Status.valueOf(statusKey) else null
         }

@@ -23,7 +23,6 @@ import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_reporting.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-
 class ReportingActivity : AppCompatActivity() {
 
     companion object {
@@ -31,14 +30,14 @@ class ReportingActivity : AppCompatActivity() {
         const val REPORT_ARGS_KEY = "report_args_key"
     }
 
-    private val viewModel : ReportingViewModel by viewModel()
+    private val viewModel: ReportingViewModel by viewModel()
 
-    private val placePickerBuilder =  PlacePicker.IntentBuilder()
-    private val progressDialogFragment =  ProgressDialogFragment()
+    private val placePickerBuilder = PlacePicker.IntentBuilder()
+    private val progressDialogFragment = ProgressDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding : ActivityReportingBinding = DataBindingUtil.setContentView(
+        val binding: ActivityReportingBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_reporting)
 
         getCurrentReport()?.let {
@@ -82,7 +81,6 @@ class ReportingActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         placePickerMapView.onStart()
-
     }
 
     override fun onResume() {
@@ -103,13 +101,10 @@ class ReportingActivity : AppCompatActivity() {
                 val place = PlacePicker.getPlace(applicationContext, data)
                 viewModel.setPlace(place)
             }
-        }
-
-        else if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+        } else if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             val image = ImagePicker.getFirstImageOrNull(data)
             viewModel.setPhoto(image.path)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -130,7 +125,7 @@ class ReportingActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.menu_save_declaraton -> {
                     saveReport()
                 }
@@ -151,12 +146,12 @@ class ReportingActivity : AppCompatActivity() {
                     if (sendToServer) {
                         finish()
                     } else {
-                        Snackbar.make(container, it , Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
                     }
                 },
                 onError = {
                     progressDialogFragment.dismiss()
-                    Snackbar.make(container, it , Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
                 })
     }
 
@@ -169,7 +164,7 @@ class ReportingActivity : AppCompatActivity() {
                 },
                 onError = {
                     progressDialogFragment.dismiss()
-                    Snackbar.make(container, it , Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
                 })
     }
 
@@ -188,6 +183,5 @@ class ReportingActivity : AppCompatActivity() {
         placePickerMapView.onLowMemory()
     }
 
-    private fun getCurrentReport() : ReportEntity? = intent.extras?.getParcelable(REPORT_ARGS_KEY)
-
+    private fun getCurrentReport(): ReportEntity? = intent.extras?.getParcelable(REPORT_ARGS_KEY)
 }

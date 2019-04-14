@@ -1,7 +1,11 @@
 package app.vdh.org.vdhapp.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.models.Status
 
@@ -9,10 +13,10 @@ import app.vdh.org.vdhapp.data.models.Status
 interface ReportDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertReport(reportEntity: ReportEntity) : Long
+    fun insertReport(reportEntity: ReportEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertReportList(reportEntityList: List<ReportEntity>) : List<Long>
+    fun insertReportList(reportEntityList: List<ReportEntity>): List<Long>
 
     @Query("SELECT * FROM reportentity WHERE timestamp >= :fromTimeStamp")
     fun getAllReports(fromTimeStamp: Long): LiveData<List<ReportEntity>>

@@ -13,7 +13,11 @@ import app.vdh.org.vdhapp.api.safeCall
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -23,16 +27,14 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Default
 
-
     override suspend fun saveReport(context: Context, reportEntity: ReportEntity, sendToServer: Boolean): Pair<Result<Long>, Result<ObservationDto>?> {
 
         var reportToSave = reportEntity
 
         val sendServerResult: Result<ObservationDto>? =
                 if (sendToServer) {
-                    safeCall(call = { observationApiClient.sendObservation(reportEntity.toObservationDto(context))},
+                    safeCall(call = { observationApiClient.sendObservation(reportEntity.toObservationDto(context)) },
                             errorMessage = "Error during sending report")
-
                 } else null
 
         if (sendServerResult is Result.Success) {
@@ -41,29 +43,26 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
             }
         }
 
-        val insertionResult = safeCall(call = {savedReport(reportToSave)},
+        val insertionResult = safeCall(call = { savedReport(reportToSave) },
                 errorMessage = "Error during sending report")
-
 
         return Pair(insertionResult, sendServerResult)
     }
 
     override fun getReports(hoursAgo: Int, status: Status?): LiveData<List<ReportEntity>> {
         launch {
-            val syncResult = withContext(Dispatchers.Default) {
+            when (val syncResult = withContext(Dispatchers.Default) {
                 syncReports()
-            }
-            when (syncResult) {
+            }) {
                 is Result.Success -> Log.i("ReportRepositoryImpl", "Sync of ${syncResult.data} reports succeed")
                 is Result.Error -> Log.e("ReportRepositoryImpl", "Sync reports error ${syncResult.exception}")
-
             }
         }
 
         val now = System.currentTimeMillis()
         val from = now - TimeUnit.HOURS.toMillis(hoursAgo.toLong())
 
-        return if (status == null){
+        return if (status == null) {
             reportDao.getAllReports(from)
         } else {
             reportDao.getReports(status, from)
@@ -84,7 +83,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
 
     override suspend fun deleteReport(reportEntity: ReportEntity): Result<String> {
         reportEntity.serverId?.let {
-            val serverResult = safeCall(call = { observationApiClient.removeObservation(it)}, errorMessage = "Exception during remove from server")
+            val serverResult = safeCall(call = { observationApiClient.removeObservation(it) }, errorMessage = "Exception during remove from server")
             if (serverResult is Result.Success) {
                 val dbResult = safeCall(call = { deleteFromDatabase(reportEntity) }, errorMessage = "Unable to remove from db")
                 if (dbResult is Result.Success) {
@@ -96,20 +95,20 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return Result.Error(Exception("Unable to delete report"))
     }
 
-    private suspend fun deleteFromDatabase(reportEntity: ReportEntity) : Result<Unit> {
+    private suspend fun deleteFromDatabase(reportEntity: ReportEntity): Result<Unit> {
         return withContext(Dispatchers.Default) {
             Result.Success(reportDao.deleteReport(reportEntity))
         }
     }
 
-    private suspend fun syncReports() : Result<Int>? {
-        val observationsResult = safeCall(call = {observationApiClient.getObservations()},
+    private suspend fun syncReports(): Result<Int>? {
+        val observationsResult = safeCall(call = { observationApiClient.getObservations() },
                 errorMessage = "Error occurred when getting observations")
         return when (observationsResult) {
             is Result.Success -> {
-                val insertionResult = safeCall(call = {savedReportList(observationsResult.data.observationList.toReportEntities())},
+                val insertionResult = safeCall(call = { savedReportList(observationsResult.data.observationList.toReportEntities()) },
                         errorMessage = "Error occurred when saving observations")
-                when(insertionResult) {
+                when (insertionResult) {
                     is Result.Success -> Result.Success(observationsResult.data.observationList.size)
                     is Result.Error -> Result.Error(insertionResult.exception)
                 }
@@ -121,13 +120,13 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         }
     }
 
-    private suspend fun savedReport(report: ReportEntity) : Result<Long>{
+    private suspend fun savedReport(report: ReportEntity): Result<Long> {
         return withContext(Dispatchers.Default) {
             Result.Success(reportDao.insertReport(report))
         }
     }
 
-    private suspend fun savedReportList(reportList: List<ReportEntity>) : Result<List<Long>>{
+    private suspend fun savedReportList(reportList: List<ReportEntity>): Result<List<Long>> {
         return withContext(Dispatchers.Default) {
             Result.Success(reportDao.insertReportList(reportList))
         }
