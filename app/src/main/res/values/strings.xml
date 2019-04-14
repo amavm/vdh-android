@@ -14,7 +14,7 @@
     <string name="save_report_success">Rapport sauvegrade</string>
     <string name="delete_report_success">Rapport supprime</string>
     <string name="report_error">Une erreur s\'est produite</string>
-    <string name="mandatory_fields_missing_error">Le lieu et le status sont obligatoires</string>
+    <string name="mandatory_fields_missing_error">Le lieu et le statut sont obligatoires</string>
 
     <string name="status_caution">Autre obstacle</string>
     <string name="status_snow">Enneigé</string>
@@ -32,6 +32,12 @@
         Commentaire: %3s
     </string>
     <string name="filter_status">Filtrer par status</string>
-    <string name="filter_hours">Filtrer par ajout</string>
+    <string name="filter_hours">Filtrer par heure d\'ajout</string>
+    <string name="filter_hours_title">Ajouté il y a</string>
     <string name="filter_path">Filtrer par type de piste</string>
+    
+    <plurals name="hours">
+        <item quantity="one">heure</item>
+        <item quantity="other">heures</item>
+    </plurals>
 </resources>

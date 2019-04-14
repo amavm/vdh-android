@@ -39,7 +39,7 @@ class HourFilterDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.viewModel = viewModel
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         viewModel.reportFilterEvent.observe(this, Observer { statusFilterEvent ->
             when (statusFilterEvent) {
@@ -60,5 +60,9 @@ class HourFilterDialogFragment : BottomSheetDialogFragment() {
         report_filter_number_picker.minValue = 1
         report_filter_number_picker.maxValue = 24
         report_filter_number_picker.value = viewModel.currentHoursAgoFilter
+        report_filter_number_picker.displayedValues = Array(24) {
+            val currentHour = it + 1
+            "$currentHour ${resources.getQuantityString(R.plurals.hours, currentHour)}"
+        }
     }
 }

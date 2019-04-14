@@ -8,24 +8,45 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/backgroundBlue">
+
+        <TextView
+            android:id="@+id/hours_filter_title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_hours_title"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingTop="@dimen/medium_spacing"
+            android:paddingStart="@dimen/medium_spacing"
+            android:paddingEnd="@dimen/medium_spacing"
+            android:paddingBottom="@dimen/medium_spacing"
+            android:drawableStart="@drawable/ic_menu_hours"
+            android:drawablePadding="@dimen/medium_spacing"/>
 
         <NumberPicker
             android:id="@+id/report_filter_number_picker"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onValueChange="@{() -> viewModel.onValueChanged(reportFilterNumberPicker)}"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hours_filter_title"
             app:layout_constraintBottom_toTopOf="@+id/report_filter_hour_choose_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/report_filter_hour_choose_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/medium_spacing"
             android:text="@android:string/ok"
             android:onClick="@{() -> viewModel.onHourFilterConfirmed()}"
+            style="@style/Widget.MaterialComponents.Button"
+            android:backgroundTint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/report_filter_number_picker"
             app:layout_constraintStart_toStartOf="parent"
