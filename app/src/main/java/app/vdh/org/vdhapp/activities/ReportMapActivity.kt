@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.Menu
@@ -18,8 +19,9 @@ import app.vdh.org.vdhapp.consts.PrefConst
 import app.vdh.org.vdhapp.consts.PrefConst.HOURS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.consts.PrefConst.STATUS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.events.ReportFilterEvent
+import app.vdh.org.vdhapp.data.events.MapFilterEvent
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
@@ -63,7 +65,9 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setCurrentFilterFromSharedPrefs() {
         val status = Status.readFromPreferences(this)
         val hourFilterStatus = defaultSharedPreferences.getInt(HOURS_SORT_PREFS_KEY, PrefConst.HOURS_SORT_DEFAULT_VALUE)
-        viewModel.setCurrentFilter(ReportFilterEvent.ReportFilterPicked(status, hourFilterStatus))
+        viewModel.currentFilterEvent.value = MapFilterEvent.ReportFilterPicked(status, hourFilterStatus)
+        // TODO get this value from shared prefs
+        viewModel.setBikePathNetwork(BikePathNetwork.FOUR_SEASONS)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +76,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 this, R.layout.activity_report_map)
 
         with(binding) {
-            setLifecycleOwner(this@ReportMapActivity)
+            lifecycleOwner = this@ReportMapActivity
             viewModel = this@ReportMapActivity.viewModel
         }
 
@@ -97,6 +101,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private fun initMap() {
 
+        setCurrentFilterFromSharedPrefs()
         addReports()
 
         map?.let { map ->
@@ -122,22 +127,26 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             })
 
-            viewModel.filterReportingEvent.observe(this, Observer { action ->
+            viewModel.mapFilterEvent.observe(this, Observer { action ->
                 when (action) {
-                    is ReportFilterEvent.PickStatusFilter -> {
+                    is MapFilterEvent.PickStatusFilter -> {
                         this.openBottomDialogFragment(StatusFilterDialogFragment.newInstance(action.status), "status_filter_framgent")
                     }
 
-                    is ReportFilterEvent.PickHoursFilter -> {
+                    is MapFilterEvent.PickHoursFilter -> {
                         this.openBottomDialogFragment(HourFilterDialogFragment.newInstance(action.hoursAgo), "status_filter_framgent")
                     }
+
+                    is MapFilterEvent.NetworkFilterPicked -> {
+                        addBicyclePath(map)
+                    }
+
+
                 }
             })
 
             map.setOnCameraIdleListener {
-                if (map.cameraPosition.zoom >= BIKE_PATH_ON_MAP_ZOOM) {
-                    addBicyclePath(map)
-                }
+                addBicyclePath(map)
             }
         }
     }
@@ -159,6 +168,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 R.id.menu_filter_path -> {
+                    viewModel.setBikePathNetwork()
                 }
             }
         }
@@ -166,7 +176,6 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addReports() {
-        setCurrentFilterFromSharedPrefs()
         viewModel.reports.observe(this, Observer { reports ->
             map?.clear()
             map?.addReportMarkers(this, reports)
@@ -174,22 +183,29 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addBicyclePath(map: GoogleMap) {
-        val visibleRegion = map.projection.visibleRegion
-        var layer: GeoJsonLayer? = null
-        viewModel.getBicyclePath(
-                boundingBoxQueryParameter = BoundingBoxQueryParameter(
-                        topRight = visibleRegion.latLngBounds.northeast,
-                        bottomLeft = visibleRegion.latLngBounds.southwest
-                ),
-                onSuccess = { geoJson ->
-                    map.let { map ->
-                        layer?.removeLayerFromMap()
-                        layer = GeoJsonLayer(map, geoJson)
-                        layer?.addLayerToMap()
-                    }
-                },
-                onError = {
-                })
+        if (map.cameraPosition.zoom >= BIKE_PATH_ON_MAP_ZOOM) {
+            val visibleRegion = map.projection.visibleRegion
+            var layer: GeoJsonLayer? = null
+            viewModel.getBicyclePath(
+                    boundingBoxQueryParameter = BoundingBoxQueryParameter(
+                            topRight = visibleRegion.latLngBounds.northeast,
+                            bottomLeft = visibleRegion.latLngBounds.southwest
+                    ),
+                    onSuccess = { geoJson, network ->
+                        map.let { map ->
+                            layer?.removeLayerFromMap()
+                            layer = GeoJsonLayer(map, geoJson)
+                                    .apply {
+                                        defaultLineStringStyle.color = when (network) {
+                                            BikePathNetwork.FOUR_SEASONS -> Color.CYAN
+                                            BikePathNetwork.THREE_SEASONS -> Color.RED
+                                    }}
+                            layer?.addLayerToMap()
+                        }
+                    },
+                    onError = {
+                    })
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

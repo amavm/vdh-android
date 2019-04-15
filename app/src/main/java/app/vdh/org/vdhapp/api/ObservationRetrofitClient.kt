@@ -4,6 +4,7 @@ import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.dtos.ObservationListDto
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.LatLngQueryParameter
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import kotlinx.coroutines.Deferred
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -17,10 +18,10 @@ import retrofit2.http.Path
 interface ObservationRetrofitClient {
 
     @POST("observations")
-    fun postObservation(@Body observation: ObservationDto): Deferred<Response<ObservationDto>>
+    fun postObservationAsync(@Body observation: ObservationDto): Deferred<Response<ObservationDto>>
 
     @GET("observations")
-    fun getObservations(
+    fun getObservationsAsync(
         @Query("startTs") startTimeStamp: Long? = null,
         @Query("endTs") endTimestamp: Long? = null,
         @Query("sort") sort: String? = null,
@@ -28,12 +29,13 @@ interface ObservationRetrofitClient {
     ): Deferred<Response<ObservationListDto>>
 
     @DELETE("observations/{id}")
-    fun deleteObservation(@Path("id") id: String): Deferred<Response<ResponseBody>>
+    fun deleteObservationAsync(@Path("id") id: String): Deferred<Response<ResponseBody>>
 
     @GET("bicycle-paths")
-    fun getBicyclePaths(
-        @Query("bbox") boundingBoxQueryParameter: BoundingBoxQueryParameter?,
-        @Query("near") centerLatLng: LatLngQueryParameter?,
-        @Query("nextToken") nextToken: String? = null
+    fun getBicyclePathsAsync(
+            @Query("bbox") boundingBoxQueryParameter: BoundingBoxQueryParameter?,
+            @Query("near") centerLatLng: LatLngQueryParameter?,
+            @Query("nextToken") nextToken: String? = null,
+            @Query("network ") bikePathNetwork: BikePathNetwork = BikePathNetwork.FOUR_SEASONS
     ): Deferred<Response<ResponseBody>>
 }

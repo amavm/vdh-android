@@ -10,6 +10,7 @@ import app.vdh.org.vdhapp.extenstions.toReportEntities
 import app.vdh.org.vdhapp.api.ObservationApiClient
 import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.api.safeCall
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
@@ -69,16 +70,8 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         }
     }
 
-    override suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter): Result<JSONObject> {
-        return observationApiClient.getBicyclePaths(boundingBoxQueryParameter = boundingBoxQueryParameter)
-    }
-
-    override suspend fun getBicyclePathGeoJson(centerCoordinates: LatLng): Result<JSONObject> {
-        return observationApiClient.getBicyclePaths(centerCoordinates = centerCoordinates)
-    }
-
-    override suspend fun getBicyclePathGeoJson(): Result<JSONObject> {
-        return observationApiClient.getBicyclePaths()
+    override suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter, network: BikePathNetwork): Result<JSONObject> {
+        return observationApiClient.getBicyclePaths(boundingBoxQueryParameter = boundingBoxQueryParameter, network = network)
     }
 
     override suspend fun deleteReport(reportEntity: ReportEntity): Result<String> {
@@ -102,13 +95,11 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun syncReports(): Result<Int>? {
-        val observationsResult = safeCall(call = { observationApiClient.getObservations() },
-                errorMessage = "Error occurred when getting observations")
-        return when (observationsResult) {
+        return when (val observationsResult = safeCall(call = { observationApiClient.getObservations() },
+                errorMessage = "Error occurred when getting observations")) {
             is Result.Success -> {
-                val insertionResult = safeCall(call = { savedReportList(observationsResult.data.observationList.toReportEntities()) },
-                        errorMessage = "Error occurred when saving observations")
-                when (insertionResult) {
+                when (val insertionResult = safeCall(call = { savedReportList(observationsResult.data.observationList.toReportEntities()) },
+                        errorMessage = "Error occurred when saving observations")) {
                     is Result.Success -> Result.Success(observationsResult.data.observationList.size)
                     is Result.Error -> Result.Error(insertionResult.exception)
                 }

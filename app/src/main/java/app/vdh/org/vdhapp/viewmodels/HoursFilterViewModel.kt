@@ -4,19 +4,19 @@ import android.app.Application
 import android.widget.NumberPicker
 import androidx.lifecycle.AndroidViewModel
 import app.vdh.org.vdhapp.data.SingleLiveEvent
-import app.vdh.org.vdhapp.data.events.ReportFilterEvent
+import app.vdh.org.vdhapp.data.events.MapFilterEvent
 
 class HoursFilterViewModel(app: Application) : AndroidViewModel(app) {
 
     var currentHoursAgoFilter: Int = 2
 
-    val reportFilterEvent: SingleLiveEvent<ReportFilterEvent> = SingleLiveEvent()
+    val mapFilterEvent: SingleLiveEvent<MapFilterEvent> = SingleLiveEvent()
 
     fun onValueChanged(numberPicker: NumberPicker) {
         currentHoursAgoFilter = numberPicker.value
     }
 
     fun onHourFilterConfirmed() {
-        reportFilterEvent.value = ReportFilterEvent.PickHoursFilter(currentHoursAgoFilter)
+        mapFilterEvent.value = MapFilterEvent.PickHoursFilter(currentHoursAgoFilter)
     }
 }

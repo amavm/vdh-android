@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.consts.PrefConst.STATUS_SORT_PREFS_KEY
-import app.vdh.org.vdhapp.data.events.ReportFilterEvent
+import app.vdh.org.vdhapp.data.events.MapFilterEvent
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.databinding.FragmentStatusFilterBinding
 import app.vdh.org.vdhapp.viewmodels.StatusFilterViewModel
@@ -43,9 +43,9 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
         binding.viewModel = viewModel
         binding.setLifecycleOwner(this)
 
-        viewModel.reportFilterEvent.observe(this, Observer { statusFilterEvent ->
+        viewModel.mapFilterEvent.observe(this, Observer { statusFilterEvent ->
             when (statusFilterEvent) {
-                is ReportFilterEvent.PickStatusFilter -> {
+                is MapFilterEvent.PickStatusFilter -> {
                     context?.let { context ->
                         Status.writeInPreferences(context, statusFilterEvent.status)
                         dismiss()

@@ -3,6 +3,7 @@ package app.vdh.org.vdhapp.api
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.dtos.ObservationListDto
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -20,6 +21,7 @@ interface ObservationApiClient {
         boundingBoxQueryParameter: BoundingBoxQueryParameter? = null,
         centerCoordinates: LatLng? = null,
         geoJsonItems: JSONArray? = null,
-        nextToken: String? = null
+        nextToken: String? = null,
+        network: BikePathNetwork
     ): Result<JSONObject>
 }

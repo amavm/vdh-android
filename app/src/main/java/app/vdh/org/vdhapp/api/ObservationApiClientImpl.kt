@@ -5,6 +5,7 @@ import android.util.Log
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.dtos.ObservationListDto
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.LatLngQueryParameter
 import com.google.android.gms.maps.model.LatLng
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -30,7 +31,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
 
     override suspend fun sendObservation(observationDto: ObservationDto): Result<ObservationDto> {
         return safeCall({
-            val response = observationRetrofitClient.postObservation(observationDto).await()
+            val response = observationRetrofitClient.postObservationAsync(observationDto).await()
             val observation = response.body()
             if (response.isSuccessful && observation != null) {
                 Result.Success(observation)
@@ -43,7 +44,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
 
     override suspend fun getObservations(): Result<ObservationListDto> {
         return safeCall({
-            val response = observationRetrofitClient.getObservations().await()
+            val response = observationRetrofitClient.getObservationsAsync().await()
             val observationList = response.body()
             if (response.isSuccessful && observationList != null) {
                 Result.Success(observationList)
@@ -56,7 +57,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
 
     override suspend fun removeObservation(observationId: String): Result<ResponseBody> {
         return safeCall({
-            val response = observationRetrofitClient.deleteObservation(observationId).await()
+            val response = observationRetrofitClient.deleteObservationAsync(observationId).await()
             val responseBody = response.body()
             if (response.isSuccessful && responseBody != null) {
                 Result.Success(responseBody)
@@ -71,7 +72,8 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
         boundingBoxQueryParameter: BoundingBoxQueryParameter?,
         centerCoordinates: LatLng?,
         geoJsonItems: JSONArray?,
-        nextToken: String?
+        nextToken: String?,
+        network: BikePathNetwork
     ): Result<JSONObject> {
         return safeCall(call = {
             val latLngQueryParameter = if (centerCoordinates != null) {
@@ -79,10 +81,11 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
             } else {
                 null
             }
-            val result = observationRetrofitClient.getBicyclePaths(
+            val result = observationRetrofitClient.getBicyclePathsAsync(
                     boundingBoxQueryParameter = boundingBoxQueryParameter,
                     centerLatLng = latLngQueryParameter,
-                    nextToken = nextToken)
+                    nextToken = nextToken,
+                    bikePathNetwork = network)
                     .await()
 
             if (result.isSuccessful) {
@@ -111,7 +114,7 @@ class ObservationApiClientImpl(private val appContext: Context) : ObservationApi
                                 totalItems.put(items.get(i))
                             }
 
-                            getBicyclePaths(geoJsonItems = totalItems, nextToken = nextTokenString)
+                            getBicyclePaths(geoJsonItems = totalItems, nextToken = nextTokenString, network = network)
                         }
                     }
                 } else {

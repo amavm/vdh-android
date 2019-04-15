@@ -6,6 +6,7 @@ import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.consts.PrefConst
 import app.vdh.org.vdhapp.data.dtos.ObservationDto
 import app.vdh.org.vdhapp.data.entities.ReportEntity
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
@@ -19,9 +20,5 @@ interface ReportRepository {
 
     suspend fun deleteReport(reportEntity: ReportEntity): Result<String>
 
-    suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter): Result<JSONObject>
-
-    suspend fun getBicyclePathGeoJson(centerCoordinates: LatLng): Result<JSONObject>
-
-    suspend fun getBicyclePathGeoJson(): Result<JSONObject>
+    suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter, network: BikePathNetwork): Result<JSONObject>
 }
