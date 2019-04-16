@@ -11,4 +11,6 @@
     <color name="red">#CC1719</color>
     <color name="green">#4FAE47</color>
     <color name="orange">#EE7D00</color>
+    <color name="three_seasons">#4CAF50</color>
+    <color name="four_seasons">#3588b3</color>
 </resources>

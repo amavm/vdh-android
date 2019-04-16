@@ -81,7 +81,7 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
         } ?: run {
             currentBikePathNetwork?.let {
                 val nextNetwork = it.next()
-                currentBikePathNetwork = network
+                currentBikePathNetwork = nextNetwork
                 mapFilterEvent.value = MapFilterEvent.NetworkFilterPicked(nextNetwork)
             }
         }

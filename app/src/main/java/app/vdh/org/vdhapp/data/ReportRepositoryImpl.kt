@@ -13,7 +13,6 @@ import app.vdh.org.vdhapp.api.safeCall
 import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

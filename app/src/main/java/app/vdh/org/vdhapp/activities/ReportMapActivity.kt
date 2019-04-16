@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.Menu
@@ -38,7 +37,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.data.geojson.GeoJsonLayer
+import kotlinx.android.synthetic.main.activity_report_map.*
 import org.jetbrains.anko.defaultSharedPreferences
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -61,6 +62,8 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             HOURS_SORT_PREFS_KEY -> setCurrentFilterFromSharedPrefs()
         }
     }
+
+    private var geoJsonLayer: GeoJsonLayer? = null
 
     private fun setCurrentFilterFromSharedPrefs() {
         val status = Status.readFromPreferences(this)
@@ -138,10 +141,9 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
 
                     is MapFilterEvent.NetworkFilterPicked -> {
+                        Snackbar.make(map_coordinator_layout, action.bikePathNetwork.label, Snackbar.LENGTH_LONG).show()
                         addBicyclePath(map)
                     }
-
-
                 }
             })
 
@@ -185,7 +187,6 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun addBicyclePath(map: GoogleMap) {
         if (map.cameraPosition.zoom >= BIKE_PATH_ON_MAP_ZOOM) {
             val visibleRegion = map.projection.visibleRegion
-            var layer: GeoJsonLayer? = null
             viewModel.getBicyclePath(
                     boundingBoxQueryParameter = BoundingBoxQueryParameter(
                             topRight = visibleRegion.latLngBounds.northeast,
@@ -193,14 +194,12 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     ),
                     onSuccess = { geoJson, network ->
                         map.let { map ->
-                            layer?.removeLayerFromMap()
-                            layer = GeoJsonLayer(map, geoJson)
+                            geoJsonLayer?.removeLayerFromMap()
+                            geoJsonLayer = GeoJsonLayer(map, geoJson)
                                     .apply {
-                                        defaultLineStringStyle.color = when (network) {
-                                            BikePathNetwork.FOUR_SEASONS -> Color.CYAN
-                                            BikePathNetwork.THREE_SEASONS -> Color.RED
-                                    }}
-                            layer?.addLayerToMap()
+                                        defaultLineStringStyle.color = ContextCompat.getColor(this@ReportMapActivity, network.color)
+                                    }
+                            geoJsonLayer?.addLayerToMap()
                         }
                     },
                     onError = {

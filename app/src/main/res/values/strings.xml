@@ -40,4 +40,7 @@
         <item quantity="one">heure</item>
         <item quantity="other">heures</item>
     </plurals>
+
+    <string name="four_seasons">Piste 4 saisons</string>
+    <string name="three_seasons">Piste 3 saisons</string>
 </resources>

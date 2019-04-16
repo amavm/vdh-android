@@ -9,7 +9,6 @@ import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
-import com.google.android.gms.maps.model.LatLng
 import org.json.JSONObject
 
 interface ReportRepository {

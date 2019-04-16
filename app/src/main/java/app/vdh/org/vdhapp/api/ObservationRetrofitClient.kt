@@ -33,9 +33,9 @@ interface ObservationRetrofitClient {
 
     @GET("bicycle-paths")
     fun getBicyclePathsAsync(
-            @Query("bbox") boundingBoxQueryParameter: BoundingBoxQueryParameter?,
-            @Query("near") centerLatLng: LatLngQueryParameter?,
-            @Query("nextToken") nextToken: String? = null,
-            @Query("network ") bikePathNetwork: BikePathNetwork = BikePathNetwork.FOUR_SEASONS
+        @Query("bbox") boundingBoxQueryParameter: BoundingBoxQueryParameter?,
+        @Query("near") centerLatLng: LatLngQueryParameter?,
+        @Query("nextToken") nextToken: String? = null,
+        @Query("network ") bikePathNetwork: BikePathNetwork = BikePathNetwork.FOUR_SEASONS
     ): Deferred<Response<ResponseBody>>
 }
