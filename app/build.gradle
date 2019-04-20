@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.0-alpha-9-bikepath-filter"
+        versionName "1.0.0-alpha-10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -86,6 +86,8 @@ dependencies {
 
     // Ktlint
     ktlint "com.github.shyiko:ktlint:0.31.0"
+
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
 
 task ktlint(type: JavaExec, group: "verification") {

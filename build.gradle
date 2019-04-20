@@ -9,6 +9,7 @@ buildscript {
         constraint_layout_version= '1.1.2'
         gms_version='16.0.0'
         anko_version='0.10.7'
+        lottieVersion='2.7.0'
 
     }
     repositories {
