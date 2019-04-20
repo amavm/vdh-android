@@ -11,9 +11,10 @@ import app.vdh.org.vdhapp.consts.PrefConst
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.events.ReportFilterEvent
+import app.vdh.org.vdhapp.data.events.MapFilterEvent
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
+import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,29 +31,29 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
     private var currentJob: Job? = null
 
     val mapReportingEvent: SingleLiveEvent<ReportingMapEvent> = SingleLiveEvent()
+    val mapFilterEvent: SingleLiveEvent<MapFilterEvent> = SingleLiveEvent()
 
-    val filterReportingEvent: SingleLiveEvent<ReportFilterEvent> = SingleLiveEvent()
-    private val currentFilter: MutableLiveData<ReportFilterEvent.ReportFilterPicked> = MutableLiveData()
+    val currentFilterEvent: MutableLiveData<MapFilterEvent.ReportFilterPicked> = MutableLiveData()
+    private var currentBikePathNetwork: BikePathNetwork? = null
 
-    val reports: LiveData<List<ReportEntity>> = Transformations.switchMap(currentFilter) { currentFilter ->
+    val reports: LiveData<List<ReportEntity>> = Transformations.switchMap(currentFilterEvent) { currentFilter ->
         repository.getReports(status = currentFilter.status, hoursAgo = currentFilter.hoursAgo)
-    }
-
-    fun setCurrentFilter(filterPicked: ReportFilterEvent.ReportFilterPicked) {
-        currentFilter.value = filterPicked
     }
 
     fun getBicyclePath(
         boundingBoxQueryParameter: BoundingBoxQueryParameter,
-        onSuccess: (JSONObject) -> Unit,
+        onSuccess: (JSONObject, BikePathNetwork) -> Unit,
         onError: (Throwable) -> Unit
     ) {
+        val network = currentBikePathNetwork ?: BikePathNetwork.FOUR_SEASONS
         currentJob = launch {
-            when (val result = repository.getBicyclePathGeoJson(boundingBoxQueryParameter = boundingBoxQueryParameter)) {
+            when (val result = repository.getBicyclePathGeoJson(
+                    boundingBoxQueryParameter = boundingBoxQueryParameter,
+                    network = network)) {
                 is Result.Success -> {
                     Log.d("ReportMapViewModel", "Bike Path ok ${result.data}")
                     withContext(Dispatchers.Main) {
-                        onSuccess(result.data)
+                        onSuccess(result.data, network)
                     }
                 }
                 is Result.Error -> {
@@ -66,11 +67,24 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
     }
 
     fun onStatusFilterButtonClicked() {
-        filterReportingEvent.value = ReportFilterEvent.PickStatusFilter(currentFilter.value?.status)
+        mapFilterEvent.value = MapFilterEvent.PickStatusFilter(currentFilterEvent.value?.status)
     }
 
     fun onHoursFilterButtonClicked() {
-        filterReportingEvent.value = ReportFilterEvent.PickHoursFilter(currentFilter.value?.hoursAgo ?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
+        mapFilterEvent.value = MapFilterEvent.PickHoursFilter(currentFilterEvent.value?.hoursAgo ?: PrefConst.HOURS_SORT_DEFAULT_VALUE)
+    }
+
+    fun setBikePathNetwork(network: BikePathNetwork? = null) {
+        network?.let {
+            mapFilterEvent.value = MapFilterEvent.NetworkFilterPicked(network)
+            currentBikePathNetwork = network
+        } ?: run {
+            currentBikePathNetwork?.let {
+                val nextNetwork = it.next()
+                currentBikePathNetwork = nextNetwork
+                mapFilterEvent.value = MapFilterEvent.NetworkFilterPicked(nextNetwork)
+            }
+        }
     }
 
     fun onReportButtonClicked() {
