@@ -71,7 +71,7 @@ class BindingAdapter {
         @BindingAdapter("status")
         fun setImageStatus(imageView: ImageView, status: Status?) {
             status?.let {
-                imageView.setImageResource(status.imgRes)
+                imageView.setImageResource(status.iconRes)
                 imageView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(imageView.context, status.colorRes))
             }
         }

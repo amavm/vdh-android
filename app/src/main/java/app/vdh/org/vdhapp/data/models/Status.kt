@@ -11,12 +11,13 @@ import org.jetbrains.anko.defaultSharedPreferences
 enum class Status(
     @StringRes val labelRes: Int,
     @ColorRes val colorRes: Int,
-    @DrawableRes val imgRes: Int
+    @DrawableRes val iconRes: Int,
+    @DrawableRes val markerRes: Int
 ) {
-    CAUTION(R.string.status_caution, R.color.red, R.drawable.ic_caution_on),
-    SNOW(R.string.status_snow, R.color.orange, R.drawable.ic_snowy_on),
-    ICE(R.string.status_ice, R.color.darkBlue, R.drawable.ic_icy_on),
-    CLEARED(R.string.status_clear, R.color.green, R.drawable.ic_cleared_on);
+    CAUTION(R.string.status_caution, R.color.red, R.drawable.ic_caution_on, R.drawable.ic_caution_pin),
+    SNOW(R.string.status_snow, R.color.orange, R.drawable.ic_snowy_on, R.drawable.ic_snowy_pin),
+    ICE(R.string.status_ice, R.color.darkBlue, R.drawable.ic_icy_on, R.drawable.ic_icy_pin),
+    CLEARED(R.string.status_clear, R.color.green, R.drawable.ic_cleared_on, R.drawable.ic_cleared_pin);
 
     companion object {
 
