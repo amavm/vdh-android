@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_key_karim">pref_key_karim</string>
+    <string name="pref_key_tom">pref_key_tom</string>
+    <string name="pref_key_yo">pref_key_yo</string>
+    <string name="pref_key_ju">pref_key_ju</string>
+    <string name="pref_key_feedback">pref_key_feedback</string>
+    <string name="pref_key_admin">pref_key_admin</string>
+</resources>

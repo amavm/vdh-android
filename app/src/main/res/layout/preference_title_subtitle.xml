@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/pref_contact_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/medium_spacing"
+        android:paddingEnd="@dimen/medium_spacing"
+        android:paddingTop="@dimen/medium_spacing"
+        android:paddingBottom="@dimen/extra_small_spacing"
+        android:textSize="@dimen/medium_font_size"
+        tools:text="@string/settings_feedback_title"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/pref_contact_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/medium_spacing"
+        android:paddingEnd="@dimen/medium_spacing"
+        android:paddingBottom="@dimen/medium_spacing"
+        android:textSize="@dimen/medium_font_size"
+        tools:text="@string/settings_feedback_summary"
+        app:layout_constraintTop_toBottomOf="@id/pref_contact_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

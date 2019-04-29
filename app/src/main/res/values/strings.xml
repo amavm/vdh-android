@@ -1,5 +1,5 @@
 <resources>
-    <string name="empty"/>
+    <string name="empty" />
     <string name="app_name">VDH</string>
     <string name="choose_place">Choisissez un lieu</string>
     <string name="take_photo">Prendre</string>
@@ -35,7 +35,7 @@
     <string name="filter_hours">Filtrer par heure d\'ajout</string>
     <string name="filter_hours_title">Ajouté il y a</string>
     <string name="filter_path">Filtrer par type de piste</string>
-    
+
     <plurals name="hours">
         <item quantity="one">heure</item>
         <item quantity="other">heures</item>
@@ -43,4 +43,28 @@
 
     <string name="four_seasons">Piste 4 saisons</string>
     <string name="three_seasons">Piste 3 saisons</string>
+
+    <string name="settings_feedback_title">Nous contacter</string>
+    <string name="settings_feedback_summary">Proposer une amelioration ou signaler un bug</string>
+    <string name="settings_menu">Reglage</string>
+    <string name="settings_header">Une application developpee par L\'Assosiation pour la Mobilite Active de Ville-Marie - AMA-VM</string>
+    <string name="settings_team_category_title">L\'equipe</string>
+
+    <string name="settings_team_category">L\'equipe</string>
+
+    <string name="settings_team_yo">Yohann</string>
+    <string name="settings_team_yo_role">Magicien du mobile</string>
+
+    <string name="settings_team_tom">Tom</string>
+    <string name="settings_team_tom_role">Super hero du design</string>
+
+    <string name="settings_team_julien">Julien</string>
+    <string name="settings_team_julien_role">Acrobate de l\'api</string>
+
+    <string name="settings_team_karim">Karim</string>
+    <string name="settings_team_karim_role">Guru a deux roux</string>
+
+    <string name="settings_admin_title">Administration</string>
+    <string name="settings_admin_subtitle">Adminstrer les rapports</string>
+
 </resources>

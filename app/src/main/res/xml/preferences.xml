@@ -1,0 +1,41 @@
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.Preference
+        app:key="header"
+        android:layout="@layout/preference_header"/>
+
+    <app.vdh.org.vdhapp.preferences.TitleSubtitlePreference
+        app:key="@string/pref_key_feedback"
+        android:layout="@layout/preference_title_subtitle">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="mailto:ama.ville.marie@gmail.com">
+        </intent>
+    </app.vdh.org.vdhapp.preferences.TitleSubtitlePreference>
+
+    <androidx.preference.PreferenceCategory
+        app:title="@string/settings_team_category"
+        android:layout="@layout/preference_custom_category">
+
+        <app.vdh.org.vdhapp.preferences.TeamMemberPreference
+            app:key="@string/pref_key_karim"
+            android:layout="@layout/preference_team_member"/>
+        <app.vdh.org.vdhapp.preferences.TeamMemberPreference
+            app:key="@string/pref_key_yo"
+            android:layout="@layout/preference_team_member"/>
+        <app.vdh.org.vdhapp.preferences.TeamMemberPreference
+            app:key="@string/pref_key_tom"
+            android:layout="@layout/preference_team_member"/>
+        <app.vdh.org.vdhapp.preferences.TeamMemberPreference
+            app:key="@string/pref_key_ju"
+            android:layout="@layout/preference_team_member"/>
+
+    </androidx.preference.PreferenceCategory>
+
+    <app.vdh.org.vdhapp.preferences.TitleSubtitlePreference
+        app:key="@string/pref_key_admin"
+        android:layout="@layout/preference_title_subtitle" />
+
+</androidx.preference.PreferenceScreen>
