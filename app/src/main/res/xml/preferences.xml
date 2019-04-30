@@ -41,6 +41,10 @@
 
     <app.vdh.org.vdhapp.preferences.TitleSubtitlePreference
         app:key="@string/pref_key_admin"
-        android:layout="@layout/preference_title_subtitle" />
+        android:layout="@layout/preference_title_subtitle" >
+        <intent
+            android:targetPackage="app.vdh.org.vdhapp"
+            android:targetClass="app.vdh.org.vdhapp.activities.AdminActivity" />
+    </app.vdh.org.vdhapp.preferences.TitleSubtitlePreference>
 
 </androidx.preference.PreferenceScreen>
