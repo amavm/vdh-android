@@ -66,5 +66,7 @@
 
     <string name="settings_admin_title">Administration</string>
     <string name="settings_admin_subtitle">Adminstrer les rapports</string>
+    <string name="settings_ama_mail">mailto:ama.ville.marie@gmail.com</string>
+    <string name="settings_ama_fb_page">https://www.facebook.com/groups/AMAVM/</string>
 
 </resources>
