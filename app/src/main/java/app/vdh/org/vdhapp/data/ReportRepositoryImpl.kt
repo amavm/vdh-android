@@ -1,31 +1,26 @@
 package app.vdh.org.vdhapp.data
 
-import androidx.lifecycle.LiveData
 import android.content.Context
 import android.util.Log
-import app.vdh.org.vdhapp.data.dtos.ObservationDto
-import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.extenstions.toObservationDto
-import app.vdh.org.vdhapp.extenstions.toReportEntities
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import app.vdh.org.vdhapp.api.ObservationApiClient
 import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.api.safeCall
+import app.vdh.org.vdhapp.data.dtos.ObservationDto
+import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.models.BikePathNetwork
 import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.models.Status
-import kotlinx.coroutines.CoroutineScope
+import app.vdh.org.vdhapp.extenstions.toObservationDto
+import app.vdh.org.vdhapp.extenstions.toReportEntities
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.plus
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
-class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationApiClient: ObservationApiClient) : ReportRepository, CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Job() + Dispatchers.Default
+class ReportRepositoryImpl(private val reportDao: ReportDao, private val observationApiClient: ObservationApiClient) : ReportRepository {
 
     override suspend fun saveReport(context: Context, reportEntity: ReportEntity, sendToServer: Boolean): Pair<Result<Long>, Result<ObservationDto>?> {
 
@@ -49,25 +44,29 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
         return Pair(insertionResult, sendServerResult)
     }
 
-    override fun getReports(hoursAgo: Int, status: Status?): LiveData<List<ReportEntity>> {
-        launch {
-            when (val syncResult = withContext(Dispatchers.Default) {
-                syncReports()
-            }) {
-                is Result.Success -> Log.i("ReportRepositoryImpl", "Sync of ${syncResult.data} reports succeed")
-                is Result.Error -> Log.e("ReportRepositoryImpl", "Sync reports error ${syncResult.exception}")
+    override fun getReports(hoursAgo: Int, status: Status?, coroutineContext: CoroutineContext): LiveData<List<ReportEntity>> =
+            liveData(coroutineContext + Dispatchers.Default) {
+
+                val now = System.currentTimeMillis()
+                val from = now - TimeUnit.HOURS.toMillis(hoursAgo.toLong())
+
+                val disposable = emitSource(getReports(from, status))
+
+                when (val syncResult = syncReports()) {
+                    is Result.Success -> Log.i("ReportRepositoryImpl", "Sync of ${syncResult.data} reports succeed")
+                    is Result.Error -> Log.e("ReportRepositoryImpl", "Sync reports error ${syncResult.exception}")
+                }
+                disposable.dispose()
+
+                emitSource(getReports(from, status))
             }
-        }
 
-        val now = System.currentTimeMillis()
-        val from = now - TimeUnit.HOURS.toMillis(hoursAgo.toLong())
-
-        return if (status == null) {
-            reportDao.getAllReports(from)
-        } else {
-            reportDao.getReports(status, from)
-        }
-    }
+    private fun getReports(from: Long, status: Status?) =
+            if (status == null) {
+                reportDao.getAllReports(from)
+            } else {
+                reportDao.getReports(status, from)
+            }
 
     override suspend fun getBicyclePathGeoJson(boundingBoxQueryParameter: BoundingBoxQueryParameter, network: BikePathNetwork): Result<JSONObject> {
         return observationApiClient.getBicyclePaths(boundingBoxQueryParameter = boundingBoxQueryParameter, network = network)
@@ -88,9 +87,7 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun deleteFromDatabase(reportEntity: ReportEntity): Result<Unit> {
-        return withContext(Dispatchers.Default) {
-            Result.Success(reportDao.deleteReport(reportEntity))
-        }
+        return Result.Success(reportDao.deleteReport(reportEntity))
     }
 
     private suspend fun syncReports(): Result<Int>? {
@@ -111,14 +108,10 @@ class ReportRepositoryImpl(private val reportDao: ReportDao, private val observa
     }
 
     private suspend fun savedReport(report: ReportEntity): Result<Long> {
-        return withContext(Dispatchers.Default) {
-            Result.Success(reportDao.insertReport(report))
-        }
+        return Result.Success(reportDao.insertReport(report))
     }
 
     private suspend fun savedReportList(reportList: List<ReportEntity>): Result<List<Long>> {
-        return withContext(Dispatchers.Default) {
-            Result.Success(reportDao.insertReportList(reportList))
-        }
+        return Result.Success(reportDao.insertReportList(reportList))
     }
 }

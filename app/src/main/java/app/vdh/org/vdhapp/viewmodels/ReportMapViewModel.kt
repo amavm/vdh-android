@@ -5,30 +5,23 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.consts.PrefConst
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.data.events.MapFilterEvent
-import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.data.events.ReportingMapEvent
 import app.vdh.org.vdhapp.data.models.BikePathNetwork
-import kotlinx.coroutines.CoroutineScope
+import app.vdh.org.vdhapp.data.models.BoundingBoxQueryParameter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import kotlin.coroutines.CoroutineContext
 
-class ReportMapViewModel(app: Application, private val repository: ReportRepository) : AndroidViewModel(app), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Job() + Dispatchers.Default
-
-    private var currentJob: Job? = null
+class ReportMapViewModel(app: Application, private val repository: ReportRepository) : AndroidViewModel(app) {
 
     val mapReportingEvent: SingleLiveEvent<ReportingMapEvent> = SingleLiveEvent()
     val mapFilterEvent: SingleLiveEvent<MapFilterEvent> = SingleLiveEvent()
@@ -36,8 +29,11 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
     val currentFilterEvent: MutableLiveData<MapFilterEvent.ReportFilterPicked> = MutableLiveData()
     private var currentBikePathNetwork: BikePathNetwork? = null
 
-    val reports: LiveData<List<ReportEntity>> = Transformations.switchMap(currentFilterEvent) { currentFilter ->
-        repository.getReports(status = currentFilter.status, hoursAgo = currentFilter.hoursAgo)
+    val reports: LiveData<List<ReportEntity>> = currentFilterEvent.switchMap { currentFilterEvent ->
+        repository.getReports(
+                status = currentFilterEvent.status,
+                hoursAgo = currentFilterEvent.hoursAgo,
+                coroutineContext = viewModelScope.coroutineContext)
     }
 
     fun getBicyclePath(
@@ -46,7 +42,7 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
         onError: (Throwable) -> Unit
     ) {
         val network = currentBikePathNetwork ?: BikePathNetwork.FOUR_SEASONS
-        currentJob = launch {
+        viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.Default) {
             when (val result = repository.getBicyclePathGeoJson(
                     boundingBoxQueryParameter = boundingBoxQueryParameter,
                     network = network)) {
@@ -89,10 +85,5 @@ class ReportMapViewModel(app: Application, private val repository: ReportReposit
 
     fun onReportButtonClicked() {
         mapReportingEvent.value = ReportingMapEvent.AddReport
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        currentJob?.cancel()
     }
 }

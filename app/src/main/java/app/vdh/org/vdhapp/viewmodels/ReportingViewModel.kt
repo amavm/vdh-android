@@ -6,6 +6,7 @@ import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import app.vdh.org.vdhapp.App
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.api.Result
@@ -19,17 +20,12 @@ import app.vdh.org.vdhapp.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.helpers.ImageHelper
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
-class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Job() + Dispatchers.Default
+class ReportingViewModel(application: Application, private val repository: ReportRepository) : AndroidViewModel(application) {
 
     var reportingEvent: SingleLiveEvent<ReportingEvent> = SingleLiveEvent()
 
@@ -46,9 +42,6 @@ class ReportingViewModel(application: Application, private val repository: Repor
     var placePickerEditButtonViewModel: MutableLiveData<EditButtonViewModel> = MutableLiveData()
     var photoPickerEditButtonViewModel: MutableLiveData<EditButtonViewModel> = MutableLiveData()
     var statusPickerEditButtonViewModel: MutableLiveData<EditButtonViewModel> = MutableLiveData()
-
-    private var saveReportJob: Job? = null
-    private var deleteReportJob: Job? = null
 
     init {
         isReportSentToServer.value = false
@@ -126,8 +119,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
                         status = status.value)
             }
 
-            saveReportJob = launch {
-
+            viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.Default) {
                 val resultPair = repository.saveReport(getApplication(), report, sendToServer = sendToServer)
                 val saveResult = resultPair.first
                 val sendToServerResult = resultPair.second
@@ -155,7 +147,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
         onError: (String) -> Unit
     ) {
         currentReport?.let {
-            deleteReportJob = launch {
+            viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.Default) {
                 val result = repository.deleteReport(it)
                 withContext(Dispatchers.Main) {
                     when (result) {
@@ -210,10 +202,5 @@ class ReportingViewModel(application: Application, private val repository: Repor
         }
 
         return sharingIntent
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        saveReportJob?.cancel()
     }
 }

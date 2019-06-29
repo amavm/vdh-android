@@ -13,10 +13,10 @@ import app.vdh.org.vdhapp.data.models.Status
 interface ReportDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertReport(reportEntity: ReportEntity): Long
+    suspend fun insertReport(reportEntity: ReportEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertReportList(reportEntityList: List<ReportEntity>): List<Long>
+    suspend fun insertReportList(reportEntityList: List<ReportEntity>): List<Long>
 
     @Query("SELECT * FROM reportentity WHERE timestamp >= :fromTimeStamp")
     fun getAllReports(fromTimeStamp: Long): LiveData<List<ReportEntity>>
@@ -25,5 +25,5 @@ interface ReportDao {
     fun getReports(filterStatus: Status, fromTimeStamp: Long): LiveData<List<ReportEntity>>
 
     @Delete
-    fun deleteReport(reportEntity: ReportEntity)
+    suspend fun deleteReport(reportEntity: ReportEntity)
 }
