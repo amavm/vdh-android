@@ -27,10 +27,11 @@ class AdminActivity : AppCompatActivity() {
                     name = "report $it")
         }
 
-        admin_recyclerView.adapter = ReportAdapter(applicationContext, reports)
+        val adapter = ReportAdapter(applicationContext, reports)
+        admin_recyclerView.adapter = adapter
         val spanHelper = PagerSnapHelper()
         spanHelper.attachToRecyclerView(admin_recyclerView)
-        val reportItemTouchHelper = ItemTouchHelper(ReportItemTouchHelperCallback())
+        val reportItemTouchHelper = ItemTouchHelper(ReportItemTouchHelperCallback(adapter))
         reportItemTouchHelper.attachToRecyclerView(admin_recyclerView)
     }
 }
