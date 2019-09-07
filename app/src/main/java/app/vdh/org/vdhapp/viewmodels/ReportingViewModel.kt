@@ -13,8 +13,8 @@ import app.vdh.org.vdhapp.api.Result
 import app.vdh.org.vdhapp.data.ReportRepository
 import app.vdh.org.vdhapp.data.SingleLiveEvent
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.events.ReportingAction
-import app.vdh.org.vdhapp.data.events.ReportingViewAction
+import app.vdh.org.vdhapp.data.actions.ReportingAction
+import app.vdh.org.vdhapp.data.actions.ReportingViewAction
 import app.vdh.org.vdhapp.extenstions.uniqueId
 import app.vdh.org.vdhapp.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.helpers.ImageHelper
@@ -30,7 +30,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
 
     var saveOrSyncDate: MutableLiveData<String> = MutableLiveData()
 
-    init {
+    fun initReport() {
         currentReport.value = ReportEntity(deviceId = getApplication<App>().uniqueId())
     }
 
@@ -89,7 +89,6 @@ class ReportingViewModel(application: Application, private val repository: Repor
                     }
                 }
             }
-
         } else {
             reportingViewViewAction.value = ReportingViewAction.SaveReportError(getApplication<App>().getString(R.string.mandatory_fields_missing_error))
         }

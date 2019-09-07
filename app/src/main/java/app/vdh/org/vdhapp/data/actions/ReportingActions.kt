@@ -1,4 +1,4 @@
-package app.vdh.org.vdhapp.data.events
+package app.vdh.org.vdhapp.data.actions
 
 import app.vdh.org.vdhapp.data.models.Status
 import com.google.android.gms.maps.model.LatLng
@@ -27,5 +27,4 @@ sealed class ReportingAction {
     object EditPlace : ReportingAction()
     object EditPhoto : ReportingAction()
     object EditStatus : ReportingAction()
-
 }

@@ -13,8 +13,8 @@ import android.view.Menu
 import android.view.MenuItem
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.events.ReportingAction
-import app.vdh.org.vdhapp.data.events.ReportingViewAction
+import app.vdh.org.vdhapp.data.actions.ReportingAction
+import app.vdh.org.vdhapp.data.actions.ReportingViewAction
 import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
 import app.vdh.org.vdhapp.fragments.ProgressDialogFragment
@@ -46,6 +46,8 @@ class ReportingActivity : AppCompatActivity() {
 
         getCurrentReport()?.let {
             viewModel.setCurrentReport(it)
+        } ?: run {
+            viewModel.initReport()
         }
 
         with(binding) {
@@ -53,49 +55,7 @@ class ReportingActivity : AppCompatActivity() {
             viewModel = this@ReportingActivity.viewModel
         }
 
-        viewModel.reportingViewViewAction.observe(this, Observer { action ->
-
-            when (action) {
-                is ReportingViewAction.PickPhoto -> {
-                    ImagePicker.create(this)
-                            .single()
-                            .showCamera(false)
-                            .theme(R.style.ImagePickerTheme)
-                            .returnMode(ReturnMode.ALL)
-                            .start()
-                }
-                is ReportingViewAction.TakePhoto -> ImagePicker.cameraOnly().start(this)
-                is ReportingViewAction.PickPlace -> {
-                    val intent = placePickerBuilder.build(this)
-                    startActivityForResult(intent, PLACE_PICKER_REQUEST)
-                }
-                is ReportingViewAction.OpenDeleteDialog -> {
-                    // TODO : Show destructive dialog
-                    progressDialogFragment.show(supportFragmentManager, "progress_dialog")
-                    viewModel.handleAction(ReportingAction.DeleteReport)
-                }
-                is ReportingViewAction.DeleteReportSuccess -> {
-                    progressDialogFragment.dismiss()
-                    finish()
-                }
-                is ReportingViewAction.DeleteReportError -> {
-                    progressDialogFragment.dismiss()
-                    Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
-                }
-                is ReportingViewAction.SaveReportSuccess -> {
-                    progressDialogFragment.dismiss()
-                    if (action.sentToServer) {
-                        finish()
-                    } else {
-                        Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
-                    }
-                }
-                is ReportingViewAction.SaveReportError -> {
-                    progressDialogFragment.dismiss()
-                    Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
-                }
-            }
-        })
+        observeViewModelsAction()
 
         placePickerMapView.onCreate(savedInstanceState)
     }
@@ -144,6 +104,52 @@ class ReportingActivity : AppCompatActivity() {
         binding.buttonEditStatus.setOnClickListener {
             viewModel.handleAction(ReportingAction.EditStatus)
         }
+    }
+
+    private fun observeViewModelsAction() {
+        viewModel.reportingViewViewAction.observe(this, Observer { action ->
+
+            when (action) {
+                is ReportingViewAction.PickPhoto -> {
+                    ImagePicker.create(this)
+                            .single()
+                            .showCamera(false)
+                            .theme(R.style.ImagePickerTheme)
+                            .returnMode(ReturnMode.ALL)
+                            .start()
+                }
+                is ReportingViewAction.TakePhoto -> ImagePicker.cameraOnly().start(this)
+                is ReportingViewAction.PickPlace -> {
+                    val intent = placePickerBuilder.build(this)
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST)
+                }
+                is ReportingViewAction.OpenDeleteDialog -> {
+                    // TODO : Show destructive dialog
+                    progressDialogFragment.show(supportFragmentManager, "progress_dialog")
+                    viewModel.handleAction(ReportingAction.DeleteReport)
+                }
+                is ReportingViewAction.DeleteReportSuccess -> {
+                    progressDialogFragment.dismiss()
+                    finish()
+                }
+                is ReportingViewAction.DeleteReportError -> {
+                    progressDialogFragment.dismiss()
+                    Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
+                }
+                is ReportingViewAction.SaveReportSuccess -> {
+                    progressDialogFragment.dismiss()
+                    if (action.sentToServer) {
+                        finish()
+                    } else {
+                        Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+                is ReportingViewAction.SaveReportError -> {
+                    progressDialogFragment.dismiss()
+                    Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
+                }
+            }
+        })
     }
 
     override fun onStart() {

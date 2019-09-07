@@ -39,7 +39,7 @@
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_add_place"
                         android:text="@string/choose_place"
-                        app:visible="@{viewModel.currentReport.position == null}"
+                        app:visible="@{!viewModel.currentReport.isPositionDefined()}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -53,7 +53,7 @@
                         app:placeLocation="@{viewModel.currentReport.position}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:visible="@{viewModel.currentReport.position != null}"/>
+                        app:visible="@{viewModel.currentReport.isPositionDefined()}"/>
 
                     <ImageView
                         android:id="@+id/button_edit_place"
@@ -63,7 +63,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:padding="@dimen/small_spacing"
                         android:background="@color/editButtonGrey"
-                        app:visible="@{viewModel.currentReport.position != null}"
+                        app:visible="@{viewModel.currentReport.isPositionDefined() &amp;&amp; !viewModel.currentReport.sentToSever}"
                         app:srcCompat="@drawable/ic_edit" />
 
 
@@ -142,7 +142,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:padding="@dimen/small_spacing"
                         android:background="@color/editButtonGrey"
-                        app:visible="@{viewModel.currentReport.photoPath != null}"
+                        app:visible="@{viewModel.currentReport.photoPath != null &amp;&amp; !viewModel.currentReport.sentToSever}"
                         app:srcCompat="@drawable/ic_edit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -264,7 +264,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:padding="@dimen/small_spacing"
                         android:background="@color/editButtonGrey"
-                        app:visible="@{viewModel.currentReport.status != null}"
+                        app:visible="@{viewModel.currentReport.status != null &amp;&amp; !viewModel.currentReport.sentToSever}"
                         app:srcCompat="@drawable/ic_edit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

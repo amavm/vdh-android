@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.consts.PrefConst.HOURS_SORT_PREFS_KEY
-import app.vdh.org.vdhapp.data.events.MapFilterEvent
+import app.vdh.org.vdhapp.data.actions.ReportMapFilterViewAction
 import app.vdh.org.vdhapp.databinding.FragmentHoursFilterBinding
 import app.vdh.org.vdhapp.viewmodels.HoursFilterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -41,9 +41,9 @@ class HourFilterDialogFragment : BottomSheetDialogFragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        viewModel.mapFilterEvent.observe(this, Observer { statusFilterEvent ->
+        viewModel.reportMapFilterViewAction.observe(this, Observer { statusFilterEvent ->
             when (statusFilterEvent) {
-                is MapFilterEvent.PickHoursFilter -> {
+                is ReportMapFilterViewAction.OpenHourFilter -> {
                     defaultSharedPreferences.edit()
                             .putInt(HOURS_SORT_PREFS_KEY, statusFilterEvent.hoursAgo)
                             .apply()

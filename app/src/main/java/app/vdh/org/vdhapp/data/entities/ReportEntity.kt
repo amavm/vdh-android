@@ -13,12 +13,19 @@ data class ReportEntity(
     val deviceId: String,
     val timestamp: Long = System.currentTimeMillis(),
     @PrimaryKey
-    val id: String = deviceId + timestamp,
+val id: String = deviceId + timestamp,
     val sentToSever: Boolean = false,
-    val name: String? = "",
-    val position: LatLng = LatLng(0.0, 0.0),
-    val photoPath: String? = "",
-    var comment: String? = "",
+    val name: String? = null,
+    val position: LatLng = EMPTY_LAT_LNG,
+    val photoPath: String? = null,
+    var comment: String? = null,
     val status: Status? = null,
     val serverId: String? = null
-) : Parcelable
+) : Parcelable {
+
+    companion object {
+        private val EMPTY_LAT_LNG = LatLng(0.0, 0.0)
+    }
+
+    fun isPositionDefined() = position != EMPTY_LAT_LNG
+}
