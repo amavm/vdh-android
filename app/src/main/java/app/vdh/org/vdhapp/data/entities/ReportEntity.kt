@@ -18,7 +18,7 @@ data class ReportEntity(
     val name: String? = "",
     val position: LatLng = LatLng(0.0, 0.0),
     val photoPath: String? = "",
-    val comment: String? = "",
+    var comment: String? = "",
     val status: Status? = null,
     val serverId: String? = null
 ) : Parcelable

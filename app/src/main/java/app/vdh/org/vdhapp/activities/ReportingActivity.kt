@@ -13,7 +13,9 @@ import android.view.Menu
 import android.view.MenuItem
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.data.entities.ReportEntity
-import app.vdh.org.vdhapp.data.events.ReportingEvent
+import app.vdh.org.vdhapp.data.events.ReportingAction
+import app.vdh.org.vdhapp.data.events.ReportingViewAction
+import app.vdh.org.vdhapp.data.models.Status
 import app.vdh.org.vdhapp.databinding.ActivityReportingBinding
 import app.vdh.org.vdhapp.fragments.ProgressDialogFragment
 import app.vdh.org.vdhapp.viewmodels.ReportingViewModel
@@ -40,42 +42,108 @@ class ReportingActivity : AppCompatActivity() {
         val binding: ActivityReportingBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_reporting)
 
+        bindView(binding)
+
         getCurrentReport()?.let {
-            viewModel.setReportData(it)
+            viewModel.setCurrentReport(it)
         }
 
         with(binding) {
-            setLifecycleOwner(this@ReportingActivity)
+            lifecycleOwner = this@ReportingActivity
             viewModel = this@ReportingActivity.viewModel
         }
 
-        viewModel.reportingEvent.observe(this, Observer { action ->
+        viewModel.reportingViewViewAction.observe(this, Observer { action ->
 
             when (action) {
-
-                is ReportingEvent.PickPhoto ->
+                is ReportingViewAction.PickPhoto -> {
                     ImagePicker.create(this)
                             .single()
                             .showCamera(false)
                             .theme(R.style.ImagePickerTheme)
                             .returnMode(ReturnMode.ALL)
                             .start()
-
-                is ReportingEvent.TakePhoto ->
-                    ImagePicker.cameraOnly().start(this)
-
-                is ReportingEvent.PickPlace -> {
+                }
+                is ReportingViewAction.TakePhoto -> ImagePicker.cameraOnly().start(this)
+                is ReportingViewAction.PickPlace -> {
                     val intent = placePickerBuilder.build(this)
                     startActivityForResult(intent, PLACE_PICKER_REQUEST)
                 }
-
-                is ReportingEvent.DeleteReport -> {
-                    removeReport()
+                is ReportingViewAction.OpenDeleteDialog -> {
+                    // TODO : Show destructive dialog
+                    progressDialogFragment.show(supportFragmentManager, "progress_dialog")
+                    viewModel.handleAction(ReportingAction.DeleteReport)
+                }
+                is ReportingViewAction.DeleteReportSuccess -> {
+                    progressDialogFragment.dismiss()
+                    finish()
+                }
+                is ReportingViewAction.DeleteReportError -> {
+                    progressDialogFragment.dismiss()
+                    Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
+                }
+                is ReportingViewAction.SaveReportSuccess -> {
+                    progressDialogFragment.dismiss()
+                    if (action.sentToServer) {
+                        finish()
+                    } else {
+                        Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+                is ReportingViewAction.SaveReportError -> {
+                    progressDialogFragment.dismiss()
+                    Snackbar.make(container, action.message, Snackbar.LENGTH_LONG).show()
                 }
             }
         })
 
         placePickerMapView.onCreate(savedInstanceState)
+    }
+
+    private fun bindView(binding: ActivityReportingBinding) {
+        binding.placePickerIcon.setOnClickListener {
+            viewModel.handleAction(ReportingAction.OpenPlacePicker)
+        }
+
+        binding.photoPickerTakeFab.setOnClickListener {
+            viewModel.handleAction(ReportingAction.TakePicture)
+        }
+
+        binding.photoPickerChooseFab.setOnClickListener {
+            viewModel.handleAction(ReportingAction.OpenPhotoGallery)
+        }
+
+        binding.statusBigSnowButton.setOnClickListener {
+            viewModel.handleAction(ReportingAction.UpdateStatus(Status.CAUTION))
+        }
+
+        binding.statusSmallSnowButton.setOnClickListener {
+            viewModel.handleAction(ReportingAction.UpdateStatus(Status.SNOW))
+        }
+
+        binding.statusIceButton.setOnClickListener {
+            viewModel.handleAction(ReportingAction.UpdateStatus(Status.ICE))
+        }
+
+        binding.statusSunnyButton.setOnClickListener {
+            viewModel.handleAction(ReportingAction.UpdateStatus(Status.CLEARED))
+        }
+
+        binding.deleteReportButton.setOnClickListener {
+            viewModel.handleAction(ReportingAction.OpenDeleteDialog)
+        }
+
+        binding.buttonEditPlace.setOnClickListener {
+            viewModel.handleAction(ReportingAction.EditPlace)
+        }
+
+        binding.buttonEditPicture.setOnClickListener {
+            viewModel.handleAction(ReportingAction.EditPhoto)
+        }
+
+        binding.buttonEditStatus.setOnClickListener {
+            viewModel.handleAction(ReportingAction.EditStatus)
+        }
     }
 
     override fun onStart() {
@@ -99,16 +167,16 @@ class ReportingActivity : AppCompatActivity() {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val place = PlacePicker.getPlace(applicationContext, data)
-                viewModel.setPlace(place)
+                viewModel.handleAction(ReportingAction.UpdatePlace(name = place.name.toString(), location = place.latLng))
             }
         } else if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             val image = ImagePicker.getFirstImageOrNull(data)
-            viewModel.setPhoto(image.path)
+            viewModel.handleAction(ReportingAction.UpdatePicture(image.path))
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val isReportSentToServer = viewModel.isReportSentToServer.value ?: false
+        val isReportSentToServer = viewModel.currentReport.value?.sentToSever ?: false
         menuInflater.inflate(R.menu.reporting_edit_menu, menu)
         val shareMenuItem = menu?.findItem(R.id.menu_share_declaraton)
         menu?.findItem(R.id.menu_send_declaraton)?.isVisible = !isReportSentToServer
@@ -140,32 +208,7 @@ class ReportingActivity : AppCompatActivity() {
 
     private fun saveReport(sendToServer: Boolean = false) {
         progressDialogFragment.show(supportFragmentManager, "progress_dialog")
-        viewModel.saveReport(declarationComment = commentTextInput.text.toString(), sendToServer = sendToServer,
-                onSuccess = {
-                    progressDialogFragment.dismiss()
-                    if (sendToServer) {
-                        finish()
-                    } else {
-                        Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
-                    }
-                },
-                onError = {
-                    progressDialogFragment.dismiss()
-                    Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
-                })
-    }
-
-    private fun removeReport() {
-        progressDialogFragment.show(supportFragmentManager, "progress_dialog")
-        viewModel.deleteReport(
-                onSuccess = {
-                    progressDialogFragment.dismiss()
-                    finish()
-                },
-                onError = {
-                    progressDialogFragment.dismiss()
-                    Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
-                })
+        viewModel.handleAction(ReportingAction.SaveReport(sendToServer))
     }
 
     override fun onDestroy() {

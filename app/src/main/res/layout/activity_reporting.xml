@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:bind="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.ReportingViewModel"/>
+        <variable name="currentReport" type="app.vdh.org.vdhapp.data.entities.ReportEntity"/>
         <import type="app.vdh.org.vdhapp.data.models.Status"/>
     </data>
 
@@ -39,8 +39,7 @@
                         android:layout_height="wrap_content"
                         app:icon="@drawable/ic_add_place"
                         android:text="@string/choose_place"
-                        android:onClick="@{() -> viewModel.onPlacePickerButtonCLicked()}"
-                        app:visible="@{viewModel.placeLocation == null}"
+                        app:visible="@{viewModel.currentReport.position == null}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -50,17 +49,23 @@
                         android:id="@+id/placePickerMapView"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        app:placeName="@{viewModel.placeName}"
-                        app:placeLocation="@{viewModel.placeLocation}"
+                        app:placeName="@{viewModel.currentReport.name}"
+                        app:placeLocation="@{viewModel.currentReport.position}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:visible="@{viewModel.placeLocation != null}"/>
+                        app:visible="@{viewModel.currentReport.position != null}"/>
 
-                    <include
-                        layout="@layout/button_edit"
+                    <ImageView
+                        android:id="@+id/button_edit_place"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        bind:viewModel="@{viewModel.placePickerEditButtonViewModel}"/>
+                        android:padding="@dimen/small_spacing"
+                        android:background="@color/editButtonGrey"
+                        app:visible="@{viewModel.currentReport.position != null}"
+                        app:srcCompat="@drawable/ic_edit" />
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -90,9 +95,8 @@
                         style="@style/Widget.MaterialComponents.Button.Icon"
                         app:layout_constraintVertical_chainStyle="packed"
                         app:icon="@drawable/ic_take_photo"
-                        app:visible="@{viewModel.picturePath == null &amp;&amp; !viewModel.isReportSentToServer}"
+                        app:visible="@{viewModel.currentReport.photoPath == null &amp;&amp; !viewModel.currentReport.sentToSever}"
                         android:text="@string/take_photo"
-                        android:onClick="@{() -> viewModel.onTakePhotoButtonClicked()}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/photoPickerChooseFab"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -105,8 +109,7 @@
                         style="@style/Widget.MaterialComponents.Button.Icon"
                         app:icon="@drawable/ic_add_photo"
                         android:text="@string/add_photo"
-                        app:visible="@{viewModel.picturePath == null &amp;&amp; !viewModel.isReportSentToServer}"
-                        android:onClick="@{() -> viewModel.onPhotoFromGalleryButtonClicked()}"
+                        app:visible="@{viewModel.currentReport.photoPath == null &amp;&amp; !viewModel.currentReport.sentToSever}"
                         app:layout_constraintTop_toBottomOf="@+id/photoPickerTakeFab"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -117,26 +120,30 @@
                         android:id="@+id/photoPickerImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:srcUrl="@{viewModel.picturePath}"
-                        app:visible="@{viewModel.picturePath != null}"/>
+                        app:srcUrl="@{viewModel.currentReport.photoPath}"
+                        app:visible="@{viewModel.currentReport.photoPath != null}"/>
 
                     <TextView
                         android:id="@+id/noPhotoTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/no_photo"
-                        app:visible="@{viewModel.picturePath == null &amp;&amp; viewModel.isReportSentToServer}"
+                        app:visible="@{viewModel.currentReport.photoPath == null &amp;&amp; viewModel.currentReport.sentToSever}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"/>
 
-                    <include
-                        layout="@layout/button_edit"
+                    <ImageView
+                        android:id="@+id/button_edit_picture"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        bind:viewModel="@{viewModel.photoPickerEditButtonViewModel}"/>
-
+                        android:padding="@dimen/small_spacing"
+                        android:background="@color/editButtonGrey"
+                        app:visible="@{viewModel.currentReport.photoPath != null}"
+                        app:srcCompat="@drawable/ic_edit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -168,8 +175,7 @@
                         android:layout_marginEnd="@dimen/small_spacing"
                         android:text="@string/status_caution"
                         app:backgroundTint="@{Status.CAUTION.colorRes}"
-                        android:onClick="@{() -> viewModel.onStatusSelected(Status.CAUTION)}"
-                        app:visible="@{viewModel.status == null}"
+                        app:visible="@{viewModel.currentReport.status == null}"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -184,8 +190,7 @@
                         android:layout_marginEnd="@dimen/small_spacing"
                         android:text="@string/status_snow"
                         app:backgroundTint="@{Status.SNOW.colorRes}"
-                        android:onClick="@{() -> viewModel.onStatusSelected(Status.SNOW)}"
-                        app:visible="@{viewModel.status == null}"
+                        app:visible="@{viewModel.currentReport.status == null}"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/statusBigSnowButton"
@@ -200,8 +205,7 @@
                         android:layout_marginEnd="@dimen/small_spacing"
                         android:text="@string/status_ice"
                         app:backgroundTint="@{Status.ICE.colorRes}"
-                        android:onClick="@{() -> viewModel.onStatusSelected(Status.ICE)}"
-                        app:visible="@{viewModel.status == null}"
+                        app:visible="@{viewModel.currentReport.status == null}"
                         app:layout_constraintTop_toBottomOf="@+id/statusSmallSnowButton"
                         app:layout_constraintBottom_toTopOf="@+id/statusSunnyButton"
                         app:layout_constraintRight_toRightOf="parent"
@@ -217,8 +221,7 @@
                         android:layout_marginBottom="@dimen/small_spacing"
                         android:text="@string/status_clear"
                         app:backgroundTint="@{Status.CLEARED.colorRes}"
-                        android:onClick="@{() -> viewModel.onStatusSelected(Status.CLEARED)}"
-                        app:visible="@{viewModel.status == null}"
+                        app:visible="@{viewModel.currentReport.status == null}"
                         app:layout_constraintTop_toBottomOf="@+id/statusIceButton"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -228,8 +231,8 @@
                         android:id="@+id/statusSelectedImage"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        app:status="@{viewModel.status}"
-                        app:visible="@{viewModel.status != null}"
+                        app:status="@{viewModel.currentReport.status}"
+                        app:visible="@{viewModel.currentReport.status != null}"
                         app:layout_constraintVertical_chainStyle="packed"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/statusSelectedTextView"
@@ -244,8 +247,8 @@
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        app:status='@{viewModel.status}'
-                        app:visible="@{viewModel.status != null}"
+                        app:status='@{viewModel.currentReport.status}'
+                        app:visible="@{viewModel.currentReport.status != null}"
                         app:layout_constraintTop_toBottomOf="@id/statusSelectedImage"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -253,11 +256,16 @@
                         tools:text="Grosse neige"
                         tools:textColor="@color/colorPrimaryDark"/>
 
-                    <include
-                        layout="@layout/button_edit"
+                    <ImageView
+                        android:id="@+id/button_edit_status"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        bind:viewModel="@{viewModel.statusPickerEditButtonViewModel}"/>
+                        android:padding="@dimen/small_spacing"
+                        android:background="@color/editButtonGrey"
+                        app:visible="@{viewModel.currentReport.status != null}"
+                        app:srcCompat="@drawable/ic_edit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -291,13 +299,13 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:counterEnabled="true"
                         app:counterMaxLength="150"
-                        app:visible="@{!viewModel.isReportSentToServer}">
+                        app:visible="@{!viewModel.currentReport.sentToSever}">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/commentTextInput"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.reportComment}"
+                            android:text="@={viewModel.currentReport.comment}"
                             android:hint="@string/enter_comment"
                             android:maxLength="150"/>
 
@@ -312,8 +320,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        android:text="@{viewModel.reportComment}"
-                        app:visible="@{viewModel.isReportSentToServer}"/>
+                        android:text="@{viewModel.currentReport.comment}"
+                        app:visible="@{viewModel.currentReport.sentToSever}"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -327,8 +335,7 @@
                 android:layout_marginEnd="@dimen/medium_spacing"
                 android:text="@string/remove_report"
                 android:backgroundTint="@color/red"
-                android:onClick="@{() -> viewModel.deleteReport()}"
-                app:visible="@{viewModel.isReportSentToServer}"
+                app:visible="@{viewModel.currentReport.sentToSever}"
                 app:layout_constraintTop_toBottomOf="@+id/commentCard"
                 app:layout_constraintBottom_toTopOf="@+id/reportSyncDateTextView"
                 app:layout_constraintStart_toStartOf="parent"
