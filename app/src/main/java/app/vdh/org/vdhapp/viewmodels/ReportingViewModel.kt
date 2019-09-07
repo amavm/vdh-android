@@ -39,7 +39,7 @@ class ReportingViewModel(application: Application, private val repository: Repor
         val saveOrSyncDateFmt = if (report.sentToSever) R.string.sync_date_fmt else R.string.save_date_fmt
         saveOrSyncDate.value = getApplication<App>().getString(saveOrSyncDateFmt, DateUtils.getRelativeTimeSpanString(report.timestamp).toString())
 
-        if (report.sentToSever && currentReport.value?.comment?.isEmpty() == true) {
+        if (report.sentToSever && currentReport.value?.comment.isNullOrEmpty()) {
             mutateReport { it.copy(comment = getApplication<App>().resources.getString(R.string.no_comment)) }
         }
     }
