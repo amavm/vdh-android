@@ -8,9 +8,9 @@ import app.vdh.org.vdhapp.data.entities.ReportEntity
 import app.vdh.org.vdhapp.databinding.ItemReportBinding
 import app.vdh.org.vdhapp.viewholders.ReportViewHolder
 
-class ReportAdapter(private val context: Context, reports: List<ReportEntity>) : RecyclerView.Adapter<ReportViewHolder>() {
+class ReportAdapter(private val context: Context) : RecyclerView.Adapter<ReportViewHolder>() {
 
-    private val reports = reports.toList()
+    private val reports = mutableListOf<ReportEntity>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReportViewHolder {
         val viewDataBinding = ItemReportBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -21,5 +21,16 @@ class ReportAdapter(private val context: Context, reports: List<ReportEntity>) :
 
     override fun onBindViewHolder(holder: ReportViewHolder, position: Int) {
         holder.onBind(reports[position])
+    }
+
+    fun removeReport(position: Int) {
+        reports.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun updateReports(newReports: List<ReportEntity>) {
+        reports.clear()
+        reports.addAll(newReports)
+        notifyDataSetChanged()
     }
 }

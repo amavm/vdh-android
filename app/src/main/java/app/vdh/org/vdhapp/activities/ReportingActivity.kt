@@ -55,7 +55,7 @@ class ReportingActivity : AppCompatActivity() {
             viewModel = this@ReportingActivity.viewModel
         }
 
-        observeViewModelsAction()
+        observeViewModelActions()
 
         placePickerMapView.onCreate(savedInstanceState)
     }
@@ -106,7 +106,7 @@ class ReportingActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeViewModelsAction() {
+    private fun observeViewModelActions() {
         viewModel.reportingViewViewAction.observe(this, Observer { action ->
 
             when (action) {

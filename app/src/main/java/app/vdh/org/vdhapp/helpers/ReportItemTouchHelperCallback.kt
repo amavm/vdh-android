@@ -11,6 +11,6 @@ class ReportItemTouchHelperCallback(private val adapter: ReportAdapter) : ItemTo
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        adapter.notifyItemRemoved(viewHolder.adapterPosition)
+        adapter.removeReport(viewHolder.adapterPosition)
     }
 }
