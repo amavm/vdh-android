@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.HoursFilterViewModel" />
+        <variable name="viewModel" type="app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.HoursFilterViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

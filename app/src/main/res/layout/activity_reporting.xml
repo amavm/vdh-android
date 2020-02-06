@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.ReportingViewModel"/>
-        <variable name="currentReport" type="app.vdh.org.vdhapp.data.entities.ReportEntity"/>
-        <import type="app.vdh.org.vdhapp.data.models.Status"/>
+        <variable name="viewModel" type="app.vdh.org.vdhapp.feature.report.presentation.reporting.viewmodel.ReportingViewModel"/>
+        <variable name="currentReport" type="app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel"/>
+        <import type="app.vdh.org.vdhapp.feature.report.domain.common.model.Status"/>
     </data>
 
     <ScrollView
@@ -17,7 +17,7 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".activities.ReportingActivity">
+            tools:context=".feature.report.presentation.reporting.activity.ReportingActivity">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/placePickerCard"
