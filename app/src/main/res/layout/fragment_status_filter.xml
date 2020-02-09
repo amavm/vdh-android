@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="viewModel" type="app.vdh.org.vdhapp.viewmodels.StatusFilterViewModel" />
-        <import type="app.vdh.org.vdhapp.data.models.Status"/>
+        <variable name="viewModel" type="app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.StatusFilterViewModel" />
+        <import type="app.vdh.org.vdhapp.feature.report.domain.common.model.Status"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

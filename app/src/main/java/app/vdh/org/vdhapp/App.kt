@@ -1,7 +1,7 @@
 package app.vdh.org.vdhapp
 
 import android.app.Application
-import app.vdh.org.vdhapp.di.appModule
+import app.vdh.org.vdhapp.core.di.appModule
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import org.koin.android.ext.android.startKoin
