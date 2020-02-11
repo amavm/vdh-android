@@ -33,14 +33,22 @@
         <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TeamMemberPreference
             app:key="@string/pref_key_tom"
             android:layout="@layout/preference_team_member"/>
-        <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TeamMemberPreference
-            app:key="@string/pref_key_ju"
-            android:layout="@layout/preference_team_member"/>
 
     </androidx.preference.PreferenceCategory>
 
     <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TitleSubtitlePreference
         app:key="@string/pref_key_admin"
         android:layout="@layout/preference_title_subtitle" />
+
+    <androidx.preference.PreferenceCategory
+        app:title="Mock data"
+        android:key="@string/pref_key_debug_category"
+        android:layout="@layout/preference_custom_category">
+
+        <Preference
+            android:key="@string/pref_key_mock_data"
+            android:title="Generer des donnes mock"/>
+
+    </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

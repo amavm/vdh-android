@@ -58,11 +58,8 @@
     <string name="settings_team_tom">Tom</string>
     <string name="settings_team_tom_role">Super hero du design</string>
 
-    <string name="settings_team_julien">Julien</string>
-    <string name="settings_team_julien_role">Acrobate de l\'api</string>
-
     <string name="settings_team_karim">Karim</string>
-    <string name="settings_team_karim_role">Guru a deux roux</string>
+    <string name="settings_team_karim_role">Guru a une roue</string>
 
     <string name="settings_admin_title">Administration</string>
     <string name="settings_admin_subtitle">Adminstrer les rapports</string>

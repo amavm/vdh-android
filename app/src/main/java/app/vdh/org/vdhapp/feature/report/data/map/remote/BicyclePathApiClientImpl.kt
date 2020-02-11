@@ -1,7 +1,7 @@
 package app.vdh.org.vdhapp.feature.report.data.map.remote
 
 import app.vdh.org.vdhapp.core.helpers.CallResult
-import app.vdh.org.vdhapp.feature.report.data.common.remote.ApiRetrofitClient
+import app.vdh.org.vdhapp.feature.report.data.common.remote.RetrofitClient
 import app.vdh.org.vdhapp.core.helpers.safeCall
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BikePathNetwork
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter
@@ -10,7 +10,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class BicyclePathApiClientImpl(private val apiClient: ApiRetrofitClient) : BicyclePathApiClient {
+class BicyclePathApiClientImpl(private val client: RetrofitClient) : BicyclePathApiClient {
 
     override suspend fun getBicyclePaths(boundingBoxQueryParameter: BoundingBoxQueryParameter?, centerCoordinates: LatLng?, geoJsonItems: JSONArray?, nextToken: String?, network: BikePathNetwork): CallResult<JSONObject> {
         return safeCall(call = {
@@ -19,7 +19,7 @@ class BicyclePathApiClientImpl(private val apiClient: ApiRetrofitClient) : Bicyc
             } else {
                 null
             }
-            val result = apiClient.getBicyclePathsAsync(
+            val result = client.getBicyclePathsAsync(
                     boundingBoxQueryParameter = boundingBoxQueryParameter,
                     centerLatLng = latLngQueryParameter,
                     nextToken = nextToken,

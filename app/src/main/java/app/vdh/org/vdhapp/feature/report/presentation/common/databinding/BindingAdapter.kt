@@ -45,14 +45,16 @@ class BindingAdapter {
         @JvmStatic
         @BindingAdapter(value = ["placeName", "placeLocation"])
         fun setPlace(mapView: MapView, placeName: String?, placeLocation: LatLng?) {
-            if (placeName != null && placeLocation != null) {
+            if (placeLocation != null) {
                 mapView.getMapAsync { googleMap ->
                     googleMap.uiSettings.setAllGesturesEnabled(false)
                     googleMap.uiSettings.isZoomControlsEnabled = true
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 18.0f))
 
                     val marker = MarkerOptions().position(placeLocation)
-                    marker.title(placeName)
+                    if (placeName != null) {
+                        marker.title(placeName)
+                    }
                     googleMap.addMarker(marker)
                 }
             }

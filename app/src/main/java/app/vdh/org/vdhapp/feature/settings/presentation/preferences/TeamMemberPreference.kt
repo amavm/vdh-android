@@ -27,9 +27,6 @@ class TeamMemberPreference @JvmOverloads constructor(
                 context.getString(R.string.pref_key_tom) -> {
                     onBind(R.string.settings_team_tom, R.string.settings_team_tom_role, holder)
                 }
-                context.getString(R.string.pref_key_ju) -> {
-                    onBind(R.string.settings_team_julien, R.string.settings_team_julien_role, holder)
-                }
             }
         }
     }
