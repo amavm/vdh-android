@@ -15,7 +15,7 @@ import retrofit2.http.Query
 import retrofit2.http.DELETE
 import retrofit2.http.Path
 
-interface ApiRetrofitClient {
+interface RetrofitClient {
 
     @POST("observations")
     fun postObservationAsync(@Body observation: ObservationDto): Deferred<Response<ObservationDto>>

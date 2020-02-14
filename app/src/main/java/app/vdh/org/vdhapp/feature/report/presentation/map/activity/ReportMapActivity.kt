@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -14,18 +13,19 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.preference.PreferenceManager
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.feature.report.presentation.reporting.activity.ReportingActivity
 import app.vdh.org.vdhapp.feature.settings.presentation.activity.SettingsActivity
 import app.vdh.org.vdhapp.core.consts.PrefConst
 import app.vdh.org.vdhapp.core.consts.PrefConst.HOURS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.core.consts.PrefConst.STATUS_SORT_PREFS_KEY
-import app.vdh.org.vdhapp.feature.report.data.common.local.entity.ReportEntity
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
 import app.vdh.org.vdhapp.core.extenstion.navigateTo
 import app.vdh.org.vdhapp.core.extenstion.openBottomDialogFragment
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
+import app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BikePathNetwork
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapAction
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapFilterViewAction
@@ -122,7 +122,7 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             map.setOnMarkerClickListener {
                 val bundle = Bundle()
-                bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportEntity)
+                bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportModel)
                 this.navigateTo(ReportingActivity::class.java, bundle)
                 true
             }

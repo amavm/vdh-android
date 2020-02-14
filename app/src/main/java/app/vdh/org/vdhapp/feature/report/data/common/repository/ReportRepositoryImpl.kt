@@ -71,7 +71,8 @@ class ReportRepositoryImpl(
     }
 
     private suspend fun saveObservationList(observationListDto: ObservationListDto): CallResult<List<Long>> {
-        return CallResult.Success(reportDao.insertReportList(observationListDto.observationList.toReportEntities()))
+        val reports = observationListDto.observationList.toReportEntities()
+        return CallResult.Success(reportDao.insertReportList(reports))
     }
 
     private suspend fun savedReport(report: ReportEntity): CallResult<Long> {
