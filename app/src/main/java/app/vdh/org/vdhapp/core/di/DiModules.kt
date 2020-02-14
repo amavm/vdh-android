@@ -65,7 +65,7 @@ val appModule = module {
     factory { DeleteReportUseCase(get()) }
 
     viewModel { ReportingViewModel(androidApplication(), get(), get()) }
-    viewModel { ReportMapViewModel(androidApplication(), get(), get()) }
+    viewModel { ReportMapViewModel(get(), get()) }
     viewModel { StatusFilterViewModel(androidApplication()) }
     viewModel { HoursFilterViewModel(androidApplication()) }
 }

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 android {
@@ -104,15 +104,14 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
-    // Fabric
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.8@aar') {
-        transitive = true
-    }
-
     // Ktlint
     ktlint "com.github.shyiko:ktlint:0.31.0"
 
     implementation "com.airbnb.android:lottie:$lottie_version"
+
+    // Firebase crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+
 }
 
 task ktlint(type: JavaExec, group: "verification") {

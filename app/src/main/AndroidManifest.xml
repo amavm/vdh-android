@@ -19,7 +19,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name="app.vdh.org.vdhapp.feature.report.presentation.map.activity.ReportMapActivity">
+        <activity android:name=".feature.report.presentation.map.activity.ReportMapActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
@@ -29,18 +29,15 @@
         </activity>
 
         <activity
-            android:name="app.vdh.org.vdhapp.feature.report.presentation.reporting.activity.ReportingActivity"
+            android:name=".feature.report.presentation.reporting.activity.ReportingActivity"
             android:label="@string/app_name"/>
 
         <activity
-            android:name="app.vdh.org.vdhapp.feature.settings.presentation.activity.SettingsActivity"/>
+            android:name=".feature.settings.presentation.activity.SettingsActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="6af736286b1eb2e01e3a74523de6811a489a51a1" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
