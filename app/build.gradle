@@ -14,11 +14,25 @@ android {
         versionCode 1
         versionName "1.0.0-alpha-10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
+
+        def hasMapKeyDebugProperty = project.hasProperty('maps.key.debug')
+        def hasMapKeyReleaseProperty = project.hasProperty('maps.key.release')
+        def mapKeyEnv = System.getenv('MAP_KEY_CI')
+
+        def mapKeyDebug = hasMapKeyDebugProperty ? project.property('maps.key.debug') : mapKeyEnv
+        def mapKeyRelease = hasMapKeyReleaseProperty? project.property('maps.key.release') : mapKeyEnv
+
+        debug {
+            manifestPlaceholders = [maps_api_key: mapKeyDebug]
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [maps_api_key: mapKeyRelease]
         }
     }
 

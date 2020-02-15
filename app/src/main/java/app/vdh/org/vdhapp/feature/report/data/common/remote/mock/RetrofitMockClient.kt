@@ -14,7 +14,8 @@ import retrofit2.Response
 import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.Calls
 import java.io.IOException
-import java.util.*
+import java.util.UUID
+import java.util.Calendar
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
