@@ -14,7 +14,7 @@ import retrofit2.Response
 import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.Calls
 import java.io.IOException
-import java.util.Calendar
+import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -39,9 +39,11 @@ class RetrofitMockClient(
     }
 
     override fun postObservationAsync(observation: ObservationDto): Deferred<Response<ObservationDto>> {
-        observations.add(observation)
+        val uniqueId = UUID.randomUUID().toString()
+        val newObservation = observation.copy(id = uniqueId)
+        observations.add(newObservation)
         return behaviourDelegate
-                .returningResponse(observation)
+                .returningResponse(newObservation)
                 .postObservationAsync(observation)
     }
 

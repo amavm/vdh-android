@@ -1,15 +1,14 @@
 package app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import app.vdh.org.vdhapp.core.helpers.CallResult
 import app.vdh.org.vdhapp.core.consts.PrefConst
+import app.vdh.org.vdhapp.core.helpers.CallResult
 import app.vdh.org.vdhapp.core.helpers.SingleLiveEvent
 import app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BikePathNetwork
@@ -24,10 +23,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ReportMapViewModel(
-    app: Application,
     reportListUseCase: GetReportListUseCase,
     private val bicyclePathUseCase: GetBicyclePathUseCase
-) : AndroidViewModel(app) {
+) : ViewModel() {
 
     val mapReportViewAction: SingleLiveEvent<ReportMapViewAction> = SingleLiveEvent()
     val reportMapFilterViewAction: SingleLiveEvent<ReportMapFilterViewAction> = SingleLiveEvent()
