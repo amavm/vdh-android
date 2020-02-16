@@ -1,5 +1,6 @@
 package app.vdh.org.vdhapp.feature.report.data.common.remote
 
+import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ModerationStatus
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationDto
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationListDto
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter
@@ -13,6 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.DELETE
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface RetrofitClient {
@@ -30,6 +32,9 @@ interface RetrofitClient {
 
     @DELETE("observations/{id}")
     fun deleteObservationAsync(@Path("id") id: String): Deferred<Response<ResponseBody>>
+
+    @PUT("observations/status")
+    fun updateObservationStatusAsync(@Path("id") id: String, @Body moderationStatus: ModerationStatus): Deferred<Response<ObservationDto>>
 
     @GET("bicycle-paths")
     fun getBicyclePathsAsync(

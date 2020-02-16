@@ -15,6 +15,7 @@ import app.vdh.org.vdhapp.feature.report.domain.map.model.BikePathNetwork
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.feature.report.domain.map.usecase.GetBicyclePathUseCase
 import app.vdh.org.vdhapp.feature.report.domain.map.usecase.GetReportListUseCase
+import app.vdh.org.vdhapp.feature.report.domain.map.usecase.SyncReportListUseCase
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapAction
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapFilterViewAction
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapViewAction
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 
 class ReportMapViewModel(
     reportListUseCase: GetReportListUseCase,
+    syncReportUseCase: SyncReportListUseCase,
     private val bicyclePathUseCase: GetBicyclePathUseCase
 ) : ViewModel() {
 
@@ -39,6 +41,7 @@ class ReportMapViewModel(
                     status = currentFilterEvent.status,
                     hoursAgo = currentFilterEvent.hoursAgo
             ))
+            syncReportUseCase.execute()
         }
     }
 

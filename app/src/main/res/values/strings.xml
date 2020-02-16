@@ -66,4 +66,13 @@
     <string name="settings_ama_mail">mailto:ama.ville.marie@gmail.com</string>
     <string name="settings_ama_fb_page">https://www.facebook.com/groups/AMAVM/</string>
 
+    <string name="accept_report">Accepter</string>
+    <string name="refuse_report">Refuser</string>
+
+    <string name="filter_pending_reports">En attente</string>
+    <string name="filter_valid_reports">Valide</string>
+    <string name="filter_refused_reports">Refuse</string>
+
+    <string name="update_report_error">Impossible de mettre a jour le rapport</string>
+
 </resources>

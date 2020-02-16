@@ -1,7 +1,9 @@
 package app.vdh.org.vdhapp.feature.report.data.common.remote.mock
 
+import app.vdh.org.vdhapp.core.consts.ApiConst
 import app.vdh.org.vdhapp.feature.report.data.common.local.AppDatabase
 import app.vdh.org.vdhapp.feature.report.data.common.remote.RetrofitClient
+import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ModerationStatus
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationDto
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationListDto
 import app.vdh.org.vdhapp.feature.report.data.map.remote.LatLngQueryParameter
@@ -41,7 +43,10 @@ class RetrofitMockClient(
 
     override fun postObservationAsync(observation: ObservationDto): Deferred<Response<ObservationDto>> {
         val uniqueId = UUID.randomUUID().toString()
-        val newObservation = observation.copy(id = uniqueId)
+        val newObservation = observation.copy(
+                id = uniqueId,
+                moderationStatus = ModerationStatus("pending")
+        )
         observations.add(newObservation)
         return behaviourDelegate
                 .returningResponse(newObservation)
@@ -70,6 +75,20 @@ class RetrofitMockClient(
                 .getBicyclePathsAsync(boundingBoxQueryParameter, centerLatLng, nextToken, bikePathNetwork)
     }
 
+    override fun updateObservationStatusAsync(id: String, moderationStatus: ModerationStatus): Deferred<Response<ObservationDto>> {
+        val observationIndex = observations.indexOfFirst { it.id == id }
+        val observation = if (observationIndex != -1) {
+            val removedObservation = observations.removeAt(observationIndex)
+            val updatedObservation = removedObservation.copy(moderationStatus = moderationStatus)
+            observations.add(observationIndex, updatedObservation)
+            updatedObservation
+        } else null
+
+        return behaviourDelegate
+                .returningResponse(observation)
+                .updateObservationStatusAsync(id, moderationStatus)
+    }
+
     private fun generateMockObservations(): List<ObservationDto> {
 
         val mockData = (1..MOCK_COUNT).toList().map {
@@ -80,6 +99,11 @@ class RetrofitMockClient(
         val calendar = Calendar.getInstance()
         return mockData.mapIndexed { index, mock ->
             calendar.add(Calendar.MINUTE, index)
+            val moderationStatus = if (index % 2 == 0) {
+                ModerationStatus(ApiConst.MODERATION_STATUS_PENDING)
+            } else {
+                ModerationStatus(ApiConst.MODERATION_STATUS_VALID)
+            }
             ObservationDto(
                     id = index.toString(),
                     timestamp = calendar.timeInMillis / 1000,
@@ -87,7 +111,8 @@ class RetrofitMockClient(
                     deviceId = "121212121",
                     attributes = arrayOf(mock.status.name),
                     assets = null,
-                    comment = "test report $index"
+                    comment = "test report $index",
+                    moderationStatus = moderationStatus
             )
         }
     }

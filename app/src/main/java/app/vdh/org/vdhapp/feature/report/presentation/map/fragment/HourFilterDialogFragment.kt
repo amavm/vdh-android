@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.core.consts.PrefConst
 import app.vdh.org.vdhapp.core.consts.PrefConst.HOURS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.databinding.FragmentHoursFilterBinding
 import app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.HoursFilterViewModel
@@ -57,10 +58,10 @@ class HourFilterDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        report_filter_number_picker.minValue = 1
-        report_filter_number_picker.maxValue = 24
+        report_filter_number_picker.minValue = PrefConst.MIN_HOUR
+        report_filter_number_picker.maxValue = PrefConst.MAX_HOUR
         report_filter_number_picker.value = viewModel.currentHoursAgoFilter
-        report_filter_number_picker.displayedValues = Array(24) {
+        report_filter_number_picker.displayedValues = Array(PrefConst.MAX_HOUR) {
             val currentHour = it + 1
             "$currentHour ${resources.getQuantityString(R.plurals.hours, currentHour)}"
         }

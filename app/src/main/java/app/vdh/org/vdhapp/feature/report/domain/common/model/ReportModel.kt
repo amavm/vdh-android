@@ -23,7 +23,8 @@ data class ReportModel(
     val photoPath: String? = null,
     var comment: String? = null,
     val status: Status? = null,
-    val serverId: String? = null
+    val serverId: String? = null,
+    val moderationStatus: String? = null
 ) : Parcelable {
 
     companion object {

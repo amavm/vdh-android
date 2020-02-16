@@ -15,12 +15,16 @@ import app.vdh.org.vdhapp.feature.report.data.map.repository.BicyclePathReposito
 import app.vdh.org.vdhapp.feature.report.domain.map.repository.BicyclePathRepository
 import app.vdh.org.vdhapp.feature.report.domain.map.usecase.GetBicyclePathUseCase
 import app.vdh.org.vdhapp.feature.report.domain.map.usecase.GetReportListUseCase
+import app.vdh.org.vdhapp.feature.report.domain.map.usecase.SyncReportListUseCase
+import app.vdh.org.vdhapp.feature.report.domain.moderation.usecase.GetReportByModerationStatusUseCase
+import app.vdh.org.vdhapp.feature.report.domain.moderation.usecase.UpdateModerationStatusUseCase
 import app.vdh.org.vdhapp.feature.report.domain.reporting.usecase.DeleteReportUseCase
 import app.vdh.org.vdhapp.feature.report.domain.reporting.usecase.SaveReportUseCase
 import app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.HoursFilterViewModel
 import app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.ReportMapViewModel
 import app.vdh.org.vdhapp.feature.report.presentation.reporting.viewmodel.ReportingViewModel
 import app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.StatusFilterViewModel
+import app.vdh.org.vdhapp.feature.report.presentation.moderation.viewmodel.ReportModerationViewModel
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.ext.koin.viewModel
@@ -63,11 +67,15 @@ val appModule = module {
     factory { GetBicyclePathUseCase(get()) }
     factory { SaveReportUseCase(get(), androidApplication().applicationContext) }
     factory { DeleteReportUseCase(get()) }
+    factory { GetReportByModerationStatusUseCase(get()) }
+    factory { SyncReportListUseCase(get()) }
+    factory { UpdateModerationStatusUseCase(get()) }
 
     viewModel { ReportingViewModel(androidApplication(), get(), get()) }
-    viewModel { ReportMapViewModel(get(), get()) }
+    viewModel { ReportMapViewModel(get(), get(), get()) }
     viewModel { StatusFilterViewModel(androidApplication()) }
     viewModel { HoursFilterViewModel(androidApplication()) }
+    viewModel { ReportModerationViewModel(get(), get(), get()) }
 }
 
 private fun buildBaseRetrofit(): Retrofit {
