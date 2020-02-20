@@ -16,7 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.feature.report.presentation.reporting.activity.ReportingActivity
-import app.vdh.org.vdhapp.feature.settings.presentation.activity.SettingsActivity
+import app.vdh.org.vdhapp.feature.report.presentation.settings.activity.SettingsActivity
 import app.vdh.org.vdhapp.core.consts.PrefConst
 import app.vdh.org.vdhapp.core.consts.PrefConst.HOURS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.core.consts.PrefConst.STATUS_SORT_PREFS_KEY

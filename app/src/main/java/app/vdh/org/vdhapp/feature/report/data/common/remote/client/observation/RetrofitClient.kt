@@ -1,4 +1,4 @@
-package app.vdh.org.vdhapp.feature.report.data.common.remote
+package app.vdh.org.vdhapp.feature.report.data.common.remote.client.observation
 
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ModerationStatus
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationDto

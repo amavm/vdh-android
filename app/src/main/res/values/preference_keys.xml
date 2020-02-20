@@ -5,6 +5,9 @@
     <string name="pref_key_yo">pref_key_yo</string>
     <string name="pref_key_feedback">pref_key_feedback</string>
     <string name="pref_key_admin">pref_key_admin</string>
+    <string name="pref_sign_in">pref_key_sign_in</string>
+    <string name="pref_sign_out">pref_key_sign_out</string>
     <string name="pref_key_mock_data">generate_mock_data_key</string>
     <string name="pref_key_debug_category">pref_key_debug_category</string>
+    <string name="pref_key_user_profile">pref_key_user_profile</string>
 </resources>

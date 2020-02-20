@@ -1,4 +1,4 @@
-package app.vdh.org.vdhapp.feature.settings.presentation.preferences
+package app.vdh.org.vdhapp.feature.report.presentation.settings.preferences
 
 import android.content.Context
 import android.util.AttributeSet

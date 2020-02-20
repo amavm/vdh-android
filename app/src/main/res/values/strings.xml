@@ -61,6 +61,11 @@
     <string name="settings_team_karim">Karim</string>
     <string name="settings_team_karim_role">Guru a une roue</string>
 
+    <string name="settings_sign_in_title">Se connecter</string>
+    <string name="settings_sign_in_subtitle">Connectez vous pour conserver vos rapport entre appareils</string>
+
+    <string name="settings_sign_out_title">Se deconnecter</string>
+
     <string name="settings_admin_title">Administration</string>
     <string name="settings_admin_subtitle">Adminstrer les rapports</string>
     <string name="settings_ama_mail">mailto:ama.ville.marie@gmail.com</string>
