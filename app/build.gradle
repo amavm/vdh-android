@@ -23,7 +23,7 @@ android {
         def mapKeyEnv = System.getenv('MAP_KEY_CI')
 
         def mapKeyDebug = hasMapKeyDebugProperty ? project.property('maps.key.debug') : mapKeyEnv
-        def mapKeyRelease = hasMapKeyReleaseProperty? project.property('maps.key.release') : mapKeyEnv
+        def mapKeyRelease = hasMapKeyReleaseProperty ? project.property('maps.key.release') : mapKeyEnv
 
         debug {
             manifestPlaceholders = [maps_api_key: mapKeyDebug]

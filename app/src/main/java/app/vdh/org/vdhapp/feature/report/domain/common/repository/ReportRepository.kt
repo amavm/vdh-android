@@ -11,7 +11,13 @@ interface ReportRepository {
 
     suspend fun getReports(hoursAgo: Int = PrefConst.HOURS_SORT_DEFAULT_VALUE, status: Status?): LiveData<List<ReportModel>>
 
+    suspend fun getReportsByModerationStatus(hoursAgo: Int, moderationStatus: String): LiveData<List<ReportModel>>
+
+    suspend fun syncReports(): CallResult<Int>?
+
     suspend fun saveReport(report: ReportModel, saveRemotely: Boolean): Pair<CallResult<Long>, CallResult<ObservationDto>?>
 
     suspend fun deleteReport(report: ReportModel): CallResult<String>
+
+    suspend fun updateReportModerationStatus(reportId: String, status: String): CallResult<ObservationDto>
 }

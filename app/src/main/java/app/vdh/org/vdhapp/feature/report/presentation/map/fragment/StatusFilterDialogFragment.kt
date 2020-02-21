@@ -41,7 +41,7 @@ class StatusFilterDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.viewModel = viewModel
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         viewModel.reportMapFilterViewAction.observe(viewLifecycleOwner, Observer { statusFilterEvent ->
             when (statusFilterEvent) {

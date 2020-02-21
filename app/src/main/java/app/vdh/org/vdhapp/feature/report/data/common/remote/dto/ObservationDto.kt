@@ -12,7 +12,8 @@ data class ObservationDto(
     @SerializedName("assets") val assets: List<ImageAssetDto>?,
     @SerializedName("comment") val comment: String,
     @SerializedName("deviceId") val deviceId: String,
-    @SerializedName("id") val id: String? = null
+    @SerializedName("id") val id: String? = null,
+    @SerializedName("status") val moderationStatus: ModerationStatus? = null
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -28,6 +29,7 @@ data class ObservationDto(
         if (comment != other.comment) return false
         if (deviceId != other.deviceId) return false
         if (id != other.id) return false
+        if (moderationStatus != other.moderationStatus) return false
 
         return true
     }
@@ -40,6 +42,7 @@ data class ObservationDto(
         result = 31 * result + comment.hashCode()
         result = 31 * result + deviceId.hashCode()
         result = 31 * result + id.hashCode()
+        result = 31 * result + moderationStatus.hashCode()
         return result
     }
 
@@ -59,7 +62,8 @@ data class ObservationDto(
                 timestamp = timestamp * 1000,
                 photoPath = photoPath,
                 serverId = id,
-                sentToSever = true
+                sentToSever = true,
+                moderationStatus = moderationStatus?.adminStatus
         )
     }
 }

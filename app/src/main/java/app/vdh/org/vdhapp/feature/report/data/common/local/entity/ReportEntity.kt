@@ -21,7 +21,8 @@ data class ReportEntity(
     val photoPath: String? = null,
     var comment: String? = null,
     val status: Status? = null,
-    val serverId: String? = null
+    val serverId: String? = null,
+    val moderationStatus: String? = null
 ) : Parcelable {
 
     companion object {
@@ -39,7 +40,8 @@ data class ReportEntity(
                 position = position,
                 sentToSever = sentToSever,
                 serverId = serverId,
-                timestamp = timestamp
+                timestamp = timestamp,
+                moderationStatus = moderationStatus
         )
     }
 }

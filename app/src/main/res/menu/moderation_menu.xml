@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_pending_reports"
+        app:showAsAction="never"
+        android:title="@string/filter_pending_reports" />
+
+    <item android:id="@+id/menu_valid_reports"
+        app:showAsAction="never"
+        android:title="@string/filter_valid_reports" />
+
+    <item android:id="@+id/menu_refused_reports"
+        app:showAsAction="never"
+        android:title="@string/filter_refused_reports"/>
+</menu>

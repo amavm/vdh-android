@@ -7,4 +7,6 @@ object PrefConst {
     const val HOURS_SORT_PREFS_KEY = "hours_sort_prefs_key"
 
     const val HOURS_SORT_DEFAULT_VALUE = 2
+    const val MIN_HOUR = 1
+    const val MAX_HOUR = 24
 }
