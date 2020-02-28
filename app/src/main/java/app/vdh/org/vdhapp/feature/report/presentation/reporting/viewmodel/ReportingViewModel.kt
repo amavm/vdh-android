@@ -9,12 +9,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import app.vdh.org.vdhapp.App
 import app.vdh.org.vdhapp.R
+import app.vdh.org.vdhapp.core.helpers.AuthHelper
 import app.vdh.org.vdhapp.core.helpers.CallResult
 import app.vdh.org.vdhapp.core.helpers.SingleLiveEvent
 import app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel
 import app.vdh.org.vdhapp.feature.report.domain.reporting.usecase.DeleteReportUseCase
 import app.vdh.org.vdhapp.feature.report.domain.reporting.usecase.SaveReportUseCase
-import app.vdh.org.vdhapp.feature.settings.presentation.extension.uniqueId
 import app.vdh.org.vdhapp.core.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.core.helpers.ImageHelper
 import app.vdh.org.vdhapp.feature.report.presentation.reporting.action.ReportingAction
@@ -36,7 +36,7 @@ class ReportingViewModel(
     var saveOrSyncDate: MutableLiveData<String> = MutableLiveData()
 
     fun initReport() {
-        currentReport.value = ReportModel(deviceId = getApplication<App>().uniqueId())
+        currentReport.value = ReportModel(deviceId = AuthHelper.UID)
     }
 
     fun setCurrentReport(report: ReportModel) {

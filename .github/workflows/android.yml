@@ -14,7 +14,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew assembleProdDebug
+      run: ./gradlew assembleCiDebug
       env:
         MAP_KEY_CI: aaaabbbcccddd
 

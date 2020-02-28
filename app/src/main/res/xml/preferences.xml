@@ -11,32 +11,44 @@
         </intent>
     </androidx.preference.Preference>
 
-    <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TitleSubtitlePreference
+    <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TitleSubtitlePreference
         app:key="@string/pref_key_feedback"
         android:layout="@layout/preference_title_subtitle">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="@string/settings_ama_mail">
         </intent>
-    </app.vdh.org.vdhapp.feature.settings.presentation.preferences.TitleSubtitlePreference>
+    </app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TitleSubtitlePreference>
 
     <androidx.preference.PreferenceCategory
         app:title="@string/settings_team_category"
         android:layout="@layout/preference_custom_category">
 
-        <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TeamMemberPreference
+        <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TeamMemberPreference
             app:key="@string/pref_key_karim"
             android:layout="@layout/preference_team_member"/>
-        <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TeamMemberPreference
+        <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TeamMemberPreference
             app:key="@string/pref_key_yo"
             android:layout="@layout/preference_team_member"/>
-        <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TeamMemberPreference
+        <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TeamMemberPreference
             app:key="@string/pref_key_tom"
             android:layout="@layout/preference_team_member"/>
 
     </androidx.preference.PreferenceCategory>
 
-    <app.vdh.org.vdhapp.feature.settings.presentation.preferences.TitleSubtitlePreference
+    <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TitleSubtitlePreference
+        app:key="@string/pref_sign_in"
+        android:layout="@layout/preference_title_subtitle" />
+
+    <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.UserProfilePreference
+        android:key="@string/pref_key_user_profile"
+        android:layout="@layout/preference_user_profile"/>
+
+    <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TitleSubtitlePreference
+        app:key="@string/pref_sign_out"
+        android:layout="@layout/preference_title_subtitle" />
+
+    <app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TitleSubtitlePreference
         app:key="@string/pref_key_admin"
         android:layout="@layout/preference_title_subtitle" />
 

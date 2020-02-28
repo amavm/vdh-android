@@ -2,7 +2,7 @@ package app.vdh.org.vdhapp.feature.report.data.common.remote.mock
 
 import app.vdh.org.vdhapp.core.consts.ApiConst
 import app.vdh.org.vdhapp.feature.report.data.common.local.AppDatabase
-import app.vdh.org.vdhapp.feature.report.data.common.remote.RetrofitClient
+import app.vdh.org.vdhapp.feature.report.data.common.remote.client.observation.RetrofitClient
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ModerationStatus
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationDto
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationListDto

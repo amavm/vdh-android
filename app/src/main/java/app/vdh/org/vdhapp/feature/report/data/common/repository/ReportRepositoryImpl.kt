@@ -5,9 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import app.vdh.org.vdhapp.core.extenstion.toMillisecondFromNow
 import app.vdh.org.vdhapp.core.helpers.CallResult
+import app.vdh.org.vdhapp.core.helpers.AuthHelper
 import app.vdh.org.vdhapp.feature.report.data.common.local.ReportDao
 import app.vdh.org.vdhapp.feature.report.data.common.local.entity.ReportEntity
-import app.vdh.org.vdhapp.feature.report.data.common.remote.ObservationApiClient
+import app.vdh.org.vdhapp.feature.report.data.common.remote.client.observation.ObservationApiClient
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationDto
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationListDto
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.toReportEntities
@@ -16,7 +17,6 @@ import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ModerationStatus
 import app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel
 import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
 import app.vdh.org.vdhapp.feature.report.domain.common.repository.ReportRepository
-import app.vdh.org.vdhapp.feature.settings.presentation.extension.uniqueId
 
 class ReportRepositoryImpl(
     private val reportDao: ReportDao,
@@ -115,9 +115,9 @@ class ReportRepositoryImpl(
 
     private fun getReports(from: Long, status: Status?): LiveData<List<ReportEntity>> {
         return if (status == null) {
-            reportDao.getAllValidOrDeviceOwnerReports(from, appContext.uniqueId())
+            reportDao.getAllValidOrDeviceOwnerReports(from, AuthHelper.UID)
         } else {
-            reportDao.getValidOrDeviceOwnerReports(status, from, appContext.uniqueId())
+            reportDao.getValidOrDeviceOwnerReports(status, from, AuthHelper.UID)
         }
     }
 }

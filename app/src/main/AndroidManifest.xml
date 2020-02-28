@@ -30,7 +30,7 @@
         <activity
             android:name=".feature.report.presentation.reporting.activity.ReportingActivity"
             android:label="@string/app_name" />
-        <activity android:name=".feature.settings.presentation.activity.SettingsActivity" />
+        <activity android:name="app.vdh.org.vdhapp.feature.report.presentation.settings.activity.SettingsActivity" />
         <activity android:name=".feature.report.presentation.moderation.activity.ReportModerationActivity"/>
 
         <meta-data

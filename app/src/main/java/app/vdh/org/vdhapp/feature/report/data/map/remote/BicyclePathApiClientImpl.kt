@@ -1,7 +1,7 @@
 package app.vdh.org.vdhapp.feature.report.data.map.remote
 
 import app.vdh.org.vdhapp.core.helpers.CallResult
-import app.vdh.org.vdhapp.feature.report.data.common.remote.RetrofitClient
+import app.vdh.org.vdhapp.feature.report.data.common.remote.client.observation.RetrofitClient
 import app.vdh.org.vdhapp.core.helpers.safeCall
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BikePathNetwork
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter

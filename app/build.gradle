@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.gms.google-services'
 
 
 android {
@@ -42,6 +43,10 @@ android {
             buildConfigField "boolean", "isMockDataEnabled", "false"
         }
         mock {
+            buildConfigField "boolean", "isMockDataEnabled", "true"
+        }
+        ci {
+            // Flavor folder to make CI pass
             buildConfigField "boolean", "isMockDataEnabled", "true"
         }
     }
@@ -123,8 +128,10 @@ dependencies {
 
     implementation "com.airbnb.android:lottie:$lottie_version"
 
-    // Firebase crashlytics
+    // Firebase
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
+    implementation 'com.google.firebase:firebase-firestore:21.4.0'
 
 }
 

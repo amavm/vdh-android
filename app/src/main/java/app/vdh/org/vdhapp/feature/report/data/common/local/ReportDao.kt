@@ -21,17 +21,17 @@ interface ReportDao {
 
     @Query("SELECT * FROM reportentity WHERE timestamp >= :fromTimeStamp AND (deviceId == :deviceId OR moderationStatus == :moderationStatus)")
     fun getAllValidOrDeviceOwnerReports(
-            fromTimeStamp: Long,
-            deviceId: String,
-            moderationStatus: String = ApiConst.MODERATION_STATUS_VALID
+        fromTimeStamp: Long,
+        deviceId: String,
+        moderationStatus: String = ApiConst.MODERATION_STATUS_VALID
     ): LiveData<List<ReportEntity>>
 
     @Query("SELECT * FROM reportentity WHERE (status == :filterStatus AND timestamp >= :fromTimeStamp) AND (deviceId == :deviceId OR moderationStatus == :moderationStatus)")
     fun getValidOrDeviceOwnerReports(
-            filterStatus: Status,
-            fromTimeStamp: Long,
-            deviceId: String,
-            moderationStatus: String = ApiConst.MODERATION_STATUS_VALID
+        filterStatus: Status,
+        fromTimeStamp: Long,
+        deviceId: String,
+        moderationStatus: String = ApiConst.MODERATION_STATUS_VALID
     ): LiveData<List<ReportEntity>>
 
     @Query("SELECT * FROM reportentity WHERE timestamp >= :fromTimeStamp AND moderationStatus == :moderationStatus ORDER BY timestamp DESC")

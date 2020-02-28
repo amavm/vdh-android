@@ -6,4 +6,8 @@
     <dimen name="extra_small_spacing">4dp</dimen>
 
     <dimen name="medium_font_size">16sp</dimen>
-    </resources>
+
+    <dimen name="profile_picture_size">54dp</dimen>
+    <dimen name="profile_cell_height">84dp</dimen>
+
+</resources>
