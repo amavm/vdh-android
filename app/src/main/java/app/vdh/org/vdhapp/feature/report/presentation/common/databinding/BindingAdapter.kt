@@ -12,10 +12,6 @@ import android.widget.TextView
 import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
 import app.vdh.org.vdhapp.core.helpers.ImageHelper
 import com.bumptech.glide.Glide
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import org.jetbrains.anko.textColor
 
 class BindingAdapter {
@@ -40,24 +36,6 @@ class BindingAdapter {
         @BindingAdapter("visible")
         fun setVisibility(view: View, isVisible: Boolean) {
             view.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
-        }
-
-        @JvmStatic
-        @BindingAdapter(value = ["placeName", "placeLocation"])
-        fun setPlace(mapView: MapView, placeName: String?, placeLocation: LatLng?) {
-            if (placeLocation != null) {
-                mapView.getMapAsync { googleMap ->
-                    googleMap.uiSettings.setAllGesturesEnabled(false)
-                    googleMap.uiSettings.isZoomControlsEnabled = true
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 18.0f))
-
-                    val marker = MarkerOptions().position(placeLocation)
-                    if (placeName != null) {
-                        marker.title(placeName)
-                    }
-                    googleMap.addMarker(marker)
-                }
-            }
         }
 
         @JvmStatic

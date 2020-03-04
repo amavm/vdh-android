@@ -2,8 +2,8 @@ package app.vdh.org.vdhapp.feature.report.data.common.remote.dto
 
 import app.vdh.org.vdhapp.feature.report.data.common.local.Converters
 import app.vdh.org.vdhapp.feature.report.data.common.local.entity.ReportEntity
-import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 data class ObservationDto(
     @SerializedName("timestamp") val timestamp: Long,

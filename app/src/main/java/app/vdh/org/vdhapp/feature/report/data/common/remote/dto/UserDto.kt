@@ -4,12 +4,12 @@ import app.vdh.org.vdhapp.core.consts.ApiConst
 import app.vdh.org.vdhapp.feature.report.domain.common.model.UserModel
 
 data class UserDto(
-        val uid: String,
-        val role: String = ApiConst.USER_ROLE_NOT_DEFINED,
-        val email: String?,
-        val fullName: String?,
-        val pictureUrl: String,
-        val isAnonymous: Boolean
+    val uid: String,
+    val role: String = ApiConst.USER_ROLE_NOT_DEFINED,
+    val email: String?,
+    val fullName: String?,
+    val pictureUrl: String,
+    val isAnonymous: Boolean
 ) {
     fun toUserModel() = UserModel(uid, role, email, fullName, pictureUrl, isAdmin, isAnonymous)
 

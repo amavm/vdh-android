@@ -5,7 +5,6 @@ import androidx.lifecycle.Observer
 import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.PersistableBundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.core.view.MenuItemCompat
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +22,7 @@ import app.vdh.org.vdhapp.feature.report.presentation.reporting.viewmodel.Report
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.google.android.gms.location.places.ui.PlacePicker
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.android.synthetic.main.activity_reporting.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -57,8 +57,6 @@ class ReportingActivity : AppCompatActivity() {
         }
 
         observeViewModelsAction()
-
-        placePickerMapView.onCreate(savedInstanceState)
     }
 
     private fun bindView(binding: ActivityReportingBinding) {
@@ -153,28 +151,13 @@ class ReportingActivity : AppCompatActivity() {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-        placePickerMapView.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        placePickerMapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        placePickerMapView.onPause()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val place = PlacePicker.getPlace(applicationContext, data)
-                viewModel.handleAction(ReportingAction.UpdatePlace(name = place.name.toString(), location = place.latLng))
+                viewModel.handleAction(ReportingAction.UpdatePlace(name = place.name.toString(), location = LatLng(place.latLng.latitude, place.latLng.longitude)))
             }
         } else if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             val image = ImagePicker.getFirstImageOrNull(data)
@@ -216,21 +199,6 @@ class ReportingActivity : AppCompatActivity() {
     private fun saveReport(sendToServer: Boolean = false) {
         progressDialogFragment.show(supportFragmentManager, "progress_dialog")
         viewModel.handleAction(ReportingAction.SaveReport(sendToServer))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        placePickerMapView.onDestroy()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        placePickerMapView.onSaveInstanceState(outState)
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        placePickerMapView.onLowMemory()
     }
 
     private fun getCurrentReport(): ReportModel? = intent.extras?.getParcelable(REPORT_ARGS_KEY)

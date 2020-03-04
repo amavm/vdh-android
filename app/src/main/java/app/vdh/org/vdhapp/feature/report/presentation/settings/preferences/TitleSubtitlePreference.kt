@@ -43,6 +43,5 @@ class TitleSubtitlePreference @JvmOverloads constructor(
         } else {
             holder.itemView.pref_contact_subtitle.visibility = View.GONE
         }
-
     }
 }

@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class FireStoreUserClient(
-        private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : UserApiClient {
 
     private val db = FirebaseFirestore.getInstance()
@@ -87,6 +87,5 @@ class FireStoreUserClient(
                 pictureUrl = picture
 
         )
-
     }
 }

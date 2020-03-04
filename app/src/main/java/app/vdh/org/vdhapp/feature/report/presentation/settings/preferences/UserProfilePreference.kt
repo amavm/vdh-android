@@ -41,8 +41,5 @@ class UserProfilePreference @JvmOverloads constructor(
                         .into(picture)
             }
         }
-
-
-
     }
 }

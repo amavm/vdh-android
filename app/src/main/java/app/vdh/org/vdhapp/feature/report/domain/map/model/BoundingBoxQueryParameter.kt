@@ -1,6 +1,6 @@
 package app.vdh.org.vdhapp.feature.report.domain.map.model
 
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 class BoundingBoxQueryParameter(
     val bottomLeft: LatLng,

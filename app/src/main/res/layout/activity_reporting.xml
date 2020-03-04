@@ -45,12 +45,11 @@
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"/>
 
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/placePickerMapView"
+                    <ImageView
+                        android:id="@+id/placePickerLocationMap"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        app:placeName="@{viewModel.currentReport.name}"
-                        app:placeLocation="@{viewModel.currentReport.position}"
+                        app:srcUrl="@{viewModel.getLocationMapImageUrl(context)}"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:visible="@{viewModel.currentReport.isPositionDefined()}"/>

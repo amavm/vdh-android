@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import android.os.Parcelable
 import app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel
 import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -14,7 +14,7 @@ data class ReportEntity(
     val deviceId: String,
     val timestamp: Long = System.currentTimeMillis(),
     @PrimaryKey
-    val id: String = deviceId + timestamp,
+val id: String = deviceId + timestamp,
     val sentToSever: Boolean = false,
     val name: String? = null,
     val position: LatLng = EMPTY_LAT_LNG,

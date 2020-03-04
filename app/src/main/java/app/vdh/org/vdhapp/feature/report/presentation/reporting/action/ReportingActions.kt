@@ -1,7 +1,7 @@
 package app.vdh.org.vdhapp.feature.report.presentation.reporting.action
 
 import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 sealed class ReportingViewAction {
     object PickPlace : ReportingViewAction()

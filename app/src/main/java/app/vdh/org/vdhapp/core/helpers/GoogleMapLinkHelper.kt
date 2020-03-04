@@ -1,6 +1,6 @@
 package app.vdh.org.vdhapp.core.helpers
 
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 object GoogleMapLinkHelper {
 

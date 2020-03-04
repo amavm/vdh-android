@@ -88,6 +88,11 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$gms_location_version"
     implementation 'com.google.maps.android:android-maps-utils:0.5'
 
+    // Mapbox
+    implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:$mapbox_version"
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.8.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.0.0'
+
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"

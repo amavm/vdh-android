@@ -1,6 +1,5 @@
 package app.vdh.org.vdhapp.core.di
 
-import android.content.SharedPreferences
 import app.vdh.org.vdhapp.BuildConfig
 import app.vdh.org.vdhapp.core.consts.ApiConst.BASE_URL
 import app.vdh.org.vdhapp.feature.report.data.common.local.AppDatabase

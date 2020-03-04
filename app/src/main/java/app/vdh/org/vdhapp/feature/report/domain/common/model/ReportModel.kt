@@ -8,7 +8,7 @@ import app.vdh.org.vdhapp.feature.report.data.common.local.entity.ReportEntity
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ImageAssetDto
 import app.vdh.org.vdhapp.feature.report.data.common.remote.dto.ObservationDto
 import com.bumptech.glide.Glide
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.android.parcel.Parcelize
 import java.io.ByteArrayOutputStream
 

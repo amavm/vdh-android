@@ -2,7 +2,7 @@ package app.vdh.org.vdhapp.feature.report.data.common.local
 
 import androidx.room.TypeConverter
 import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 import java.lang.Exception
 
 class Converters {

@@ -12,5 +12,4 @@ object PrefConst {
     const val USER_NAME_PREFS_KEY = "user_name_prefs_key"
     const val USER_EMAIL_PREFS_KEY = "user_email_prefs_key"
     const val USER_PHOTO_URL_PREFS_KEY = "user_photo_url_prefs_key"
-
 }

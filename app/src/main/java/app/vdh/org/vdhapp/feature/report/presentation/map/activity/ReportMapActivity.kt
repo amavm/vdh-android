@@ -1,64 +1,61 @@
 package app.vdh.org.vdhapp.feature.report.presentation.map.activity
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import app.vdh.org.vdhapp.R
-import app.vdh.org.vdhapp.feature.report.presentation.reporting.activity.ReportingActivity
-import app.vdh.org.vdhapp.feature.report.presentation.settings.activity.SettingsActivity
+import app.vdh.org.vdhapp.core.MapLocationManager
 import app.vdh.org.vdhapp.core.consts.PrefConst
 import app.vdh.org.vdhapp.core.consts.PrefConst.HOURS_SORT_PREFS_KEY
 import app.vdh.org.vdhapp.core.consts.PrefConst.STATUS_SORT_PREFS_KEY
-import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter
-import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
 import app.vdh.org.vdhapp.core.extenstion.navigateTo
 import app.vdh.org.vdhapp.core.extenstion.openBottomDialogFragment
+import app.vdh.org.vdhapp.core.helpers.MapBoxHelper
+import app.vdh.org.vdhapp.core.helpers.MapBoxHelper.addMarkerImages
+import app.vdh.org.vdhapp.core.helpers.MapBoxHelper.centerOnUser
+import app.vdh.org.vdhapp.core.helpers.MapBoxHelper.enableLocation
 import app.vdh.org.vdhapp.databinding.ActivityReportMapBinding
-import app.vdh.org.vdhapp.feature.report.domain.common.model.ReportModel
+import app.vdh.org.vdhapp.feature.report.domain.common.model.Status
 import app.vdh.org.vdhapp.feature.report.domain.map.model.BikePathNetwork
+import app.vdh.org.vdhapp.feature.report.domain.map.model.BoundingBoxQueryParameter
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapAction
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapFilterViewAction
 import app.vdh.org.vdhapp.feature.report.presentation.map.action.ReportMapViewAction
-import app.vdh.org.vdhapp.feature.report.presentation.map.extension.addReportMarkers
 import app.vdh.org.vdhapp.feature.report.presentation.map.fragment.HourFilterDialogFragment
 import app.vdh.org.vdhapp.feature.report.presentation.map.fragment.StatusFilterDialogFragment
 import app.vdh.org.vdhapp.feature.report.presentation.map.viewmodel.ReportMapViewModel
+import app.vdh.org.vdhapp.feature.report.presentation.reporting.activity.ReportingActivity
+import app.vdh.org.vdhapp.feature.report.presentation.settings.activity.SettingsActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
-import com.google.maps.android.data.geojson.GeoJsonLayer
+import com.mapbox.android.core.permissions.PermissionsListener
+import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.Style
 import kotlinx.android.synthetic.main.activity_report_map.*
 import org.jetbrains.anko.defaultSharedPreferences
-import org.json.JSONObject
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
+class ReportMapActivity : AppCompatActivity(), PermissionsListener {
 
     companion object {
-        private const val LOCATION_PERMISSION_CODE = 123
-        private const val DEFAULT_MAP_ZOOM = 16.0f
+        private const val DEFAULT_MAP_ZOOM = 16.0
         private const val BIKE_PATH_ON_MAP_ZOOM = 13.0f
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private var map: GoogleMap? = null
+    private var mapView: MapView? = null
+    private var mapboxMap: MapboxMap? = null
     private val viewModel: ReportMapViewModel by viewModel()
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -68,10 +65,13 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private var geoJsonLayer: GeoJsonLayer? = null
+    private var permissionsManager: PermissionsManager? = null
+    private lateinit var locationManager: MapLocationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Mapbox.getInstance(this, resources.getString(R.string.mapbox_key))
+
         val binding: ActivityReportMapBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_report_map)
 
@@ -84,63 +84,69 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        mapView = map_view as MapView
+        mapView?.onCreate(savedInstanceState)
+        mapView?.getMapAsync { map ->
+            mapboxMap = map
+            configureMap(map)
+        }
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(prefsListener)
-    }
-
-    private fun bindView(binding: ActivityReportMapBinding) {
-        binding.createReportButton.setOnClickListener {
-            viewModel.handleAction(ReportMapAction.CreateReport)
+        locationManager = MapLocationManager(
+                context = this,
+                lifecycle = lifecycle
+        ) { _, firstUpdate ->
+            if (firstUpdate) {
+                mapboxMap?.centerOnUser(DEFAULT_MAP_ZOOM)
+                locationManager.stop()
+            }
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
-        } else {
-            setupMap()
+    private fun configureMap(mapboxMap: MapboxMap) {
+        mapboxMap.setStyle(Style.MAPBOX_STREETS) {
+            mapboxMap.addMarkerImages(this)
+            permissionsManager = mapboxMap.enableLocation(this, this, this) {
+                locationManager.enable()
+                my_location_button.setOnClickListener {
+                    mapboxMap.centerOnUser(DEFAULT_MAP_ZOOM)
+                }
+                setupMapLayers()
+            }
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun setupMap() {
-
+    private fun setupMapLayers() {
         setCurrentFilterFromSharedPrefs()
-        addReports()
+        mapView?.let {
+            observeViewModelActions(it)
+        }
 
-        map?.let { map ->
-
-            map.isMyLocationEnabled = true
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_MAP_ZOOM))
+        viewModel.reports.observe(this, Observer { reports ->
+            if (reports.isNotEmpty()) {
+                mapboxMap?.let { map ->
+                    mapView?.let { mapView ->
+                        MapBoxHelper.addMarkers(
+                                mapboxMap = map,
+                                mapView = mapView,
+                                reports = reports
+                        ) { report ->
+                            val bundle = Bundle()
+                            bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, report)
+                            navigateTo(ReportingActivity::class.java, bundle)
+                        }
+                    }
                 }
             }
-            map.setOnMarkerClickListener {
-                val bundle = Bundle()
-                bundle.putParcelable(ReportingActivity.REPORT_ARGS_KEY, it.tag as ReportModel)
-                this.navigateTo(ReportingActivity::class.java, bundle)
-                true
-            }
-
-            map.setOnCameraIdleListener {
-                addBicyclePath(map)
-            }
-
-            observeViewModelActions(map)
-        }
+        })
     }
 
-    private fun observeViewModelActions(map: GoogleMap) {
+    private fun observeViewModelActions(map: MapView) {
 
         viewModel.mapReportViewAction.observe(this, Observer { viewAction ->
             when (viewAction) {
                 is ReportMapViewAction.OpenReportCreation -> this.navigateTo(ReportingActivity::class.java)
-                is ReportMapViewAction.BicyclePathQuerySuccess -> displayBicyclePathOverlay(viewAction.data, viewAction.network)
+                is ReportMapViewAction.BicyclePathQuerySuccess -> {} // Display bicycle Path
                 is ReportMapViewAction.BicyclePathQueryError -> {}
             }
         })
@@ -155,20 +161,22 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 is ReportMapFilterViewAction.RefreshPathNetwork -> {
                     Snackbar.make(map_coordinator_layout, viewAction.bikePathNetwork.label, Snackbar.LENGTH_LONG).show()
-                    addBicyclePath(map)
+                    mapboxMap?.let {
+                        addBicyclePath(it)
+                    }
                 }
             }
         })
     }
 
-    private fun displayBicyclePathOverlay(data: JSONObject, network: BikePathNetwork) {
-        map.let { map ->
-            geoJsonLayer?.removeLayerFromMap()
-            geoJsonLayer = GeoJsonLayer(map, data)
-                    .apply {
-                        defaultLineStringStyle.color = ContextCompat.getColor(this@ReportMapActivity, network.color)
-                    }
-            geoJsonLayer?.addLayerToMap()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView?.onSaveInstanceState(outState)
+    }
+
+    private fun bindView(binding: ActivityReportMapBinding) {
+        binding.createReportButton.setOnClickListener {
+            viewModel.handleAction(ReportMapAction.CreateReport)
         }
     }
 
@@ -200,21 +208,12 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun addReports() {
-        viewModel.reports.observe(this, Observer { reports ->
-            if (reports.isNotEmpty()) {
-                map?.clear()
-                map?.addReportMarkers(this, reports)
-            }
-        })
-    }
-
-    private fun addBicyclePath(map: GoogleMap) {
+    private fun addBicyclePath(map: MapboxMap) {
         if (map.cameraPosition.zoom >= BIKE_PATH_ON_MAP_ZOOM) {
             val visibleRegion = map.projection.visibleRegion
             val queryParameter = BoundingBoxQueryParameter(
-                    topRight = visibleRegion.latLngBounds.northeast,
-                    bottomLeft = visibleRegion.latLngBounds.southwest
+                    topRight = visibleRegion.latLngBounds.northEast,
+                    bottomLeft = visibleRegion.latLngBounds.southWest
             )
             viewModel.handleAction(ReportMapAction.GetBicyclePath(queryParameter))
         }
@@ -229,15 +228,49 @@ class ReportMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == LOCATION_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setupMap()
+        permissionsManager?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onPermissionResult(granted: Boolean) {
+        if (granted) {
+            mapboxMap?.let {
+                configureMap(it)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView?.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView?.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView?.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(prefsListener)
+        mapView?.onDestroy()
     }
 }

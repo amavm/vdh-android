@@ -12,7 +12,6 @@ import androidx.preference.PreferenceFragmentCompat
 import app.vdh.org.vdhapp.BuildConfig
 import app.vdh.org.vdhapp.R
 import app.vdh.org.vdhapp.core.extenstion.navigateTo
-import app.vdh.org.vdhapp.core.helpers.AuthHelper
 import app.vdh.org.vdhapp.core.helpers.AuthHelper.Companion.onAuthResult
 import app.vdh.org.vdhapp.core.helpers.AuthHelper.Companion.signIn
 import app.vdh.org.vdhapp.core.helpers.AuthHelper.Companion.signOut
@@ -22,8 +21,6 @@ import app.vdh.org.vdhapp.feature.report.presentation.moderation.activity.Report
 import app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.TitleSubtitlePreference
 import app.vdh.org.vdhapp.feature.report.presentation.settings.preferences.UserProfilePreference
 import app.vdh.org.vdhapp.feature.report.presentation.settings.viewmodel.SettingsViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 

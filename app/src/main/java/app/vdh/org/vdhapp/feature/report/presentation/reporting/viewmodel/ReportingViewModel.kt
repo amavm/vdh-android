@@ -1,6 +1,7 @@
 package app.vdh.org.vdhapp.feature.report.presentation.reporting.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.text.format.DateUtils
 import android.util.Log
@@ -17,6 +18,7 @@ import app.vdh.org.vdhapp.feature.report.domain.reporting.usecase.DeleteReportUs
 import app.vdh.org.vdhapp.feature.report.domain.reporting.usecase.SaveReportUseCase
 import app.vdh.org.vdhapp.core.helpers.GoogleMapLinkHelper
 import app.vdh.org.vdhapp.core.helpers.ImageHelper
+import app.vdh.org.vdhapp.core.helpers.MapBoxHelper
 import app.vdh.org.vdhapp.feature.report.presentation.reporting.action.ReportingAction
 import app.vdh.org.vdhapp.feature.report.presentation.reporting.action.ReportingViewAction
 import kotlinx.coroutines.Dispatchers
@@ -154,6 +156,14 @@ class ReportingViewModel(
         val report = currentReport.value
         report?.let {
             currentReport.value = mutator(report)
+        }
+    }
+
+    fun getLocationMapImageUrl(context: Context): String? {
+        return currentReport.value?.position?.let { currentPosition ->
+            MapBoxHelper.getStaticImageUrl(context, currentPosition)
+        } ?: run {
+            null
         }
     }
 }

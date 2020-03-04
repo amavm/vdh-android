@@ -10,8 +10,8 @@ import app.vdh.org.vdhapp.feature.report.domain.common.usecase.GetCurrentUserUse
 import kotlinx.coroutines.Dispatchers
 
 class SettingsViewModel(
-        private val getCurrentUserUseCase: GetCurrentUserUseCase,
-        private val deleteUserProfileUseCase: DeleteUserProfileUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val deleteUserProfileUseCase: DeleteUserProfileUseCase
 ) : ViewModel() {
 
     private val fetchUser: MutableLiveData<Boolean> = MutableLiveData()

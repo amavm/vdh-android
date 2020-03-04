@@ -7,11 +7,9 @@ import androidx.fragment.app.Fragment
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import java.util.*
+import java.util.UUID
 
 class AuthHelper {
 
@@ -42,9 +40,9 @@ class AuthHelper {
         }
 
         fun onAuthResult(
-                data: Intent?,
-                resultCode: Int,
-                onAuthSuccess: (FirebaseUser) -> Unit
+            data: Intent?,
+            resultCode: Int,
+            onAuthSuccess: (FirebaseUser) -> Unit
         ) {
 
             val response = IdpResponse.fromResultIntent(data)
@@ -57,7 +55,7 @@ class AuthHelper {
             } else {
                 Log.e("SettingsFragment", "Authentication error ${response?.error}")
                 if (response?.error?.errorCode == ErrorCodes.ANONYMOUS_UPGRADE_MERGE_CONFLICT) {
-                    val  nonAnonymousCredential = response.credentialForLinking
+                    val nonAnonymousCredential = response.credentialForLinking
                     nonAnonymousCredential?.let {
                         FirebaseAuth.getInstance().signInWithCredential(nonAnonymousCredential)
                     }

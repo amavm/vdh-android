@@ -8,5 +8,4 @@ interface UserApiClient {
     fun getCurrentUser(): LiveData<UserDto?>
 
     fun deleteUserProfile()
-
 }
