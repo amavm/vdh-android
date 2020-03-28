@@ -2,6 +2,7 @@ package app.vdh.org.vdhapp.core.helpers
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.DisplayMetrics
 import androidx.core.content.ContextCompat
 import app.vdh.org.vdhapp.R
@@ -21,6 +22,9 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
+import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker
+import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions
 import org.jetbrains.anko.windowManager
 
 object MapBoxHelper {
@@ -109,5 +113,17 @@ object MapBoxHelper {
                                 .build()))
                 .build()
         return staticImage.url().toString()
+    }
+
+    fun getPlacePickerIntent(activity: Activity, position: LatLng): Intent {
+        return PlacePicker.IntentBuilder()
+                .accessToken(activity.resources.getString(R.string.mapbox_key))
+                .placeOptions(PlacePickerOptions.builder()
+                        .statingCameraPosition(CameraPosition.Builder()
+                                .target(position)
+                                .zoom(16.0)
+                                .build()
+                        ).build()
+                ).build(activity)
     }
 }

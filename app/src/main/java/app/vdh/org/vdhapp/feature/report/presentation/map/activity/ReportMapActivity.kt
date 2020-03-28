@@ -145,7 +145,14 @@ class ReportMapActivity : AppCompatActivity(), PermissionsListener {
 
         viewModel.mapReportViewAction.observe(this, Observer { viewAction ->
             when (viewAction) {
-                is ReportMapViewAction.OpenReportCreation -> this.navigateTo(ReportingActivity::class.java)
+                is ReportMapViewAction.OpenReportCreation -> {
+                    val userLocation = mapboxMap?.locationComponent?.lastKnownLocation
+                    val bundle = Bundle()
+                    userLocation?.let {
+                        bundle.putParcelable(ReportingActivity.USER_POS_ARGS_KEY, userLocation)
+                    }
+                    navigateTo(ReportingActivity::class.java, bundle)
+                }
                 is ReportMapViewAction.BicyclePathQuerySuccess -> {} // Display bicycle Path
                 is ReportMapViewAction.BicyclePathQueryError -> {}
             }
